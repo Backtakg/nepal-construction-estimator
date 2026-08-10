@@ -1450,7 +1450,137 @@ function calculateCategorySummary() {
 
     return categories;
 }
+// ==========================================================
+// MATERIAL / LABOUR / OTHER SUMMARY
+// ==========================================================
 
+function calculateCostTypeSummary() {
+
+    const summary = {
+        Material: 0,
+        Labour: 0,
+        Other: 0
+    };
+
+    if (!Array.isArray(activeBOQ)) {
+        return summary;
+    }
+
+    activeBOQ.forEach(function(item) {
+
+        const amount =
+            Number(item.quantity || 0) *
+            Number(item.rate || 0);
+
+        let type =
+            String(
+                item.costType || "Material"
+            ).trim();
+
+        if (
+            type !== "Material" &&
+            type !== "Labour" &&
+            type !== "Other"
+        ) {
+            type = "Other";
+        }
+
+        summary[type] += amount;
+
+    });
+
+    return summary;
+}
+// ==========================================================
+// RENDER MATERIAL / LABOUR SUMMARY
+// ==========================================================
+
+function renderCostTypeSummary() {
+
+    const container =
+        document.getElementById(
+            "costTypeSummary"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const summary =
+        calculateCostTypeSummary();
+
+    const total =
+        summary.Material +
+        summary.Labour +
+        summary.Other;
+
+    container.innerHTML = `
+
+        <div class="cost-type-row">
+
+            <span>
+                🧱 Material
+            </span>
+
+            <strong>
+                NPR
+                ${Math.round(
+                    summary.Material
+                ).toLocaleString()}
+            </strong>
+
+        </div>
+
+
+        <div class="cost-type-row">
+
+            <span>
+                👷 Labour
+            </span>
+
+            <strong>
+                NPR
+                ${Math.round(
+                    summary.Labour
+                ).toLocaleString()}
+            </strong>
+
+        </div>
+
+
+        <div class="cost-type-row">
+
+            <span>
+                📦 Other
+            </span>
+
+            <strong>
+                NPR
+                ${Math.round(
+                    summary.Other
+                ).toLocaleString()}
+            </strong>
+
+        </div>
+
+
+        <div class="cost-type-total">
+
+            <strong>
+                TOTAL
+            </strong>
+
+            <strong>
+                NPR
+                ${Math.round(
+                    total
+                ).toLocaleString()}
+            </strong>
+
+        </div>
+
+    `;
+}
 
 // ==========================================================
 // RENDER CATEGORY SUMMARY
