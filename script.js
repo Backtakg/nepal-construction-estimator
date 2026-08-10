@@ -4277,7 +4277,158 @@ function deleteProject(
 
 }
 
+// ==========================================================
+// RESET PROJECT FORM UI
+// ==========================================================
 
+function resetProjectFormUI() {
+
+    editingProjectId = null;
+
+    const formTitle =
+        document.querySelector(".form-header h1");
+
+    if (formTitle) {
+        formTitle.textContent =
+            "Create your project";
+    }
+
+    const formDescription =
+        document.querySelector(".form-header p");
+
+    if (formDescription) {
+        formDescription.textContent =
+            "Enter the basic project information to create your estimate workspace.";
+    }
+
+    const submitButton =
+        document.getElementById("createProjectButton");
+
+    if (submitButton) {
+        submitButton.textContent =
+            "Create Project →";
+    }
+
+    if (projectForm) {
+        projectForm.reset();
+    }
+
+    if (totalArea) {
+        totalArea.textContent =
+            "0 sq.ft";
+    }
+}
+
+
+// ==========================================================
+// EDIT PROJECT
+// ==========================================================
+
+function editProject(id) {
+
+    const project =
+        projects.find(function(item) {
+
+            return Number(item.id) ===
+                Number(id);
+
+        });
+
+    if (!project) {
+
+        alert(
+            "Project could not be found."
+        );
+
+        return;
+    }
+
+    editingProjectId =
+        Number(project.id);
+
+    const boqScreen =
+        document.getElementById("boqScreen");
+
+    if (boqScreen) {
+        boqScreen.classList.add("hidden");
+    }
+
+    if (dashboard) {
+        dashboard.classList.add("hidden");
+    }
+
+    if (newProject) {
+        newProject.classList.remove("hidden");
+    }
+
+    const projectNameInput =
+        document.getElementById("projectName");
+
+    const clientNameInput =
+        document.getElementById("clientName");
+
+    const locationInput =
+        document.getElementById("location");
+
+    const buildingTypeInput =
+        document.getElementById("buildingType");
+
+    if (projectNameInput) {
+        projectNameInput.value =
+            project.projectName || "";
+    }
+
+    if (clientNameInput) {
+        clientNameInput.value =
+            project.clientName || "";
+    }
+
+    if (locationInput) {
+        locationInput.value =
+            project.location || "";
+    }
+
+    if (buildingTypeInput) {
+        buildingTypeInput.value =
+            project.buildingType || "Residential";
+    }
+
+    if (floorsInput) {
+        floorsInput.value =
+            project.floors || "";
+    }
+
+    if (areaInput) {
+        areaInput.value =
+            project.area || "";
+    }
+
+    calculateArea();
+
+    const formTitle =
+        document.querySelector(".form-header h1");
+
+    if (formTitle) {
+        formTitle.textContent =
+            "Edit your project";
+    }
+
+    const formDescription =
+        document.querySelector(".form-header p");
+
+    if (formDescription) {
+        formDescription.textContent =
+            "Update your project details. Your existing BOQ and estimate will remain محفوظ.";
+    }
+
+    const submitButton =
+        document.getElementById("createProjectButton");
+
+    if (submitButton) {
+        submitButton.textContent =
+            "Save Changes →";
+    }
+}
 // ==========================================================
 // AREA CALCULATION
 // ==========================================================
