@@ -1,174 +1,92 @@
 ```javascript
 // ==========================================
-// PAGE NAVIGATION
-// ==========================================
-
-function showNewProject() {
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("newProject").classList.remove("hidden");
-}
-
-function showDashboard() {
-    document.getElementById("newProject").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-
-    displayProjects();
-}
-
-
-// ==========================================
 // PROJECT DATA
 // ==========================================
 
-let projects = JSON.parse(
-    localStorage.getItem("constructionProjects")
-) || [];
+let projects = [];
 
 
 // ==========================================
-// PAGE LOADED
+// LOAD PROJECTS
 // ==========================================
 
-document.addEventListener("DOMContentLoaded", function () {
+function loadProjects() {
 
-    const floorsInput =
-        document.getElementById("floors");
+    const savedProjects =
+        localStorage.getItem("constructionProjects");
 
-    const areaInput =
-        document.getElementById("area");
+    if (savedProjects) {
 
-    const totalArea =
-        document.getElementById("totalArea");
+        try {
 
-    const projectForm =
-        document.getElementById("projectForm");
+            projects = JSON.parse(savedProjects);
 
+            if (!Array.isArray(projects)) {
+                projects = [];
+            }
 
-    // ======================================
-    // CALCULATE TOTAL AREA
-    // ======================================
+        } catch (error) {
 
-    function calculateTotalArea() {
-
-        const floors =
-            parseFloat(floorsInput.value) || 0;
-
-        const area =
-            parseFloat(areaInput.value) || 0;
-
-        const total =
-            floors * area;
-
-        totalArea.textContent =
-            total.toLocaleString() + " sq.ft";
-    }
-
-
-    floorsInput.addEventListener(
-        "input",
-        calculateTotalArea
-    );
-
-    areaInput.addEventListener(
-        "input",
-        calculateTotalArea
-    );
-
-
-    // ======================================
-    // CREATE PROJECT
-    // ======================================
-
-    projectForm.addEventListener(
-        "submit",
-        function (event) {
-
-            event.preventDefault();
-
-
-            const project = {
-
-                id: Date.now(),
-
-                projectName:
-                    document
-                        .getElementById("projectName")
-                        .value
-                        .trim(),
-
-                clientName:
-                    document
-                        .getElementById("clientName")
-                        .value
-                        .trim(),
-
-                location:
-                    document
-                        .getElementById("location")
-                        .value
-                        .trim(),
-
-                buildingType:
-                    document
-                        .getElementById("buildingType")
-                        .value,
-
-                floors:
-                    parseFloat(
-                        document
-                            .getElementById("floors")
-                            .value
-                    ),
-
-                area:
-                    parseFloat(
-                        document
-                            .getElementById("area")
-                            .value
-                    )
-            };
-
-
-            project.totalArea =
-                project.floors *
-                project.area;
-
-
-            // Add project to array
-            projects.push(project);
-
-
-            // Save projects in browser
-            localStorage.setItem(
-                "constructionProjects",
-                JSON.stringify(projects)
+            console.error(
+                "Could not load projects:",
+                error
             );
 
-
-            console.log(
-                "Project saved:",
-                project
-            );
-
-
-            // Reset form
-            projectForm.reset();
-
-            totalArea.textContent =
-                "0 sq.ft";
-
-
-            // Return to dashboard
-            showDashboard();
-
+            projects = [];
         }
+
+    } else {
+
+        projects = [];
+    }
+}
+
+
+// ==========================================
+// SAVE PROJECTS
+// ==========================================
+
+function saveProjects() {
+
+    localStorage.setItem(
+        "constructionProjects",
+        JSON.stringify(projects)
     );
+}
 
 
-    // Display saved projects
+// ==========================================
+// SHOW NEW PROJECT
+// ==========================================
+
+function showNewProject() {
+
+    document
+        .getElementById("dashboard")
+        .classList.add("hidden");
+
+    document
+        .getElementById("newProject")
+        .classList.remove("hidden");
+}
+
+
+// ==========================================
+// SHOW DASHBOARD
+// ==========================================
+
+function showDashboard() {
+
+    document
+        .getElementById("newProject")
+        .classList.add("hidden");
+
+    document
+        .getElementById("dashboard")
+        .classList.remove("hidden");
+
     displayProjects();
-
-});
+}
 
 
 // ==========================================
@@ -182,6 +100,11 @@ function displayProjects() {
 
 
     if (!projectList) {
+
+        console.error(
+            "ERROR: projectList was not found."
+        );
+
         return;
     }
 
@@ -219,19 +142,22 @@ function displayProjects() {
     }
 
 
-    // Clear current list
+    // Clear project list
     projectList.innerHTML = "";
 
 
-    // Create project cards
+    // Create cards
     projects.forEach(function (project) {
 
         const card =
             document.createElement("div");
 
-
         card.className =
             "project-card";
+
+
+        const totalArea =
+            Number(project.totalArea) || 0;
 
 
         card.innerHTML = `
@@ -241,17 +167,23 @@ function displayProjects() {
                 <div>
 
                     <h3>
-                        ${escapeHTML(project.projectName)}
+                        ${escapeHTML(
+                            project.projectName
+                        )}
                     </h3>
 
                     <span class="project-location">
-                        📍 ${escapeHTML(project.location)}
+                        📍 ${escapeHTML(
+                            project.location
+                        )}
                     </span>
 
                 </div>
 
                 <span class="project-type">
-                    ${escapeHTML(project.buildingType)}
+                    ${escapeHTML(
+                        project.buildingType
+                    )}
                 </span>
 
             </div>
@@ -288,7 +220,7 @@ function displayProjects() {
                     <span>Built-up Area</span>
 
                     <strong>
-                        ${project.totalArea.toLocaleString()}
+                        ${totalArea.toLocaleString()}
                         sq.ft
                     </strong>
 
@@ -306,7 +238,6 @@ function displayProjects() {
                     Open Project →
                 </button>
 
-
                 <button
                     class="delete-button"
                     onclick="deleteProject(${project.id})"
@@ -322,6 +253,110 @@ function displayProjects() {
         projectList.appendChild(card);
 
     });
+
+}
+
+
+// ==========================================
+// CREATE PROJECT
+// ==========================================
+
+function createProject(event) {
+
+    event.preventDefault();
+
+
+    const projectName =
+        document
+            .getElementById("projectName")
+            .value
+            .trim();
+
+
+    const clientName =
+        document
+            .getElementById("clientName")
+            .value
+            .trim();
+
+
+    const location =
+        document
+            .getElementById("location")
+            .value
+            .trim();
+
+
+    const buildingType =
+        document
+            .getElementById("buildingType")
+            .value;
+
+
+    const floors =
+        Number(
+            document
+                .getElementById("floors")
+                .value
+        );
+
+
+    const area =
+        Number(
+            document
+                .getElementById("area")
+                .value
+        );
+
+
+    const project = {
+
+        id: Date.now(),
+
+        projectName: projectName,
+
+        clientName: clientName,
+
+        location: location,
+
+        buildingType: buildingType,
+
+        floors: floors,
+
+        area: area,
+
+        totalArea: floors * area
+
+    };
+
+
+    // Add project
+    projects.push(project);
+
+
+    // Save
+    saveProjects();
+
+
+    console.log(
+        "PROJECT SAVED:",
+        project
+    );
+
+
+    // Reset form
+    document
+        .getElementById("projectForm")
+        .reset();
+
+
+    document
+        .getElementById("totalArea")
+        .textContent = "0 sq.ft";
+
+
+    // Go dashboard
+    showDashboard();
 
 }
 
@@ -352,9 +387,9 @@ function openProject(id) {
 
 
     alert(
-        "Project opened: " +
+        "Project: " +
         project.projectName +
-        "\n\nBOQ module will be added next."
+        "\n\nBOQ module coming next."
     );
 
 }
@@ -366,42 +401,26 @@ function openProject(id) {
 
 function deleteProject(id) {
 
-    const project =
-        projects.find(
-            function (item) {
-                return item.id === id;
-            }
-        );
-
-
-    if (!project) {
-        return;
-    }
-
-
-    const confirmDelete =
+    const confirmed =
         confirm(
-            `Delete "${project.projectName}"?`
+            "Are you sure you want to delete this project?"
         );
 
 
-    if (!confirmDelete) {
+    if (!confirmed) {
         return;
     }
 
 
     projects =
         projects.filter(
-            function (item) {
-                return item.id !== id;
+            function (project) {
+                return project.id !== id;
             }
         );
 
 
-    localStorage.setItem(
-        "constructionProjects",
-        JSON.stringify(projects)
-    );
+    saveProjects();
 
 
     displayProjects();
@@ -418,12 +437,80 @@ function escapeHTML(value) {
     const div =
         document.createElement("div");
 
-
     div.textContent =
-        value;
-
+        value || "";
 
     return div.innerHTML;
-
 }
+
+
+// ==========================================
+// START APPLICATION
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadProjects();
+
+        displayProjects();
+
+
+        // Project form
+        const projectForm =
+            document.getElementById("projectForm");
+
+
+        if (projectForm) {
+
+            projectForm.addEventListener(
+                "submit",
+                createProject
+            );
+
+        }
+
+
+        // Area calculation
+        const floorsInput =
+            document.getElementById("floors");
+
+        const areaInput =
+            document.getElementById("area");
+
+
+        function calculateTotalArea() {
+
+            const floors =
+                Number(floorsInput.value) || 0;
+
+            const area =
+                Number(areaInput.value) || 0;
+
+            const total =
+                floors * area;
+
+
+            document
+                .getElementById("totalArea")
+                .textContent =
+                total.toLocaleString() +
+                " sq.ft";
+        }
+
+
+        floorsInput.addEventListener(
+            "input",
+            calculateTotalArea
+        );
+
+
+        areaInput.addEventListener(
+            "input",
+            calculateTotalArea
+        );
+
+    }
+);
 ```
