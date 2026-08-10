@@ -15,6 +15,7 @@
 let projects = [];
 let activeProject = null;
 let activeBOQ = [];
+let editingProjectId = null;
 
 const THEME_KEY = "nepalEstimatorTheme";
 
