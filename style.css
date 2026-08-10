@@ -1494,7 +1494,125 @@ a {
     opacity: 1;
 
 }
+/* =========================================================
+   PROJECT CARD ACTIONS
+   ========================================================= */
 
+.project-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+
+/* EDIT BUTTON */
+
+.edit-project-button {
+    border: 0;
+    background: var(--blue-soft, #eff6ff);
+    color: var(--blue, #2563eb);
+
+    padding: 8px 13px;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.edit-project-button:hover {
+
+    background: var(--blue, #2563eb);
+    color: #ffffff;
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(37, 99, 235, .22);
+
+}
+
+
+.edit-project-button:active {
+
+    transform:
+        translateY(0)
+        scale(.97);
+
+}
+
+
+/* DELETE */
+
+.delete-button {
+
+    border: none;
+
+    background: transparent;
+
+    color: #ef4444;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+
+}
+
+
+.delete-button:hover {
+
+    opacity: 1;
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+
+    .project-card-footer {
+
+        align-items:
+            flex-start;
+
+        gap: 15px;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .project-card-actions {
+
+        width: 100%;
+
+        justify-content:
+            space-between;
+
+    }
+
+}
 
 /* =========================================================
    EMPTY STATE
