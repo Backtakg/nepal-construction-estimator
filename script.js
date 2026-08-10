@@ -5209,3 +5209,333 @@ displayProjects();
 console.log(
     "Nepal Construction Estimator loaded successfully."
 );
+// ==========================================================
+// DAY / NIGHT / THEME SYSTEM
+// ==========================================================
+
+(function initializeThemeSystem() {
+
+    const dayButton =
+        document.getElementById(
+            "dayModeBtn"
+        );
+
+    const nightButton =
+        document.getElementById(
+            "nightModeBtn"
+        );
+
+    const themeButton =
+        document.getElementById(
+            "themeBtn"
+        );
+
+
+    if (
+        !dayButton &&
+        !nightButton &&
+        !themeButton
+    ) {
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // APPLY MODE
+    // ------------------------------------------------------
+
+    function applyMode(mode) {
+
+        if (mode === "night") {
+
+            document.body.classList.add(
+                "dark-mode"
+            );
+
+        } else {
+
+            document.body.classList.remove(
+                "dark-mode"
+            );
+
+        }
+
+
+        updateButtons(
+            mode
+        );
+
+
+        localStorage.setItem(
+            "estimatorThemeMode",
+            mode
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // UPDATE BUTTON STATES
+    // ------------------------------------------------------
+
+    function updateButtons(mode) {
+
+        if (dayButton) {
+
+            dayButton.classList.toggle(
+                "active",
+                mode === "day"
+            );
+
+        }
+
+
+        if (nightButton) {
+
+            nightButton.classList.toggle(
+                "active",
+                mode === "night"
+            );
+
+        }
+
+    }
+
+
+    // ------------------------------------------------------
+    // DAY
+    // ------------------------------------------------------
+
+    if (dayButton) {
+
+        dayButton.addEventListener(
+            "click",
+            function() {
+
+                applyMode(
+                    "day"
+                );
+
+
+                dayButton.classList.add(
+                    "theme-click"
+                );
+
+
+                setTimeout(
+                    function() {
+
+                        dayButton.classList.remove(
+                            "theme-click"
+                        );
+
+                    },
+                    350
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // NIGHT
+    // ------------------------------------------------------
+
+    if (nightButton) {
+
+        nightButton.addEventListener(
+            "click",
+            function() {
+
+                applyMode(
+                    "night"
+                );
+
+
+                nightButton.classList.add(
+                    "theme-click"
+                );
+
+
+                setTimeout(
+                    function() {
+
+                        nightButton.classList.remove(
+                            "theme-click"
+                        );
+
+                    },
+                    350
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // THEME COLORS
+    // ------------------------------------------------------
+
+    const themes = [
+
+        {
+            primary: "#2563eb",
+            dark: "#1d4ed8",
+            accent: "#7c3aed"
+        },
+
+        {
+            primary: "#059669",
+            dark: "#047857",
+            accent: "#14b8a6"
+        },
+
+        {
+            primary: "#ea580c",
+            dark: "#c2410c",
+            accent: "#f59e0b"
+        },
+
+        {
+            primary: "#db2777",
+            dark: "#be185d",
+            accent: "#9333ea"
+        },
+
+        {
+            primary: "#0891b2",
+            dark: "#0e7490",
+            accent: "#2563eb"
+        }
+
+    ];
+
+
+    let currentTheme =
+        Number(
+            localStorage.getItem(
+                "estimatorThemeColor"
+            )
+        );
+
+
+    if (
+        !Number.isFinite(
+            currentTheme
+        )
+    ) {
+
+        currentTheme = 0;
+
+    }
+
+
+    function applyColorTheme(index) {
+
+        const theme =
+            themes[index];
+
+
+        if (!theme) {
+
+            return;
+
+        }
+
+
+        document.documentElement.style.setProperty(
+            "--theme-primary",
+            theme.primary
+        );
+
+
+        document.documentElement.style.setProperty(
+            "--theme-primary-dark",
+            theme.dark
+        );
+
+
+        document.documentElement.style.setProperty(
+            "--theme-accent",
+            theme.accent
+        );
+
+
+        localStorage.setItem(
+            "estimatorThemeColor",
+            String(index)
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // THEME BUTTON
+    // ------------------------------------------------------
+
+    if (themeButton) {
+
+        themeButton.addEventListener(
+            "click",
+            function() {
+
+                currentTheme =
+                    (
+                        currentTheme + 1
+                    ) %
+                    themes.length;
+
+
+                applyColorTheme(
+                    currentTheme
+                );
+
+
+                themeButton.classList.add(
+                    "theme-click"
+                );
+
+
+                setTimeout(
+                    function() {
+
+                        themeButton.classList.remove(
+                            "theme-click"
+                        );
+
+                    },
+                    350
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // INITIALIZE
+    // ------------------------------------------------------
+
+    const savedMode =
+        localStorage.getItem(
+            "estimatorThemeMode"
+        ) || "day";
+
+
+    applyMode(
+        savedMode
+    );
+
+
+    applyColorTheme(
+        currentTheme
+    );
+
+})();
