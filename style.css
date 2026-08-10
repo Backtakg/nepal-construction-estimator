@@ -661,3 +661,66 @@ button {
         padding: 20px 15px;
     }
 }
+/* =====================================================
+   BOQ EDITABLE INPUT FIX
+   ===================================================== */
+
+.boq-table input,
+.boq-table .boq-input,
+.boq-table .number-input,
+.boq-table .item-input,
+.boq-table .unit-input {
+    pointer-events: auto !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    cursor: text !important;
+
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    border: 1px solid #d1d5db !important;
+    background: #ffffff !important;
+
+    color: #111827 !important;
+
+    padding: 8px 10px !important;
+    border-radius: 6px !important;
+
+    font-family: inherit !important;
+    font-size: 14px !important;
+
+    opacity: 1 !important;
+}
+
+
+.boq-table input:focus,
+.boq-table .boq-input:focus {
+    outline: 2px solid #2563eb !important;
+    outline-offset: 1px !important;
+
+    border-color: #2563eb !important;
+
+    background: #ffffff !important;
+}
+
+
+.boq-table td {
+    pointer-events: auto !important;
+}
+
+
+.boq-table-wrapper {
+    pointer-events: auto !important;
+}
+
+
+.boq-table input[type="number"] {
+    text-align: right;
+}
+
+
+.boq-table .delete-boq-button {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
