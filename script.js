@@ -2,9 +2,8 @@
 // NEPAL CONSTRUCTION ESTIMATOR
 // PROJECTS + BOQ + EDITABLE RATES + CUSTOM ITEMS
 // + NEPAL REFERENCE RATE SYSTEM
-// + COST BREAKDOWN
 // + DAY / NIGHT THEME
-// + LOGO + FOOTER
+// FULL REPLACEMENT VERSION
 // ==========================================================
 
 "use strict";
@@ -17,16 +16,8 @@ let projects = [];
 let activeProject = null;
 let activeBOQ = [];
 
-// ==========================================================
-// COST SETTINGS
-// ==========================================================
+const THEME_KEY = "nepalEstimatorTheme";
 
-const DEFAULT_COST_SETTINGS = {
-    toolsEquipmentPct: 3,
-    overheadPct: 5,
-    contingencyPct: 10,
-    profitPct: 10
-};
 
 // ==========================================================
 // ELEMENTS
@@ -53,14 +44,9 @@ const areaInput =
 const totalArea =
     document.getElementById("totalArea");
 
+
 // ==========================================================
 // NEPAL REFERENCE RATE DATABASE
-// ==========================================================
-//
-// Reference/demo values.
-// Verify applicable official schedules and quotations
-// before commercial use.
-//
 // ==========================================================
 
 const NEPAL_RATE_DATABASE = {
@@ -388,7 +374,9 @@ const NEPAL_RATE_DATABASE = {
         unit: "pc",
         rate: 180
     }
+
 };
+
 
 // ==========================================================
 // RATE SCHEDULE
@@ -441,15 +429,17 @@ const NEPAL_RATE_SCHEDULES = {
 
 };
 
+
 // ==========================================================
-// RATE HELPERS
+// SAFE RATE HELPERS
 // ==========================================================
 
 function getRateLocations() {
 
     if (
         !NEPAL_RATE_SCHEDULES ||
-        typeof NEPAL_RATE_SCHEDULES !== "object"
+        typeof NEPAL_RATE_SCHEDULES !== "object" ||
+        Array.isArray(NEPAL_RATE_SCHEDULES)
     ) {
 
         return [];
@@ -459,7 +449,9 @@ function getRateLocations() {
     return Object.keys(
         NEPAL_RATE_SCHEDULES
     );
+
 }
+
 
 function getRateYears(location) {
 
@@ -473,11 +465,14 @@ function getRateYears(location) {
     }
 
     const district =
-        NEPAL_RATE_SCHEDULES[location];
+        NEPAL_RATE_SCHEDULES[
+            location
+        ];
 
     if (
         !district ||
-        typeof district !== "object"
+        typeof district !== "object" ||
+        Array.isArray(district)
     ) {
 
         return [];
@@ -487,7 +482,9 @@ function getRateYears(location) {
     return Object.keys(
         district
     );
+
 }
+
 
 function getRateSchedule(
     location,
@@ -504,7 +501,9 @@ function getRateSchedule(
     }
 
     const district =
-        NEPAL_RATE_SCHEDULES[location];
+        NEPAL_RATE_SCHEDULES[
+            location
+        ];
 
     if (
         !district ||
@@ -527,6 +526,7 @@ function getRateSchedule(
 
     }
 
+    // Critical defensive fix.
     if (
         !Array.isArray(
             schedule.items
@@ -538,10 +538,25 @@ function getRateSchedule(
     }
 
     return schedule;
+
 }
 
+
+function isVerifiedRate(item) {
+
+    return !!(
+        item &&
+        Number.isFinite(
+            Number(item.rate)
+        ) &&
+        Number(item.rate) > 0
+    );
+
+}
+
+
 // ==========================================================
-// NORMALIZATION
+// NORMALIZE BOQ
 // ==========================================================
 
 function normalizeBOQItem(
@@ -623,69 +638,10 @@ function normalizeBOQItem(
 
 }
 
-function normalizeCostSettings(
-    settings
-) {
 
-    const source =
-        settings &&
-        typeof settings === "object"
-            ? settings
-            : {};
-
-    return {
-
-        toolsEquipmentPct:
-            validPercentage(
-                source.toolsEquipmentPct,
-                DEFAULT_COST_SETTINGS.toolsEquipmentPct
-            ),
-
-        overheadPct:
-            validPercentage(
-                source.overheadPct,
-                DEFAULT_COST_SETTINGS.overheadPct
-            ),
-
-        contingencyPct:
-            validPercentage(
-                source.contingencyPct,
-                DEFAULT_COST_SETTINGS.contingencyPct
-            ),
-
-        profitPct:
-            validPercentage(
-                source.profitPct,
-                DEFAULT_COST_SETTINGS.profitPct
-            )
-
-    };
-
-}
-
-function validPercentage(
-    value,
-    fallback
-) {
-
-    const number =
-        Number(value);
-
-    if (
-        !Number.isFinite(number) ||
-        number < 0
-    ) {
-
-        return fallback;
-
-    }
-
-    return Math.min(
-        number,
-        100
-    );
-
-}
+// ==========================================================
+// NORMALIZE PROJECT
+// ==========================================================
 
 function normalizeProject(
     project,
@@ -760,27 +716,20 @@ function normalizeProject(
             Number(
                 source.totalArea
             ) ||
-            (
-                floors *
-                area
-            ),
+            floors * area,
 
         boq:
             rawBOQ.map(
                 normalizeBOQItem
-            ),
-
-        costSettings:
-            normalizeCostSettings(
-                source.costSettings
             )
 
     };
 
 }
 
+
 // ==========================================================
-// PROJECT STORAGE
+// LOAD PROJECTS
 // ==========================================================
 
 function loadProjects() {
@@ -821,9 +770,18 @@ function loadProjects() {
 
         projects = [];
 
+        console.warn(
+            "Existing localStorage data was not deleted."
+        );
+
     }
 
 }
+
+
+// ==========================================================
+// SAVE PROJECTS
+// ==========================================================
 
 function saveProjects() {
 
@@ -850,6 +808,7 @@ function saveProjects() {
     }
 
 }
+
 
 // ==========================================================
 // DASHBOARD
@@ -890,6 +849,11 @@ function showDashboard() {
 
 }
 
+
+// ==========================================================
+// NEW PROJECT
+// ==========================================================
+
 function showNewProject() {
 
     const boqScreen =
@@ -923,8 +887,9 @@ function showNewProject() {
 
 }
 
+
 // ==========================================================
-// PROJECT LIST
+// DISPLAY PROJECTS
 // ==========================================================
 
 function displayProjects() {
@@ -944,7 +909,7 @@ function displayProjects() {
             <div class="empty-state">
 
                 <div class="empty-icon">
-                    🏗️
+                    🏠
                 </div>
 
                 <h3>
@@ -959,9 +924,10 @@ function displayProjects() {
                 <button
                     type="button"
                     class="primary-button"
-                    id="createFirstProjectButton"
-                >
+                    id="createFirstProjectButton">
+
                     Create Your First Project
+
                 </button>
 
             </div>
@@ -1032,10 +998,14 @@ function displayProjects() {
 
                 </div>
 
+
                 <div class="project-details">
 
                     <div>
-                        <span>Client</span>
+
+                        <span>
+                            Client
+                        </span>
 
                         <strong>
                             ${escapeHTML(
@@ -1043,44 +1013,61 @@ function displayProjects() {
                                 "—"
                             )}
                         </strong>
+
                     </div>
 
+
                     <div>
-                        <span>Floors</span>
+
+                        <span>
+                            Floors
+                        </span>
 
                         <strong>
                             ${project.floors || 0}
                         </strong>
+
                     </div>
 
+
                     <div>
-                        <span>Built-up Area</span>
+
+                        <span>
+                            Built-up Area
+                        </span>
 
                         <strong>
+
                             ${Number(
                                 project.totalArea ||
                                 0
                             ).toLocaleString()}
+
                             sq.ft
+
                         </strong>
+
                     </div>
 
                 </div>
+
 
                 <div class="project-card-footer">
 
                     <button
                         type="button"
-                        class="open-project-button"
-                    >
+                        class="open-project-button">
+
                         Open Project →
+
                     </button>
 
                     <button
                         type="button"
-                        class="delete-button"
-                    >
+                        class="delete-button">
+
                         Delete
+
                     </button>
 
                 </div>
@@ -1136,13 +1123,12 @@ function displayProjects() {
 
 }
 
+
 // ==========================================================
 // OPEN PROJECT
 // ==========================================================
 
-function openProject(
-    id
-) {
+function openProject(id) {
 
     const project =
         projects.find(
@@ -1150,9 +1136,8 @@ function openProject(
 
                 return String(
                     item.id
-                ) === String(
-                    id
-                );
+                ) ===
+                String(id);
 
             }
         );
@@ -1201,8 +1186,9 @@ function openProject(
 
 }
 
+
 // ==========================================================
-// BOQ SCREEN
+// CREATE BOQ SCREEN
 // ==========================================================
 
 function createBOQScreen() {
@@ -1252,6 +1238,7 @@ function createBOQScreen() {
 
 }
 
+
 // ==========================================================
 // LOAD BOQ
 // ==========================================================
@@ -1268,11 +1255,6 @@ function loadProjectBOQ(
         return;
 
     }
-
-    project.costSettings =
-        normalizeCostSettings(
-            project.costSettings
-        );
 
     if (
         Array.isArray(
@@ -1293,13 +1275,14 @@ function loadProjectBOQ(
                 project
             );
 
-    }
+        saveCurrentBOQ();
 
-    saveCurrentBOQ();
+    }
 
     renderBOQ();
 
 }
+
 
 // ==========================================================
 // DEFAULT BOQ
@@ -1413,6 +1396,7 @@ function getDefaultBOQ(
 
 }
 
+
 // ==========================================================
 // SAVE CURRENT BOQ
 // ==========================================================
@@ -1431,7 +1415,8 @@ function saveCurrentBOQ() {
 
                 return String(
                     item.id
-                ) === String(
+                ) ===
+                String(
                     activeProject.id
                 );
 
@@ -1453,11 +1438,6 @@ function saveCurrentBOQ() {
             )
             : [];
 
-    project.costSettings =
-        normalizeCostSettings(
-            project.costSettings
-        );
-
     activeBOQ =
         project.boq;
 
@@ -1475,8 +1455,16 @@ function saveCurrentBOQ() {
 
 }
 
+
+function saveActiveBOQ() {
+
+    saveCurrentBOQ();
+
+}
+
+
 // ==========================================================
-// COST CALCULATION
+// BOQ TOTAL
 // ==========================================================
 
 function calculateBOQTotal() {
@@ -1520,57 +1508,91 @@ function calculateBOQTotal() {
 
 }
 
-function calculateCostBreakdown() {
 
-    const subtotal =
-        calculateBOQTotal();
+// ==========================================================
+// COST BREAKDOWN SETTINGS
+// ==========================================================
 
-    const settings =
-        normalizeCostSettings(
-            activeProject &&
-            activeProject.costSettings
+function getCostBreakdownSettings() {
+
+    const saved =
+        localStorage.getItem(
+            "costBreakdownSettings"
         );
 
-    const toolsEquipment =
-        subtotal *
-        settings.toolsEquipmentPct /
-        100;
+    if (!saved) {
 
-    const overhead =
-        subtotal *
-        settings.overheadPct /
-        100;
+        return {
 
-    const contingency =
-        subtotal *
-        settings.contingencyPct /
-        100;
+            contingency:
+                5,
 
-    const profit =
-        subtotal *
-        settings.profitPct /
-        100;
+            overhead:
+                5,
 
-    const grandTotal =
-        subtotal +
-        toolsEquipment +
-        overhead +
-        contingency +
-        profit;
+            profit:
+                10
 
-    return {
+        };
 
-        subtotal,
-        toolsEquipment,
-        overhead,
-        contingency,
-        profit,
-        grandTotal,
-        settings
+    }
 
-    };
+    try {
+
+        const data =
+            JSON.parse(
+                saved
+            );
+
+        return {
+
+            contingency:
+                Number.isFinite(
+                    Number(
+                        data.contingency
+                    )
+                )
+                    ? Number(
+                        data.contingency
+                    )
+                    : 5,
+
+            overhead:
+                5,
+
+            profit:
+                10
+
+        };
+
+    } catch (error) {
+
+        return {
+
+            contingency: 5,
+            overhead: 5,
+            profit: 10
+
+        };
+
+    }
 
 }
+
+
+function saveCostBreakdownSettings(
+    settings
+) {
+
+    localStorage.setItem(
+        "costBreakdownSettings",
+        JSON.stringify(
+            settings
+        )
+    );
+
+}
+
 
 // ==========================================================
 // RENDER BOQ
@@ -1602,79 +1624,81 @@ function renderBOQ() {
 
     }
 
-    activeProject.costSettings =
-        normalizeCostSettings(
-            activeProject.costSettings
-        );
-
     const area =
         Number(
             activeProject.totalArea
         ) || 0;
 
-    const breakdown =
-        calculateCostBreakdown();
-
-    const grandTotal =
-        breakdown.grandTotal;
+    const baseTotal =
+        calculateBOQTotal();
 
     const costPerSqFt =
         area > 0
-            ? grandTotal / area
+            ? baseTotal / area
             : 0;
+
+    const settings =
+        getCostBreakdownSettings();
+
+    const contingency =
+        baseTotal *
+        (
+            settings.contingency /
+            100
+        );
+
+    const overhead =
+        baseTotal *
+        0.05;
+
+    const subtotalWithContingency =
+        baseTotal +
+        contingency;
+
+    const contractorProfit =
+        subtotalWithContingency *
+        0.10;
+
+    const finalTotal =
+        subtotalWithContingency +
+        overhead +
+        contractorProfit;
+
 
     screen.innerHTML = `
 
         <div class="boq-container">
 
-            <!-- ==========================================
-                 PROJECT HEADER
-            =========================================== -->
+            <!-- HEADER -->
 
             <div class="boq-header">
 
                 <button
                     type="button"
                     class="back-button"
-                    id="boqBackButton"
-                >
+                    id="boqBackButton">
+
                     ← Back to Projects
+
                 </button>
 
-                <div class="boq-project-heading">
+                <h2>
+                    ${escapeHTML(
+                        activeProject.projectName
+                    )}
+                </h2>
 
-                    <div class="project-mini-logo">
-                        <span>₨</span>
-                    </div>
-
-                    <div>
-
-                        <span class="estimate-label">
-                            CONSTRUCTION ESTIMATE
-                        </span>
-
-                        <h2>
-                            ${escapeHTML(
-                                activeProject.projectName
-                            )}
-                        </h2>
-
-                        <p>
-                            📍
-                            ${escapeHTML(
-                                activeProject.location
-                            )}
-                        </p>
-
-                    </div>
-
-                </div>
+                <p>
+                    📍
+                    ${escapeHTML(
+                        activeProject.location
+                    )}
+                </p>
 
             </div>
 
-            <!-- ==========================================
-                 SUMMARY
-            =========================================== -->
+
+            <!-- SUMMARY -->
 
             <div class="estimate-summary">
 
@@ -1691,6 +1715,7 @@ function renderBOQ() {
 
                 </div>
 
+
                 <div class="summary-card">
 
                     <span>
@@ -1703,6 +1728,7 @@ function renderBOQ() {
 
                 </div>
 
+
                 <div class="summary-card">
 
                     <span>
@@ -1712,22 +1738,24 @@ function renderBOQ() {
                     <strong>
                         NPR
                         ${Math.round(
-                            costPerSqFt
+                            baseTotal /
+                            Math.max(area, 1)
                         ).toLocaleString()}
                     </strong>
 
                 </div>
 
+
                 <div class="summary-card total">
 
                     <span>
-                        Grand Estimate
+                        Estimated Cost
                     </span>
 
                     <strong>
                         NPR
                         ${Math.round(
-                            grandTotal
+                            finalTotal
                         ).toLocaleString()}
                     </strong>
 
@@ -1735,32 +1763,24 @@ function renderBOQ() {
 
             </div>
 
-            <!-- ==========================================
-                 RATE SYSTEM
-            =========================================== -->
+
+            <!-- RATE SYSTEM -->
 
             <div class="nepal-rate-panel">
 
                 <div class="rate-panel-header">
 
-                    <div>
+                    <h3>
+                        District Rate System
+                    </h3>
 
-                        <span class="rate-kicker">
-                            RATE REFERENCE
-                        </span>
-
-                        <h3>
-                            District Rate System
-                        </h3>
-
-                        <p>
-                            Select a district, fiscal year
-                            and reference item.
-                        </p>
-
-                    </div>
+                    <p>
+                        Select a district, fiscal year,
+                        and BOQ/reference item.
+                    </p>
 
                 </div>
+
 
                 <div class="rate-controls">
 
@@ -1771,10 +1791,11 @@ function renderBOQ() {
                         </label>
 
                         <select
-                            id="rateLocation"
-                        ></select>
+                            id="rateLocation">
+                        </select>
 
                     </div>
+
 
                     <div class="rate-field">
 
@@ -1783,10 +1804,11 @@ function renderBOQ() {
                         </label>
 
                         <select
-                            id="rateYear"
-                        ></select>
+                            id="rateYear">
+                        </select>
 
                     </div>
+
 
                     <div class="rate-field">
 
@@ -1803,21 +1825,24 @@ function renderBOQ() {
 
                     </div>
 
+
                     <div class="rate-field">
 
                         <label>
-                            BOQ / Reference Item
+                            BOQ Item
                         </label>
 
                         <select
-                            id="rateItem"
-                        >
+                            id="rateItem">
+
                             <option value="">
-                                Select item
+                                Select BOQ item
                             </option>
+
                         </select>
 
                     </div>
+
 
                     <div class="rate-field">
 
@@ -1833,6 +1858,7 @@ function renderBOQ() {
                         >
 
                     </div>
+
 
                     <div class="rate-field">
 
@@ -1850,45 +1876,45 @@ function renderBOQ() {
 
                     </div>
 
+
                     <div class="rate-action">
 
                         <button
                             type="button"
                             id="applyNepalRate"
-                            class="primary-button"
-                        >
+                            class="primary-button">
+
                             Apply Rate
+
                         </button>
 
                     </div>
 
                 </div>
 
+
                 <div
                     id="rateStatus"
-                    class="rate-status"
-                >
+                    class="rate-status">
+
                     Select a BOQ item or reference rate.
+
                 </div>
+
 
                 <div class="rate-warning">
 
-                    <span>ⓘ</span>
-
-                    <span>
-                        Reference values only.
-                        Verify applicable official schedules
-                        and current market quotations before
-                        commercial use.
-                    </span>
+                    ⚠️ Reference rates should be
+                    verified against applicable
+                    official schedules and current
+                    market quotations.
 
                 </div>
 
             </div>
 
-            <!-- ==========================================
-                 BOQ
-            =========================================== -->
+
+            <!-- BOQ -->
 
             <div class="boq-card">
 
@@ -1896,29 +1922,29 @@ function renderBOQ() {
 
                     <div>
 
-                        <span class="section-kicker">
-                            QUANTITY + RATE
-                        </span>
-
                         <h3>
                             Bill of Quantities
                         </h3>
 
                         <p>
-                            Edit quantities and rates directly.
+                            Edit quantities and rates
+                            directly in the table.
                         </p>
 
                     </div>
 
+
                     <button
                         type="button"
                         id="addBOQButton"
-                        class="add-boq-button"
-                    >
+                        class="add-boq-button">
+
                         + Add BOQ Item
+
                     </button>
 
                 </div>
+
 
                 <div class="boq-table-wrapper">
 
@@ -1941,121 +1967,124 @@ function renderBOQ() {
 
                         </thead>
 
+
                         <tbody>
 
                             ${
-                                activeBOQ.map(
-                                    function(
-                                        item,
-                                        index
-                                    ) {
+                                activeBOQ
+                                    .map(
+                                        function(
+                                            item,
+                                            index
+                                        ) {
 
-                                        return `
+                                            return `
 
-                                            <tr>
+                                                <tr>
 
-                                                <td>
-                                                    <span class="row-number">
+                                                    <td>
                                                         ${index + 1}
-                                                    </span>
-                                                </td>
+                                                    </td>
 
-                                                <td>
+                                                    <td>
 
-                                                    <input
-                                                        class="boq-input"
-                                                        data-field="category"
-                                                        data-id="${escapeAttribute(item.id)}"
-                                                        value="${escapeAttribute(item.category)}"
-                                                    >
+                                                        <input
+                                                            class="boq-input"
+                                                            data-field="category"
+                                                            data-id="${escapeAttribute(item.id)}"
+                                                            value="${escapeAttribute(item.category)}"
+                                                        >
 
-                                                </td>
+                                                    </td>
 
-                                                <td>
+                                                    <td>
 
-                                                    <input
-                                                        class="boq-input item-input"
-                                                        data-field="item"
-                                                        data-id="${escapeAttribute(item.id)}"
-                                                        value="${escapeAttribute(item.item)}"
-                                                    >
+                                                        <input
+                                                            class="boq-input item-input"
+                                                            data-field="item"
+                                                            data-id="${escapeAttribute(item.id)}"
+                                                            value="${escapeAttribute(item.item)}"
+                                                        >
 
-                                                </td>
+                                                    </td>
 
-                                                <td>
+                                                    <td>
 
-                                                    <input
-                                                        class="boq-input unit-input"
-                                                        data-field="unit"
-                                                        data-id="${escapeAttribute(item.id)}"
-                                                        value="${escapeAttribute(item.unit)}"
-                                                    >
+                                                        <input
+                                                            class="boq-input unit-input"
+                                                            data-field="unit"
+                                                            data-id="${escapeAttribute(item.id)}"
+                                                            value="${escapeAttribute(item.unit)}"
+                                                        >
 
-                                                </td>
+                                                    </td>
 
-                                                <td>
+                                                    <td>
 
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        step="0.01"
-                                                        class="boq-input number-input"
-                                                        data-field="quantity"
-                                                        data-id="${escapeAttribute(item.id)}"
-                                                        value="${item.quantity}"
-                                                    >
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            class="boq-input number-input"
+                                                            data-field="quantity"
+                                                            data-id="${escapeAttribute(item.id)}"
+                                                            value="${item.quantity}"
+                                                        >
 
-                                                </td>
+                                                    </td>
 
-                                                <td>
+                                                    <td>
 
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        step="0.01"
-                                                        class="boq-input number-input"
-                                                        data-field="rate"
-                                                        data-id="${escapeAttribute(item.id)}"
-                                                        value="${item.rate}"
-                                                    >
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            class="boq-input number-input"
+                                                            data-field="rate"
+                                                            data-id="${escapeAttribute(item.id)}"
+                                                            value="${item.rate}"
+                                                        >
 
-                                                </td>
+                                                    </td>
 
-                                                <td>
+                                                    <td>
 
-                                                    <strong
-                                                        class="amount-cell"
-                                                        data-amount-id="${escapeAttribute(item.id)}"
-                                                    >
-                                                        NPR
-                                                        ${Math.round(
-                                                            item.amount ||
-                                                            0
-                                                        ).toLocaleString()}
-                                                    </strong>
+                                                        <strong
+                                                            class="amount-cell"
+                                                            data-amount-id="${escapeAttribute(item.id)}">
 
-                                                </td>
+                                                            NPR
+                                                            ${Math.round(
+                                                                item.amount ||
+                                                                0
+                                                            ).toLocaleString()}
 
-                                                <td>
+                                                        </strong>
 
-                                                    <button
-                                                        type="button"
-                                                        class="delete-boq-button"
-                                                        data-delete-boq="${escapeAttribute(item.id)}"
-                                                        title="Delete item"
-                                                    >
-                                                        🗑
-                                                    </button>
+                                                    </td>
 
-                                                </td>
+                                                    <td>
 
-                                            </tr>
+                                                        <button
+                                                            type="button"
+                                                            class="delete-boq-button"
+                                                            data-delete-boq="${escapeAttribute(item.id)}">
 
-                                        `;
+                                                            🗑️
 
-                                    }
-                                ).join("")
+                                                        </button>
+
+                                                    </td>
+
+                                                </tr>
+
+                                            `;
+
+                                        }
+                                    )
+                                    .join("")
                             }
+
 
                             ${
                                 activeBOQ.length === 0
@@ -2065,14 +2094,15 @@ function renderBOQ() {
 
                                             <td
                                                 colspan="8"
-                                                class="no-boq-items"
-                                            >
+                                                class="no-boq-items">
+
                                                 No BOQ items.
                                                 Click
                                                 <strong>
                                                     + Add BOQ Item
                                                 </strong>
                                                 to add one.
+
                                             </td>
 
                                         </tr>
@@ -2083,310 +2113,164 @@ function renderBOQ() {
 
                         </tbody>
 
-                        <tfoot>
-
-                            <tr>
-
-                                <td
-                                    colspan="6"
-                                    class="total-label"
-                                >
-                                    BOQ SUBTOTAL
-                                </td>
-
-                                <td
-                                    colspan="2"
-                                    class="total-value"
-                                >
-                                    NPR
-                                    ${Math.round(
-                                        breakdown.subtotal
-                                    ).toLocaleString()}
-                                </td>
-
-                            </tr>
-
-                        </tfoot>
-
                     </table>
 
                 </div>
 
             </div>
 
-            <!-- ==========================================
-                 COST BREAKDOWN
-            =========================================== -->
 
-            <section class="cost-breakdown-card">
+            <!-- COST BREAKDOWN -->
 
-                <div class="cost-breakdown-heading">
+            <div
+                class="cost-breakdown-card"
+                id="costBreakdown">
+
+                <div class="cost-breakdown-header">
 
                     <div>
 
-                        <span class="section-kicker">
-                            FINAL ESTIMATE
-                        </span>
-
                         <h2>
-                            💰 Cost Breakdown
+                            Cost Breakdown
                         </h2>
 
                         <p>
-                            Construction subtotal plus
-                            project allowances and contractor costs.
+                            Construction estimate summary
                         </p>
 
                     </div>
 
-                    <div class="grand-total-badge">
-
-                        <span>
-                            GRAND TOTAL
-                        </span>
-
-                        <strong
-                            id="grandTotalValue"
-                        >
-                            NPR
-                            ${Math.round(
-                                breakdown.grandTotal
-                            ).toLocaleString()}
-                        </strong>
-
-                    </div>
-
                 </div>
+
 
                 <div class="cost-breakdown-list">
 
-                    <div class="cost-row subtotal-row">
+                    <div class="cost-row">
 
-                        <div>
+                        <span>
+                            Direct BOQ Cost
+                        </span>
 
-                            <strong>
-                                BOQ Subtotal
-                            </strong>
-
-                            <span>
-                                Direct construction work
-                            </span>
-
-                        </div>
-
-                        <strong
-                            id="breakdownSubtotal"
-                        >
+                        <strong>
                             NPR
                             ${Math.round(
-                                breakdown.subtotal
+                                baseTotal
                             ).toLocaleString()}
                         </strong>
 
                     </div>
 
-                    <div class="cost-row">
-
-                        <div>
-
-                            <strong>
-                                Tools &amp; Equipment
-                            </strong>
-
-                            <span>
-                                Equipment / tools allowance
-                            </span>
-
-                        </div>
-
-                        <div class="cost-value-with-percent">
-
-                            <span>
-                                ${breakdown.settings.toolsEquipmentPct}%
-                            </span>
-
-                            <strong
-                                id="toolsEquipmentValue"
-                            >
-                                NPR
-                                ${Math.round(
-                                    breakdown.toolsEquipment
-                                ).toLocaleString()}
-                            </strong>
-
-                        </div>
-
-                    </div>
 
                     <div class="cost-row">
-
-                        <div>
-
-                            <strong>
-                                Overhead
-                            </strong>
-
-                            <span>
-                                Site and administrative overhead
-                            </span>
-
-                        </div>
-
-                        <div class="cost-value-with-percent">
-
-                            <span>
-                                5%
-                            </span>
-
-                            <strong
-                                id="overheadValue"
-                            >
-                                NPR
-                                ${Math.round(
-                                    breakdown.overhead
-                                ).toLocaleString()}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                    <div class="cost-row editable-cost-row">
-
-                        <div>
-
-                            <strong>
-                                Contingency
-                            </strong>
-
-                            <span>
-                                Editable allowance for uncertainty
-                            </span>
-
-                        </div>
-
-                        <div class="editable-cost-control">
-
-                            <div class="percent-input-wrap">
-
-                                <input
-                                    id="contingencyPct"
-                                    type="number"
-                                    min="0"
-                                    max="100"
-                                    step="0.5"
-                                    value="${breakdown.settings.contingencyPct}"
-                                    aria-label="Contingency percentage"
-                                >
-
-                                <span>
-                                    %
-                                </span>
-
-                            </div>
-
-                            <strong
-                                id="contingencyValue"
-                            >
-                                NPR
-                                ${Math.round(
-                                    breakdown.contingency
-                                ).toLocaleString()}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                    <div class="cost-row">
-
-                        <div>
-
-                            <strong>
-                                Contractor's Profit
-                            </strong>
-
-                            <span>
-                                Contractor margin
-                            </span>
-
-                        </div>
-
-                        <div class="cost-value-with-percent">
-
-                            <span>
-                                10%
-                            </span>
-
-                            <strong
-                                id="profitValue"
-                            >
-                                NPR
-                                ${Math.round(
-                                    breakdown.profit
-                                ).toLocaleString()}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="cost-breakdown-total">
-
-                    <div>
 
                         <span>
-                            TOTAL ESTIMATED PROJECT COST
+                            Tools & Equipment
                         </span>
 
-                        <small>
-                            NPR • Preliminary estimate
-                        </small>
+                        <strong>
+                            Included in
+                            overhead
+                        </strong>
 
                     </div>
 
-                    <strong
-                        id="costBreakdownGrandTotal"
-                    >
-                        NPR
-                        ${Math.round(
-                            breakdown.grandTotal
-                        ).toLocaleString()}
-                    </strong>
+
+                    <div class="cost-row">
+
+                        <span>
+
+                            Contingency
+
+                            <input
+                                id="contingencyRate"
+                                class="cost-percent-input"
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                value="${settings.contingency}"
+                            > %
+
+                        </span>
+
+                        <strong>
+                            NPR
+                            ${Math.round(
+                                contingency
+                            ).toLocaleString()}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="cost-row">
+
+                        <span>
+                            Overhead
+                            <small>
+                                5%
+                            </small>
+                        </span>
+
+                        <strong>
+                            NPR
+                            ${Math.round(
+                                overhead
+                            ).toLocaleString()}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="cost-row">
+
+                        <span>
+                            Contractor's Profit
+                            <small>
+                                10%
+                            </small>
+                        </span>
+
+                        <strong>
+                            NPR
+                            ${Math.round(
+                                contractorProfit
+                            ).toLocaleString()}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="cost-row cost-final">
+
+                        <span>
+                            Total Estimated Project Cost
+                        </span>
+
+                        <strong>
+                            NPR
+                            ${Math.round(
+                                finalTotal
+                            ).toLocaleString()}
+                        </strong>
+
+                    </div>
 
                 </div>
 
-                <div class="cost-breakdown-note">
+            </div>
 
-                    <span>⚠️</span>
 
-                    <p>
-                        Tools &amp; equipment is currently
-                        carried as a 2% estimating allowance.
-                        Overhead is 5%, contractor's profit is
-                        10%, and contingency defaults to 5%.
-                        Adjust the contingency to suit the
-                        project's risk and estimating basis.
-                    </p>
-
-                </div>
-
-            </section>
-
-            <!-- ==========================================
-                 CUSTOM BOQ FORM
-            =========================================== -->
+            <!-- ADD BOQ -->
 
             <div
                 id="addBOQForm"
-                class="add-boq-form hidden"
-            >
+                class="add-boq-form hidden">
 
                 <h3>
                     Add Custom BOQ Item
                 </h3>
+
 
                 <div class="add-boq-grid">
 
@@ -2404,6 +2288,7 @@ function renderBOQ() {
 
                     </div>
 
+
                     <div>
 
                         <label>
@@ -2417,6 +2302,7 @@ function renderBOQ() {
                         >
 
                     </div>
+
 
                     <div>
 
@@ -2466,6 +2352,7 @@ function renderBOQ() {
 
                     </div>
 
+
                     <div>
 
                         <label>
@@ -2481,6 +2368,7 @@ function renderBOQ() {
                         >
 
                     </div>
+
 
                     <div>
 
@@ -2500,27 +2388,32 @@ function renderBOQ() {
 
                 </div>
 
+
                 <div class="add-boq-actions">
 
                     <button
                         type="button"
                         id="saveCustomBOQ"
-                        class="primary-button"
-                    >
+                        class="primary-button">
+
                         Add Item
+
                     </button>
+
 
                     <button
                         type="button"
                         id="cancelCustomBOQ"
-                        class="secondary-button"
-                    >
+                        class="secondary-button">
+
                         Cancel
+
                     </button>
 
                 </div>
 
             </div>
+
 
             <div class="boq-note">
 
@@ -2528,15 +2421,15 @@ function renderBOQ() {
                     Preliminary Estimate:
                 </strong>
 
-                Reference rates should be verified against
-                the applicable official schedule and current
-                local quotations before commercial use.
+                Verify applicable rates before
+                commercial use.
 
             </div>
 
         </div>
 
     `;
+
 
     initializeRateSystem();
 
@@ -2546,15 +2439,16 @@ function renderBOQ() {
 
 }
 
+
 // ==========================================================
-// COST BREAKDOWN EVENTS
+// COST BREAKDOWN
 // ==========================================================
 
 function initializeCostBreakdown() {
 
     const input =
         document.getElementById(
-            "contingencyPct"
+            "contingencyRate"
         );
 
     if (!input) {
@@ -2567,164 +2461,48 @@ function initializeCostBreakdown() {
         "input",
         function() {
 
-            const value =
-                validPercentage(
-                    input.value,
-                    DEFAULT_COST_SETTINGS.contingencyPct
+            let value =
+                Number(
+                    input.value
                 );
 
             if (
-                activeProject
+                !Number.isFinite(
+                    value
+                ) ||
+                value < 0
             ) {
 
-                activeProject.costSettings =
-                    normalizeCostSettings(
-                        activeProject.costSettings
-                    );
-
-                activeProject.costSettings.contingencyPct =
-                    value;
-
-                saveCurrentBOQ();
+                value = 0;
 
             }
 
-            updateCostBreakdown();
+            if (value > 100) {
+
+                value = 100;
+
+            }
+
+            const settings =
+                getCostBreakdownSettings();
+
+            settings.contingency =
+                value;
+
+            saveCostBreakdownSettings(
+                settings
+            );
+
+            renderBOQ();
 
         }
     );
 
 }
 
-function updateCostBreakdown() {
-
-    if (!activeProject) {
-
-        return;
-
-    }
-
-    activeProject.costSettings =
-        normalizeCostSettings(
-            activeProject.costSettings
-        );
-
-    const breakdown =
-        calculateCostBreakdown();
-
-    const setText =
-        function(
-            id,
-            text
-        ) {
-
-            const element =
-                document.getElementById(
-                    id
-                );
-
-            if (element) {
-
-                element.textContent =
-                    text;
-
-            }
-
-        };
-
-    setText(
-        "breakdownSubtotal",
-        "NPR " +
-        Math.round(
-            breakdown.subtotal
-        ).toLocaleString()
-    );
-
-    setText(
-        "toolsEquipmentValue",
-        "NPR " +
-        Math.round(
-            breakdown.toolsEquipment
-        ).toLocaleString()
-    );
-
-    setText(
-        "overheadValue",
-        "NPR " +
-        Math.round(
-            breakdown.overhead
-        ).toLocaleString()
-    );
-
-    setText(
-        "contingencyValue",
-        "NPR " +
-        Math.round(
-            breakdown.contingency
-        ).toLocaleString()
-    );
-
-    setText(
-        "profitValue",
-        "NPR " +
-        Math.round(
-            breakdown.profit
-        ).toLocaleString()
-    );
-
-    setText(
-        "grandTotalValue",
-        "NPR " +
-        Math.round(
-            breakdown.grandTotal
-        ).toLocaleString()
-    );
-
-    setText(
-        "costBreakdownGrandTotal",
-        "NPR " +
-        Math.round(
-            breakdown.grandTotal
-        ).toLocaleString()
-    );
-
-    const area =
-        Number(
-            activeProject.totalArea
-        ) || 0;
-
-    const costPerSqFt =
-        area > 0
-            ? breakdown.grandTotal / area
-            : 0;
-
-    const cards =
-        document.querySelectorAll(
-            ".summary-card strong"
-        );
-
-    if (
-        cards.length >= 4
-    ) {
-
-        cards[2].textContent =
-            "NPR " +
-            Math.round(
-                costPerSqFt
-            ).toLocaleString();
-
-        cards[3].textContent =
-            "NPR " +
-            Math.round(
-                breakdown.grandTotal
-            ).toLocaleString();
-
-    }
-
-}
 
 // ==========================================================
-// RATE SYSTEM
+// INITIALIZE RATE SYSTEM
 // ==========================================================
 
 function initializeRateSystem() {
@@ -2769,6 +2547,7 @@ function initializeRateSystem() {
             "applyNepalRate"
         );
 
+
     if (
         !locationSelect ||
         !yearSelect ||
@@ -2785,11 +2564,13 @@ function initializeRateSystem() {
 
     }
 
+
     locationSelect.innerHTML =
         "";
 
     const locations =
         getRateLocations();
+
 
     if (
         !Array.isArray(
@@ -2805,9 +2586,24 @@ function initializeRateSystem() {
                 </option>
             `;
 
+        yearSelect.innerHTML =
+            `
+                <option value="">
+                    No fiscal year available
+                </option>
+            `;
+
+        itemSelect.innerHTML =
+            `
+                <option value="">
+                    No reference rate available
+                </option>
+            `;
+
         return;
 
     }
+
 
     locations.forEach(
         function(location) {
@@ -2830,7 +2626,8 @@ function initializeRateSystem() {
         }
     );
 
-    function addCurrentBOQOptions() {
+
+    function addCustomBOQOptions() {
 
         if (
             !Array.isArray(
@@ -2843,13 +2640,14 @@ function initializeRateSystem() {
 
         }
 
-        const group =
+        const boqGroup =
             document.createElement(
                 "optgroup"
             );
 
-        group.label =
+        boqGroup.label =
             "📋 Current BOQ Items";
+
 
         activeBOQ.forEach(
             function(item) {
@@ -2866,20 +2664,28 @@ function initializeRateSystem() {
                     );
 
                 option.textContent =
-                    `${item.category || "Custom"} — ${item.item || "Unnamed item"}`;
+                    `${
+                        item.category ||
+                        "Custom"
+                    } — ${
+                        item.item ||
+                        "Unnamed item"
+                    }`;
 
-                group.appendChild(
+                boqGroup.appendChild(
                     option
                 );
 
             }
         );
 
+
         itemSelect.appendChild(
-            group
+            boqGroup
         );
 
     }
+
 
     function loadSchedule() {
 
@@ -2895,11 +2701,13 @@ function initializeRateSystem() {
                 year
             );
 
-        itemSelect.innerHTML = `
-            <option value="">
-                Select item
-            </option>
-        `;
+
+        itemSelect.innerHTML =
+            `
+                <option value="">
+                    Select BOQ item
+                </option>
+            `;
 
         unitInput.value =
             "";
@@ -2907,7 +2715,9 @@ function initializeRateSystem() {
         rateInput.value =
             "";
 
-        addCurrentBOQOptions();
+
+        addCustomBOQOptions();
+
 
         if (!schedule) {
 
@@ -2929,12 +2739,14 @@ function initializeRateSystem() {
 
         }
 
+
         const items =
             Array.isArray(
                 schedule.items
             )
                 ? schedule.items
                 : [];
+
 
         if (sourceInput) {
 
@@ -2944,38 +2756,37 @@ function initializeRateSystem() {
 
         }
 
+
         if (status) {
 
             status.textContent =
-                `${schedule.sourceType || "Reference"} • ${schedule.sourceYear || year}`;
+                `${
+                    schedule.sourceType ||
+                    "Reference"
+                } • ${
+                    schedule.sourceYear ||
+                    year
+                }`;
 
         }
 
-        if (
-            items.length === 0
-        ) {
 
-            return;
-
-        }
-
-        const group =
+        const referenceGroup =
             document.createElement(
                 "optgroup"
             );
 
-        group.label =
-            "🇳🇵 Reference Rates";
+        referenceGroup.label =
+            "🇳🇵 Nepal Reference Rates";
+
 
         items.forEach(
-            function(
-                item,
-                index
-            ) {
+            function(item, index) {
 
                 if (
                     !item ||
-                    typeof item !== "object"
+                    typeof item !==
+                        "object"
                 ) {
 
                     return;
@@ -2992,20 +2803,28 @@ function initializeRateSystem() {
                     index;
 
                 option.textContent =
-                    `${item.category || "General"} — ${item.description || "Unnamed item"}`;
+                    `${
+                        item.category ||
+                        "General"
+                    } — ${
+                        item.description ||
+                        "Unnamed rate item"
+                    }`;
 
-                group.appendChild(
+                referenceGroup.appendChild(
                     option
                 );
 
             }
         );
 
+
         itemSelect.appendChild(
-            group
+            referenceGroup
         );
 
     }
+
 
     function loadYears() {
 
@@ -3020,6 +2839,7 @@ function initializeRateSystem() {
                 location
             );
 
+
         const safeYears =
             Array.isArray(
                 years
@@ -3027,21 +2847,24 @@ function initializeRateSystem() {
                 ? years
                 : [];
 
+
         if (
             safeYears.length === 0
         ) {
 
-            yearSelect.innerHTML = `
-                <option value="">
-                    No fiscal year available
-                </option>
-            `;
+            yearSelect.innerHTML =
+                `
+                    <option value="">
+                        No fiscal year available
+                    </option>
+                `;
 
             loadSchedule();
 
             return;
 
         }
+
 
         safeYears.forEach(
             function(year) {
@@ -3064,9 +2887,11 @@ function initializeRateSystem() {
             }
         );
 
+
         loadSchedule();
 
     }
+
 
     itemSelect.addEventListener(
         "change",
@@ -3075,11 +2900,13 @@ function initializeRateSystem() {
             const value =
                 itemSelect.value;
 
+
             unitInput.value =
                 "";
 
             rateInput.value =
                 "";
+
 
             if (!value) {
 
@@ -3094,6 +2921,7 @@ function initializeRateSystem() {
 
             }
 
+
             if (
                 value.indexOf(
                     "boq:"
@@ -3105,18 +2933,18 @@ function initializeRateSystem() {
                         4
                     );
 
-                const item =
+
+                const boqItem =
                     Array.isArray(
                         activeBOQ
                     )
                         ? activeBOQ.find(
-                            function(
-                                boqItem
-                            ) {
+                            function(item) {
 
                                 return String(
-                                    boqItem.id
-                                ) === String(
+                                    item.id
+                                ) ===
+                                String(
                                     id
                                 );
 
@@ -3124,31 +2952,35 @@ function initializeRateSystem() {
                         )
                         : null;
 
-                if (!item) {
+
+                if (!boqItem) {
 
                     return;
 
                 }
 
+
                 unitInput.value =
-                    item.unit ||
+                    boqItem.unit ||
                     "";
 
                 rateInput.value =
                     Number(
-                        item.rate
+                        boqItem.rate
                     ) || 0;
+
 
                 if (status) {
 
                     status.textContent =
-                        "Current BOQ item selected.";
+                        "Current BOQ item selected. Edit the rate if required.";
 
                 }
 
                 return;
 
             }
+
 
             if (
                 value.indexOf(
@@ -3163,11 +2995,25 @@ function initializeRateSystem() {
                         )
                     );
 
+
+                if (
+                    !Number.isInteger(
+                        index
+                    ) ||
+                    index < 0
+                ) {
+
+                    return;
+
+                }
+
+
                 const schedule =
                     getRateSchedule(
                         locationSelect.value,
                         yearSelect.value
                     );
+
 
                 const items =
                     schedule &&
@@ -3177,14 +3023,17 @@ function initializeRateSystem() {
                         ? schedule.items
                         : [];
 
+
                 const item =
                     items[index];
+
 
                 if (!item) {
 
                     return;
 
                 }
+
 
                 unitInput.value =
                     item.unit ||
@@ -3194,6 +3043,7 @@ function initializeRateSystem() {
                     Number(
                         item.rate
                     ) || 0;
+
 
                 if (status) {
 
@@ -3207,15 +3057,18 @@ function initializeRateSystem() {
         }
     );
 
+
     locationSelect.addEventListener(
         "change",
         loadYears
     );
 
+
     yearSelect.addEventListener(
         "change",
         loadSchedule
     );
+
 
     if (applyButton) {
 
@@ -3226,12 +3079,14 @@ function initializeRateSystem() {
 
     }
 
+
     loadYears();
 
 }
 
+
 // ==========================================================
-// APPLY RATE
+// APPLY SELECTED RATE
 // ==========================================================
 
 function applySelectedRate() {
@@ -3251,6 +3106,12 @@ function applySelectedRate() {
             "rateValue"
         );
 
+    const status =
+        document.getElementById(
+            "rateStatus"
+        );
+
+
     if (
         !itemSelect ||
         !unitInput ||
@@ -3261,8 +3122,10 @@ function applySelectedRate() {
 
     }
 
+
     const selected =
         itemSelect.value;
+
 
     if (!selected) {
 
@@ -3274,13 +3137,17 @@ function applySelectedRate() {
 
     }
 
+
     const rate =
         Number(
             rateInput.value
         );
 
+
     if (
-        !Number.isFinite(rate) ||
+        !Number.isFinite(
+            rate
+        ) ||
         rate <= 0
     ) {
 
@@ -3292,11 +3159,15 @@ function applySelectedRate() {
 
     }
 
+
     const unit =
         String(
             unitInput.value ||
             ""
         ).trim();
+
+
+    // CURRENT BOQ ITEM
 
     if (
         selected.indexOf(
@@ -3309,22 +3180,27 @@ function applySelectedRate() {
                 4
             );
 
-        const item =
-            activeBOQ.find(
-                function(
-                    boqItem
-                ) {
 
-                    return String(
-                        boqItem.id
-                    ) === String(
-                        id
-                    );
+        const boqItem =
+            Array.isArray(
+                activeBOQ
+            )
+                ? activeBOQ.find(
+                    function(item) {
 
-                }
-            );
+                        return String(
+                            item.id
+                        ) ===
+                        String(
+                            id
+                        );
 
-        if (!item) {
+                    }
+                )
+                : null;
+
+
+        if (!boqItem) {
 
             alert(
                 "BOQ item could not be found."
@@ -3334,29 +3210,38 @@ function applySelectedRate() {
 
         }
 
-        item.rate =
+
+        boqItem.rate =
             rate;
+
 
         if (unit) {
 
-            item.unit =
+            boqItem.unit =
                 unit;
 
         }
 
-        item.amount =
+
+        boqItem.amount =
             Number(
-                item.quantity
+                boqItem.quantity ||
+                0
             ) *
             rate;
 
+
         saveCurrentBOQ();
+
 
         renderBOQ();
 
         return;
 
     }
+
+
+    // REFERENCE RATE
 
     if (
         selected.indexOf(
@@ -3371,25 +3256,28 @@ function applySelectedRate() {
                 )
             );
 
-        const location =
+
+        const locationElement =
             document.getElementById(
                 "rateLocation"
             );
 
-        const year =
+        const yearElement =
             document.getElementById(
                 "rateYear"
             );
 
+
         const schedule =
             getRateSchedule(
-                location
-                    ? location.value
+                locationElement
+                    ? locationElement.value
                     : "",
-                year
-                    ? year.value
+                yearElement
+                    ? yearElement.value
                     : ""
             );
+
 
         const items =
             schedule &&
@@ -3399,10 +3287,13 @@ function applySelectedRate() {
                 ? schedule.items
                 : [];
 
-        const referenceItem =
-            items[index];
 
-        if (!referenceItem) {
+        if (
+            !Number.isInteger(
+                index
+            ) ||
+            !items[index]
+        ) {
 
             alert(
                 "Reference rate item could not be found."
@@ -3412,15 +3303,18 @@ function applySelectedRate() {
 
         }
 
-        let matchingItem =
-            null;
+
+        const referenceItem =
+            items[index];
+
 
         const referenceText =
             normalizeText(
                 referenceItem.description
             );
 
-        matchingItem =
+
+        let matchingItem =
             activeBOQ.find(
                 function(item) {
 
@@ -3431,6 +3325,7 @@ function applySelectedRate() {
 
                 }
             );
+
 
         if (
             !matchingItem &&
@@ -3460,6 +3355,7 @@ function applySelectedRate() {
 
         }
 
+
         if (
             !matchingItem &&
             referenceItem.category
@@ -3476,10 +3372,12 @@ function applySelectedRate() {
 
                         return normalizeText(
                             item.category
-                        ) === category;
+                        ) ===
+                        category;
 
                     }
                 );
+
 
             if (
                 matches.length === 1
@@ -3491,6 +3389,7 @@ function applySelectedRate() {
             }
 
         }
+
 
         if (!matchingItem) {
 
@@ -3504,8 +3403,10 @@ function applySelectedRate() {
 
         }
 
+
         matchingItem.rate =
             rate;
+
 
         if (unit) {
 
@@ -3514,19 +3415,33 @@ function applySelectedRate() {
 
         }
 
+
         matchingItem.amount =
             Number(
-                matchingItem.quantity
+                matchingItem.quantity ||
+                0
             ) *
             rate;
+
 
         saveCurrentBOQ();
 
         renderBOQ();
 
+        return;
+
+    }
+
+
+    if (status) {
+
+        status.textContent =
+            "Rate applied.";
+
     }
 
 }
+
 
 // ==========================================================
 // BOQ EVENTS
@@ -3547,6 +3462,7 @@ function attachBOQEvents() {
         );
 
     }
+
 
     const addButton =
         document.getElementById(
@@ -3577,6 +3493,7 @@ function attachBOQEvents() {
 
     }
 
+
     const cancelButton =
         document.getElementById(
             "cancelCustomBOQ"
@@ -3606,6 +3523,7 @@ function attachBOQEvents() {
 
     }
 
+
     const saveButton =
         document.getElementById(
             "saveCustomBOQ"
@@ -3619,6 +3537,7 @@ function attachBOQEvents() {
         );
 
     }
+
 
     document
         .querySelectorAll(
@@ -3640,6 +3559,7 @@ function attachBOQEvents() {
 
             }
         );
+
 
     document
         .querySelectorAll(
@@ -3664,6 +3584,7 @@ function attachBOQEvents() {
 
 }
 
+
 // ==========================================================
 // UPDATE BOQ ITEM
 // ==========================================================
@@ -3681,6 +3602,7 @@ function updateBOQItem(
 
     }
 
+
     const id =
         String(
             input.dataset.id
@@ -3689,22 +3611,26 @@ function updateBOQItem(
     const field =
         input.dataset.field;
 
+
     const item =
         activeBOQ.find(
             function(boqItem) {
 
                 return String(
                     boqItem.id
-                ) === id;
+                ) ===
+                id;
 
             }
         );
+
 
     if (!item) {
 
         return;
 
     }
+
 
     if (
         field === "quantity" ||
@@ -3731,20 +3657,37 @@ function updateBOQItem(
 
     }
 
+
     item.amount =
         Number(
-            item.quantity
+            item.quantity || 0
         ) *
         Number(
-            item.rate
+            item.rate || 0
         );
+
 
     saveCurrentBOQ();
 
-    const amountCell =
-        document.querySelector(
-            `[data-amount-id="${CSS.escape(id)}"]`
-        );
+
+    let amountCell = null;
+
+    try {
+
+        amountCell =
+            document.querySelector(
+                `[data-amount-id="${CSS.escape(id)}"]`
+            );
+
+    } catch (error) {
+
+        amountCell =
+            document.querySelector(
+                `[data-amount-id="${id}"]`
+            );
+
+    }
+
 
     if (amountCell) {
 
@@ -3756,9 +3699,11 @@ function updateBOQItem(
 
     }
 
+
     updateBOQSummary();
 
 }
+
 
 // ==========================================================
 // UPDATE SUMMARY
@@ -3766,9 +3711,102 @@ function updateBOQItem(
 
 function updateBOQSummary() {
 
-    updateCostBreakdown();
+    let total = 0;
+
+    if (
+        !Array.isArray(
+            activeBOQ
+        )
+    ) {
+
+        activeBOQ = [];
+
+    }
+
+
+    activeBOQ.forEach(
+        function(item) {
+
+            total +=
+                Number(
+                    item.quantity || 0
+                ) *
+                Number(
+                    item.rate || 0
+                );
+
+        }
+    );
+
+
+    const area =
+        Number(
+            activeProject &&
+            activeProject.totalArea
+        ) || 0;
+
+
+    const settings =
+        getCostBreakdownSettings();
+
+
+    const contingency =
+        total *
+        (
+            settings.contingency /
+            100
+        );
+
+
+    const overhead =
+        total * 0.05;
+
+
+    const profit =
+        (
+            total +
+            contingency
+        ) *
+        0.10;
+
+
+    const finalTotal =
+        total +
+        contingency +
+        overhead +
+        profit;
+
+
+    const cards =
+        document.querySelectorAll(
+            ".summary-card strong"
+        );
+
+
+    if (
+        cards.length >= 4
+    ) {
+
+        cards[2].textContent =
+            "NPR " +
+            Math.round(
+                area > 0
+                    ? total / area
+                    : 0
+            ).toLocaleString();
+
+
+        cards[3].textContent =
+            "NPR " +
+            Math.round(
+                finalTotal
+            ).toLocaleString();
+
+    }
+
 
 }
+
 
 // ==========================================================
 // ADD CUSTOM BOQ ITEM
@@ -3801,6 +3839,7 @@ function addCustomBOQItem() {
             "customRate"
         );
 
+
     if (
         !category ||
         !item ||
@@ -3812,6 +3851,7 @@ function addCustomBOQItem() {
         return;
 
     }
+
 
     const categoryValue =
         category.value.trim();
@@ -3829,6 +3869,7 @@ function addCustomBOQItem() {
             rate.value
         ) || 0;
 
+
     if (!categoryValue) {
 
         alert(
@@ -3839,6 +3880,7 @@ function addCustomBOQItem() {
 
     }
 
+
     if (!itemValue) {
 
         alert(
@@ -3848,6 +3890,7 @@ function addCustomBOQItem() {
         return;
 
     }
+
 
     if (
         quantityValue <= 0
@@ -3861,6 +3904,7 @@ function addCustomBOQItem() {
 
     }
 
+
     if (
         rateValue < 0
     ) {
@@ -3873,39 +3917,54 @@ function addCustomBOQItem() {
 
     }
 
+
     activeBOQ.push(
-        normalizeBOQItem({
 
-            id:
-                Date.now() +
-                Math.floor(
-                    Math.random() *
-                    100000
-                ),
+        normalizeBOQItem(
 
-            category:
-                categoryValue,
+            {
 
-            item:
-                itemValue,
+                id:
+                    Date.now() +
+                    Math.floor(
+                        Math.random() *
+                        100000
+                    ),
 
-            unit:
-                unit.value,
+                category:
+                    categoryValue,
 
-            quantity:
-                quantityValue,
+                item:
+                    itemValue,
 
-            rate:
-                rateValue
+                unit:
+                    unit.value,
 
-        }, activeBOQ.length)
+                quantity:
+                    quantityValue,
+
+                rate:
+                    rateValue,
+
+                amount:
+                    quantityValue *
+                    rateValue
+
+            },
+
+            activeBOQ.length
+
+        )
+
     );
+
 
     saveCurrentBOQ();
 
     renderBOQ();
 
 }
+
 
 // ==========================================================
 // DELETE BOQ ITEM
@@ -3917,24 +3976,23 @@ function deleteBOQItem(
 
     const item =
         activeBOQ.find(
-            function(
-                boqItem
-            ) {
+            function(boqItem) {
 
                 return String(
                     boqItem.id
-                ) === String(
-                    id
-                );
+                ) ===
+                String(id);
 
             }
         );
+
 
     if (!item) {
 
         return;
 
     }
+
 
     const confirmed =
         confirm(
@@ -3943,32 +4001,33 @@ function deleteBOQItem(
             '" from the BOQ?'
         );
 
+
     if (!confirmed) {
 
         return;
 
     }
 
+
     activeBOQ =
         activeBOQ.filter(
-            function(
-                boqItem
-            ) {
+            function(boqItem) {
 
                 return String(
                     boqItem.id
-                ) !== String(
-                    id
-                );
+                ) !==
+                String(id);
 
             }
         );
+
 
     saveCurrentBOQ();
 
     renderBOQ();
 
 }
+
 
 // ==========================================================
 // DELETE PROJECT
@@ -3984,18 +4043,19 @@ function deleteProject(
 
                 return String(
                     item.id
-                ) === String(
-                    id
-                );
+                ) ===
+                String(id);
 
             }
         );
+
 
     if (!project) {
 
         return;
 
     }
+
 
     const confirmed =
         confirm(
@@ -4004,11 +4064,13 @@ function deleteProject(
             '"?'
         );
 
+
     if (!confirmed) {
 
         return;
 
     }
+
 
     projects =
         projects.filter(
@@ -4016,20 +4078,19 @@ function deleteProject(
 
                 return String(
                     item.id
-                ) !== String(
-                    id
-                );
+                ) !==
+                String(id);
 
             }
         );
+
 
     if (
         activeProject &&
         String(
             activeProject.id
-        ) === String(
-            id
-        )
+        ) ===
+        String(id)
     ) {
 
         activeProject =
@@ -4044,11 +4105,13 @@ function deleteProject(
 
     }
 
+
     saveProjects();
 
     displayProjects();
 
 }
+
 
 // ==========================================================
 // AREA CALCULATION
@@ -4066,25 +4129,30 @@ function calculateArea() {
 
     }
 
+
     const floors =
         Number(
             floorsInput.value
         ) || 0;
+
 
     const area =
         Number(
             areaInput.value
         ) || 0;
 
+
     const total =
         floors *
         area;
+
 
     totalArea.textContent =
         total.toLocaleString() +
         " sq.ft";
 
 }
+
 
 if (floorsInput) {
 
@@ -4095,6 +4163,7 @@ if (floorsInput) {
 
 }
 
+
 if (areaInput) {
 
     areaInput.addEventListener(
@@ -4103,6 +4172,7 @@ if (areaInput) {
     );
 
 }
+
 
 // ==========================================================
 // CREATE PROJECT
@@ -4115,6 +4185,7 @@ if (projectForm) {
         function(event) {
 
             event.preventDefault();
+
 
             const projectNameElement =
                 document.getElementById(
@@ -4136,25 +4207,30 @@ if (projectForm) {
                     "buildingType"
                 );
 
+
             const projectName =
                 projectNameElement
                     ? projectNameElement.value.trim()
                     : "";
+
 
             const clientName =
                 clientNameElement
                     ? clientNameElement.value.trim()
                     : "";
 
+
             const location =
                 locationElement
                     ? locationElement.value.trim()
                     : "";
 
+
             const buildingType =
                 buildingTypeElement
                     ? buildingTypeElement.value
-                    : "Residential";
+                    : "";
+
 
             const floors =
                 Number(
@@ -4163,12 +4239,14 @@ if (projectForm) {
                         : 0
                 );
 
+
             const area =
                 Number(
                     areaInput
                         ? areaInput.value
                         : 0
                 );
+
 
             if (!projectName) {
 
@@ -4180,6 +4258,7 @@ if (projectForm) {
 
             }
 
+
             if (!location) {
 
                 alert(
@@ -4189,6 +4268,7 @@ if (projectForm) {
                 return;
 
             }
+
 
             if (
                 !floors ||
@@ -4203,6 +4283,7 @@ if (projectForm) {
 
             }
 
+
             if (
                 !area ||
                 area <= 0
@@ -4215,6 +4296,7 @@ if (projectForm) {
                 return;
 
             }
+
 
             const project = {
 
@@ -4244,22 +4326,21 @@ if (projectForm) {
                     area,
 
                 boq:
-                    [],
-
-                costSettings:
-                    normalizeCostSettings(
-                        DEFAULT_COST_SETTINGS
-                    )
+                    []
 
             };
+
 
             projects.push(
                 project
             );
 
+
             saveProjects();
 
+
             projectForm.reset();
+
 
             if (totalArea) {
 
@@ -4268,12 +4349,14 @@ if (projectForm) {
 
             }
 
+
             showDashboard();
 
         }
     );
 
 }
+
 
 // ==========================================================
 // NAVIGATION BUTTONS
@@ -4300,6 +4383,7 @@ function connectButton(
 
 }
 
+
 connectButton(
     "newProjectButton",
     showNewProject
@@ -4320,350 +4404,6 @@ connectButton(
     showDashboard
 );
 
-// ==========================================================
-// THEME SYSTEM
-// ==========================================================
-
-function applyTheme(
-    theme
-) {
-
-    const dark =
-        theme === "dark";
-
-    document.body.classList.toggle(
-        "dark-mode",
-        dark
-    );
-
-    localStorage.setItem(
-        "construction-estimator-theme",
-        dark
-            ? "dark"
-            : "light"
-    );
-
-    updateThemeButton();
-
-}
-
-function updateThemeButton() {
-
-    const button =
-        document.getElementById(
-            "themeToggle"
-        );
-
-    if (!button) {
-
-        return;
-
-    }
-
-    const dark =
-        document.body.classList.contains(
-            "dark-mode"
-        );
-
-    button.innerHTML =
-        dark
-            ? `
-                <span class="theme-icon">☀️</span>
-                <span>Day</span>
-              `
-            : `
-                <span class="theme-icon">🌙</span>
-                <span>Night</span>
-              `;
-
-    button.setAttribute(
-        "aria-label",
-        dark
-            ? "Switch to day mode"
-            : "Switch to night mode"
-    );
-
-}
-
-function toggleTheme() {
-
-    const dark =
-        document.body.classList.contains(
-            "dark-mode"
-        );
-
-    applyTheme(
-        dark
-            ? "light"
-            : "dark"
-    );
-
-}
-
-// ==========================================================
-// LOGO / HEADER / FOOTER
-// ==========================================================
-
-function setupBranding() {
-
-    const header =
-        document.querySelector(
-            "header"
-        );
-
-    if (!header) {
-
-        return;
-
-    }
-
-    // Remove old unwanted header badges/text.
-
-    header
-        .querySelectorAll(
-            ".nepal-pill, .built-for-nepal, .nepal-badge"
-        )
-        .forEach(
-            function(element) {
-
-                element.remove();
-
-            }
-        );
-
-    // Existing H1 becomes the logo link.
-
-    const oldTitle =
-        header.querySelector(
-            "h1"
-        );
-
-    if (oldTitle) {
-
-        const brand =
-            document.createElement(
-                "a"
-            );
-
-        brand.href =
-            "#";
-
-        brand.className =
-            "app-logo";
-
-        brand.setAttribute(
-            "aria-label",
-            "Nepal Construction Estimator home"
-        );
-
-        brand.innerHTML = `
-
-            <span class="logo-mark">
-
-                <svg
-                    viewBox="0 0 64 64"
-                    aria-hidden="true"
-                >
-
-                    <path
-                        d="M10 28 L32 10 L54 28 V54 H10 Z"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="4"
-                        stroke-linejoin="round"
-                    />
-
-                    <path
-                        d="M20 54 V35 H44 V54"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="4"
-                    />
-
-                    <path
-                        d="M28 54 V43 H36 V54"
-                        fill="currentColor"
-                    />
-
-                </svg>
-
-            </span>
-
-            <span class="logo-text">
-                <strong>
-                    Nepal Construction
-                    Estimator
-                </strong>
-
-                <small>
-                    BOQ • COST • ESTIMATION
-                </small>
-            </span>
-
-        `;
-
-        oldTitle.replaceWith(
-            brand
-        );
-
-        brand.addEventListener(
-            "click",
-            function(event) {
-
-                event.preventDefault();
-
-                showDashboard();
-
-            }
-        );
-
-    }
-
-    let themeButton =
-        document.getElementById(
-            "themeToggle"
-        );
-
-    if (!themeButton) {
-
-        themeButton =
-            document.createElement(
-                "button"
-            );
-
-        themeButton.id =
-            "themeToggle";
-
-        themeButton.className =
-            "theme-toggle";
-
-        themeButton.type =
-            "button";
-
-        header.appendChild(
-            themeButton
-        );
-
-    }
-
-    themeButton.onclick =
-        toggleTheme;
-
-    // Remove old subtitle if it contains the unwanted
-    // old application description.
-
-    header
-        .querySelectorAll(
-            "p"
-        )
-        .forEach(
-            function(p) {
-
-                const text =
-                    normalizeText(
-                        p.textContent
-                    );
-
-                if (
-                    text.includes(
-                        "boq & cost estimation tool"
-                    ) ||
-                    text.includes(
-                        "built for nepal"
-                    )
-                ) {
-
-                    p.remove();
-
-                }
-
-            }
-        );
-
-}
-
-// ==========================================================
-// FOOTER
-// ==========================================================
-
-function setupFooter() {
-
-    let footer =
-        document.querySelector(
-            ".site-footer"
-        );
-
-    if (!footer) {
-
-        footer =
-            document.createElement(
-                "footer"
-            );
-
-        footer.className =
-            "site-footer";
-
-        document.body.appendChild(
-            footer
-        );
-
-    }
-
-    const currentYear =
-        new Date()
-            .getFullYear();
-
-    const today =
-        new Date();
-
-    const formattedDate =
-        today.toLocaleDateString(
-            "en-GB",
-            {
-                day: "2-digit",
-                month: "long",
-                year: "numeric"
-            }
-        );
-
-    footer.innerHTML = `
-
-        <div class="footer-inner">
-
-            <div class="footer-logo">
-
-                <span class="footer-logo-mark">
-                    ₨
-                </span>
-
-                <strong>
-                    Nepal Construction Estimator
-                </strong>
-
-            </div>
-
-            <div class="footer-meta">
-
-                <span>
-                    ${formattedDate}
-                </span>
-
-                <span>
-                    •
-                </span>
-
-                <span>
-                    © ${currentYear}
-                    All Rights Reserved
-                </span>
-
-            </div>
-
-        </div>
-
-    `;
-
-}
 
 // ==========================================================
 // SECURITY
@@ -4681,13 +4421,12 @@ function escapeHTML(
     div.textContent =
         value == null
             ? ""
-            : String(
-                value
-            );
+            : String(value);
 
     return div.innerHTML;
 
 }
+
 
 function escapeAttribute(
     value
@@ -4717,6 +4456,7 @@ function escapeAttribute(
 
 }
 
+
 // ==========================================================
 // NORMALIZE TEXT
 // ==========================================================
@@ -4739,13 +4479,16 @@ function normalizeText(
 
 }
 
+
 // ==========================================================
-// CSS.escape FALLBACK
+// CSS ESCAPE FALLBACK
 // ==========================================================
 
 if (
-    typeof window.CSS === "undefined" ||
-    typeof window.CSS.escape !== "function"
+    typeof window.CSS ===
+        "undefined" ||
+    typeof window.CSS.escape !==
+        "function"
 ) {
 
     window.CSS =
@@ -4770,51 +4513,249 @@ if (
 
 }
 
+
 // ==========================================================
-// INITIALIZATION
+// DAY / NIGHT THEME
 // ==========================================================
 
-function initializeApplication() {
+function getSavedTheme() {
 
-    const savedTheme =
+    const saved =
         localStorage.getItem(
-            "construction-estimator-theme"
+            THEME_KEY
         );
 
-    applyTheme(
-        savedTheme === "dark"
-            ? "dark"
-            : "light"
-    );
+    if (
+        saved === "dark" ||
+        saved === "light"
+    ) {
 
-    setupBranding();
+        return saved;
 
-    setupFooter();
+    }
 
-    loadProjects();
-
-    displayProjects();
-
-    calculateArea();
-
-    console.log(
-        "Nepal Construction Estimator loaded successfully."
-    );
+    return "light";
 
 }
 
-if (
-    document.readyState ===
-    "loading"
+
+function applyTheme(
+    theme
 ) {
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeApplication
+    const safeTheme =
+        theme === "dark"
+            ? "dark"
+            : "light";
+
+
+    document.documentElement.setAttribute(
+        "data-theme",
+        safeTheme
     );
 
-} else {
 
-    initializeApplication();
+    localStorage.setItem(
+        THEME_KEY,
+        safeTheme
+    );
+
+
+    updateThemeButton();
 
 }
+
+
+function updateThemeButton() {
+
+    let button =
+        document.getElementById(
+            "themeToggle"
+        );
+
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    const dark =
+        document.documentElement.getAttribute(
+            "data-theme"
+        ) ===
+        "dark";
+
+
+    button.textContent =
+        dark
+            ? "☀️"
+            : "🌙";
+
+
+    button.title =
+        dark
+            ? "Switch to day mode"
+            : "Switch to night mode";
+
+
+    button.setAttribute(
+        "aria-label",
+        dark
+            ? "Switch to day mode"
+            : "Switch to night mode"
+    );
+
+}
+
+
+function toggleTheme() {
+
+    const current =
+        document.documentElement.getAttribute(
+            "data-theme"
+        );
+
+
+    applyTheme(
+        current === "dark"
+            ? "light"
+            : "dark"
+    );
+
+}
+
+
+function createThemeButton() {
+
+    let button =
+        document.getElementById(
+            "themeToggle"
+        );
+
+
+    if (button) {
+
+        updateThemeButton();
+
+        return;
+
+    }
+
+
+    button =
+        document.createElement(
+            "button"
+        );
+
+
+    button.type =
+        "button";
+
+    button.id =
+        "themeToggle";
+
+    button.className =
+        "theme-toggle";
+
+    button.setAttribute(
+        "aria-label",
+        "Switch theme"
+    );
+
+
+    button.addEventListener(
+        "click",
+        toggleTheme
+    );
+
+
+    /*
+       Try to place it in the existing
+       header/navigation.
+    */
+
+    const header =
+        document.querySelector(
+            "header"
+        );
+
+
+    if (header) {
+
+        header.appendChild(
+            button
+        );
+
+    } else {
+
+        document.body.prepend(
+            button
+        );
+
+    }
+
+
+    updateThemeButton();
+
+}
+
+
+function initializeTheme() {
+
+    const theme =
+        getSavedTheme();
+
+
+    document.documentElement.setAttribute(
+        "data-theme",
+        theme
+    );
+
+
+    /*
+       Wait until DOM is ready before
+       creating the button.
+    */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                createThemeButton();
+
+            }
+        );
+
+    } else {
+
+        createThemeButton();
+
+    }
+
+}
+
+
+initializeTheme();
+
+
+// ==========================================================
+// START APP
+// ==========================================================
+
+loadProjects();
+
+displayProjects();
+
+calculateArea();
+
+
+console.log(
+    "Nepal Construction Estimator loaded successfully."
+);
