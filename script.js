@@ -869,6 +869,7 @@ function showNewProject() {
             "boqScreen"
         );
 
+
     if (boqScreen) {
 
         boqScreen.classList.add(
@@ -877,6 +878,7 @@ function showNewProject() {
 
     }
 
+
     if (dashboard) {
 
         dashboard.classList.add(
@@ -884,6 +886,7 @@ function showNewProject() {
         );
 
     }
+
 
     if (newProject) {
 
