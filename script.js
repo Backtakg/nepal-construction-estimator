@@ -810,11 +810,13 @@ function saveProjects() {
 }
 
 
-// ==========================================================
-// DASHBOARD
-// ==========================================================
-
 function showDashboard() {
+
+    // User intentionally returned to dashboard
+    localStorage.removeItem(
+        "activeProject"
+    );
+
 
     const boqScreen =
         document.getElementById(
@@ -829,6 +831,7 @@ function showDashboard() {
 
     }
 
+
     if (newProject) {
 
         newProject.classList.add(
@@ -836,6 +839,7 @@ function showDashboard() {
         );
 
     }
+
 
     if (dashboard) {
 
@@ -845,10 +849,13 @@ function showDashboard() {
 
     }
 
+
+    activeProject = null;
+    activeBOQ = [];
+
+
     displayProjects();
-
 }
-
 
 // ==========================================================
 // NEW PROJECT
