@@ -1106,27 +1106,158 @@ function displayProjects() {
         }
 
 
-        // EDIT PROJECT
+      // ==========================================================
+// EDIT PROJECT
+// ==========================================================
 
-        const editButton =
-            card.querySelector(
-                ".edit-project-button"
-            );
+function editProject(id) {
 
-        if (editButton) {
+    const project =
+        projects.find(function(item) {
 
-            editButton.addEventListener(
-                "click",
-                function() {
+            return Number(item.id) ===
+                Number(id);
 
-                    editProject(
-                        project.id
-                    );
+        });
 
-                }
-            );
 
-        }
+    if (!project) {
+
+        alert(
+            "Project could not be found."
+        );
+
+        return;
+
+    }
+
+
+    editingProjectId =
+        project.id;
+
+
+    const projectNameInput =
+        document.getElementById(
+            "projectName"
+        );
+
+    const clientNameInput =
+        document.getElementById(
+            "clientName"
+        );
+
+    const locationInput =
+        document.getElementById(
+            "location"
+        );
+
+    const buildingTypeInput =
+        document.getElementById(
+            "buildingType"
+        );
+
+
+    if (projectNameInput) {
+
+        projectNameInput.value =
+            project.projectName || "";
+
+    }
+
+
+    if (clientNameInput) {
+
+        clientNameInput.value =
+            project.clientName || "";
+
+    }
+
+
+    if (locationInput) {
+
+        locationInput.value =
+            project.location || "";
+
+    }
+
+
+    if (buildingTypeInput) {
+
+        buildingTypeInput.value =
+            project.buildingType || "Residential";
+
+    }
+
+
+    if (floorsInput) {
+
+        floorsInput.value =
+            project.floors || "";
+
+    }
+
+
+    if (areaInput) {
+
+        areaInput.value =
+            project.area || "";
+
+    }
+
+
+    calculateArea();
+
+
+    // Change form heading
+
+    const formTitle =
+        document.querySelector(
+            ".form-header h1"
+        );
+
+    if (formTitle) {
+
+        formTitle.textContent =
+            "Edit your project";
+
+    }
+
+
+    // Change form description
+
+    const formDescription =
+        document.querySelector(
+            ".form-header p"
+        );
+
+    if (formDescription) {
+
+        formDescription.textContent =
+            "Update your project details. Your existing BOQ will stay محفوظ.";
+
+    }
+
+
+    // Change submit button
+
+    const submitButton =
+        document.getElementById(
+            "createProjectButton"
+        );
+
+    if (submitButton) {
+
+        submitButton.textContent =
+            "Save Changes →";
+
+    }
+
+
+    // Show form
+
+    showNewProject();
+
+}
 
 
         // DELETE PROJECT
