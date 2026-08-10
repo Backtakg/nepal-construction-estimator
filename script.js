@@ -903,26 +903,19 @@ function showNewProject() {
 function displayProjects() {
 
     if (!projectList) {
-
         return;
-
     }
 
-    if (
-        projects.length === 0
-    ) {
+    if (projects.length === 0) {
 
         projectList.innerHTML = `
-
             <div class="empty-state">
 
                 <div class="empty-icon">
                     🏠
                 </div>
 
-                <h3>
-                    No projects yet
-                </h3>
+                <h3>No projects yet</h3>
 
                 <p>
                     Create your first construction
@@ -939,7 +932,6 @@ function displayProjects() {
                 </button>
 
             </div>
-
         `;
 
         const button =
@@ -957,118 +949,121 @@ function displayProjects() {
         }
 
         return;
-
     }
+
 
     projectList.innerHTML = "";
 
-    projects.forEach(
-        function(project) {
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+    projects.forEach(function(project) {
 
-            card.className =
-                "project-card";
+        const card =
+            document.createElement("div");
 
-            card.innerHTML = `
+        card.className =
+            "project-card";
 
-                <div class="project-card-header">
 
-                    <div>
+        card.innerHTML = `
 
-                        <h3>
-                            ${escapeHTML(
-                                project.projectName
-                            )}
-                        </h3>
+            <div class="project-card-header">
 
-                        <span class="project-location">
+                <div>
 
-                            📍
-                            ${escapeHTML(
-                                project.location
-                            )}
-
-                        </span>
-
-                    </div>
-
-                    <span class="project-type">
-
+                    <h3>
                         ${escapeHTML(
-                            project.buildingType
+                            project.projectName
                         )}
+                    </h3>
 
+                    <span class="project-location">
+                        📍
+                        ${escapeHTML(
+                            project.location
+                        )}
                     </span>
 
                 </div>
 
 
-                <div class="project-details">
+                <span class="project-type">
+                    ${escapeHTML(
+                        project.buildingType
+                    )}
+                </span>
 
-                    <div>
-
-                        <span>
-                            Client
-                        </span>
-
-                        <strong>
-                            ${escapeHTML(
-                                project.clientName ||
-                                "—"
-                            )}
-                        </strong>
-
-                    </div>
+            </div>
 
 
-                    <div>
+            <div class="project-details">
 
-                        <span>
-                            Floors
-                        </span>
+                <div>
 
-                        <strong>
-                            ${project.floors || 0}
-                        </strong>
+                    <span>
+                        Client
+                    </span>
 
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Built-up Area
-                        </span>
-
-                        <strong>
-
-                            ${Number(
-                                project.totalArea ||
-                                0
-                            ).toLocaleString()}
-
-                            sq.ft
-
-                        </strong>
-
-                    </div>
+                    <strong>
+                        ${escapeHTML(
+                            project.clientName || "—"
+                        )}
+                    </strong>
 
                 </div>
 
 
-                <div class="project-card-footer">
+                <div>
+
+                    <span>
+                        Floors
+                    </span>
+
+                    <strong>
+                        ${project.floors || 0}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Built-up Area
+                    </span>
+
+                    <strong>
+                        ${Number(
+                            project.totalArea || 0
+                        ).toLocaleString()}
+                        sq.ft
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="project-card-footer">
+
+                <button
+                    type="button"
+                    class="open-project-button">
+
+                    Open Project →
+
+                </button>
+
+
+                <div class="project-card-actions">
 
                     <button
                         type="button"
-                        class="open-project-button">
+                        class="edit-project-button">
 
-                        Open Project →
+                        Edit
 
                     </button>
+
 
                     <button
                         type="button"
@@ -1080,57 +1075,85 @@ function displayProjects() {
 
                 </div>
 
-            `;
+            </div>
 
-            projectList.appendChild(
-                card
+        `;
+
+
+        projectList.appendChild(card);
+
+
+        // OPEN PROJECT
+
+        const openButton =
+            card.querySelector(
+                ".open-project-button"
             );
 
-            const openButton =
-                card.querySelector(
-                    ".open-project-button"
-                );
+        if (openButton) {
 
-            const deleteButton =
-                card.querySelector(
-                    ".delete-button"
-                );
+            openButton.addEventListener(
+                "click",
+                function() {
 
-            if (openButton) {
+                    openProject(
+                        project.id
+                    );
 
-                openButton.addEventListener(
-                    "click",
-                    function() {
-
-                        openProject(
-                            project.id
-                        );
-
-                    }
-                );
-
-            }
-
-            if (deleteButton) {
-
-                deleteButton.addEventListener(
-                    "click",
-                    function() {
-
-                        deleteProject(
-                            project.id
-                        );
-
-                    }
-                );
-
-            }
+                }
+            );
 
         }
-    );
+
+
+        // EDIT PROJECT
+
+        const editButton =
+            card.querySelector(
+                ".edit-project-button"
+            );
+
+        if (editButton) {
+
+            editButton.addEventListener(
+                "click",
+                function() {
+
+                    editProject(
+                        project.id
+                    );
+
+                }
+            );
+
+        }
+
+
+        // DELETE PROJECT
+
+        const deleteButton =
+            card.querySelector(
+                ".delete-button"
+            );
+
+        if (deleteButton) {
+
+            deleteButton.addEventListener(
+                "click",
+                function() {
+
+                    deleteProject(
+                        project.id
+                    );
+
+                }
+            );
+
+        }
+
+    });
 
 }
-
 
 // ==========================================================
 // OPEN PROJECT
