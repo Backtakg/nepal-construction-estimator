@@ -1405,6 +1405,152 @@ function calculateBOQTotal() {
     return total;
 
 }
+// ==========================================================
+// CATEGORY-WISE BOQ SUMMARY
+// ==========================================================
+
+function calculateCategorySummary() {
+
+    const categories = {};
+
+    if (!Array.isArray(activeBOQ)) {
+        return categories;
+    }
+
+    activeBOQ.forEach(function(item) {
+
+        const category =
+            String(item.category || "Uncategorized").trim() ||
+            "Uncategorized";
+
+        const quantity =
+            Number(item.quantity) || 0;
+
+        const rate =
+            Number(item.rate) || 0;
+
+        const amount =
+            quantity * rate;
+
+        if (!categories[category]) {
+
+            categories[category] = {
+                category: category,
+                itemCount: 0,
+                amount: 0
+            };
+
+        }
+
+        categories[category].itemCount += 1;
+
+        categories[category].amount += amount;
+
+    });
+
+    return categories;
+}
+
+
+// ==========================================================
+// RENDER CATEGORY SUMMARY
+// ==========================================================
+
+function renderCategorySummary() {
+
+    const container =
+        document.getElementById(
+            "categorySummary"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const categories =
+        calculateCategorySummary();
+
+    const categoryNames =
+        Object.keys(categories);
+
+    if (categoryNames.length === 0) {
+
+        container.innerHTML = `
+            <div class="category-empty">
+                No BOQ categories available.
+            </div>
+        `;
+
+        return;
+    }
+
+    let html = "";
+
+    categoryNames.forEach(function(category) {
+
+        const data =
+            categories[category];
+
+        html += `
+            <div class="category-summary-row">
+
+                <div class="category-summary-name">
+
+                    <strong>
+                        ${escapeHTML(category)}
+                    </strong>
+
+                    <span>
+                        ${data.itemCount}
+                        ${data.itemCount === 1 ? "item" : "items"}
+                    </span>
+
+                </div>
+
+                <div class="category-summary-amount">
+
+                    NPR
+                    ${Math.round(
+                        data.amount
+                    ).toLocaleString()}
+
+                </div>
+
+            </div>
+        `;
+
+    });
+
+    const total =
+        categoryNames.reduce(
+            function(sum, category) {
+
+                return sum +
+                    categories[category].amount;
+
+            },
+            0
+        );
+
+    html += `
+        <div class="category-summary-total">
+
+            <strong>
+                TOTAL
+            </strong>
+
+            <strong>
+                NPR
+                ${Math.round(
+                    total
+                ).toLocaleString()}
+            </strong>
+
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
 
 
 // ==========================================================
