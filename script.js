@@ -4935,13 +4935,112 @@ initializeTheme();
 
 loadProjects();
 
-displayProjects();
 
-calculateArea();
+// ==========================================================
+// RESTORE LAST OPEN PROJECT AFTER REFRESH
+// ==========================================================
+
+function restoreLastProject() {
+
+    const savedActiveProject =
+        localStorage.getItem("activeProject");
+
+    // Nothing was open before refresh
+    if (!savedActiveProject) {
+        displayProjects();
+        return;
+    }
+
+    try {
+
+        const savedProject =
+            JSON.parse(savedActiveProject);
+
+        if (!savedProject || !savedProject.id) {
+            localStorage.removeItem("activeProject");
+            displayProjects();
+            return;
+        }
+
+
+        // Find the latest version of the project
+        // from the main projects array.
+        const project =
+            projects.find(function (item) {
+
+                return Number(item.id) ===
+                    Number(savedProject.id);
+
+            });
+
+
+        // Project was deleted
+        if (!project) {
+
+            localStorage.removeItem(
+                "activeProject"
+            );
+
+            displayProjects();
+
+            return;
+        }
+
+
+        // Restore active project
+        activeProject = project;
+
+
+        // Hide dashboard
+        if (dashboard) {
+            dashboard.classList.add("hidden");
+        }
+
+
+        // Hide new project screen
+        if (newProject) {
+            newProject.classList.add("hidden");
+        }
+
+
+        // Recreate workspace
+        createBOQScreen();
+
+
+        // Load the project's BOQ
+        loadProjectBOQ(project);
+
+
+        console.log(
+            "Restored project:",
+            project.projectName
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not restore active project:",
+            error
+        );
+
+        localStorage.removeItem(
+            "activeProject"
+        );
+
+        displayProjects();
+    }
+}
+
+
+// ==========================================================
+// START
+// ==========================================================
+
+restoreLastProject();
 
 
 console.log(
-    "Nepal Construction Estimator loaded successfully."
+    "Constructor Estimator loaded successfully."
 );
 // ==========================================================
 // MODERN DAY / NIGHT THEME
