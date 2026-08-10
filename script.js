@@ -2048,6 +2048,34 @@ function renderBOQ() {
     </div>
 
 </div>
+<!-- MATERIAL / LABOUR SUMMARY -->
+
+<div class="cost-type-summary-card">
+
+    <div class="category-summary-header">
+
+        <span class="badge">
+            💰 Cost Breakdown
+        </span>
+
+        <h3>
+            Material & Labour Cost
+        </h3>
+
+        <p>
+            Automatic breakdown of the BOQ by cost type.
+        </p>
+
+    </div>
+
+
+    <div
+        id="costTypeSummary"
+        class="cost-type-summary">
+
+    </div>
+
+</div>
             <!-- BOQ -->
 
             <div class="boq-card">
