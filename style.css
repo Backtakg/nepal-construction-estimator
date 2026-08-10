@@ -3512,3 +3512,125 @@ a {
     }
 
 }
+/* =========================================================
+   BRAND / LOGO
+   ========================================================= */
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+
+    text-decoration: none;
+    color: inherit;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
+}
+
+.brand:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.brand:active {
+    transform: scale(0.97);
+}
+
+
+/* LOGO */
+
+.brand-logo {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    line-height: 1;
+    flex-shrink: 0;
+
+    box-shadow:
+        0 8px 22px rgba(37, 99, 235, 0.25);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.brand:hover .brand-logo {
+    transform: rotate(-4deg) scale(1.05);
+
+    box-shadow:
+        0 12px 30px rgba(37, 99, 235, 0.35);
+}
+
+.brand-logo span {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.brand-logo small {
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+
+/* BRAND TEXT */
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.brand-text strong {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+
+    color: #172033;
+}
+
+.brand-text span {
+    margin-top: 2px;
+
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   DARK MODE BRAND
+   ========================================================= */
+
+body.dark .brand-text strong {
+    color: #f8fafc;
+}
+
+body.dark .brand-text span {
+    color: #94a3b8;
+}
+
+body.dark .brand-logo {
+    background: #3b82f6;
+
+    box-shadow:
+        0 8px 25px rgba(59, 130, 246, 0.3);
+}
