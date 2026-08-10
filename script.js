@@ -715,36 +715,26 @@ function calculateBOQTotal() {
 function renderBOQ() {
 
     const screen =
-        document.getElementById(
-            "boqScreen"
-        );
-
+        document.getElementById("boqScreen");
 
     if (!screen || !activeProject) {
         return;
     }
 
-
     const area =
-        Number(
-            activeProject.totalArea
-        ) || 0;
-
+        Number(activeProject.totalArea) || 0;
 
     const total =
         calculateBOQTotal();
-
 
     const costPerSqFt =
         area > 0
             ? total / area
             : 0;
 
-
     screen.innerHTML = `
 
         <div class="boq-container">
-
 
             <!-- HEADER -->
 
@@ -759,30 +749,21 @@ function renderBOQ() {
 
                 </button>
 
-
                 <span class="badge">
-
                     🇳🇵 Construction Estimate
-
                 </span>
 
-
                 <h2>
-
                     ${escapeHTML(
                         activeProject.projectName
                     )}
-
                 </h2>
 
-
                 <p>
-
                     📍
                     ${escapeHTML(
                         activeProject.location
                     )}
-
                 </p>
 
             </div>
@@ -799,10 +780,8 @@ function renderBOQ() {
                     </span>
 
                     <strong>
-
                         ${area.toLocaleString()}
                         sq.ft
-
                     </strong>
 
                 </div>
@@ -828,12 +807,10 @@ function renderBOQ() {
                     </span>
 
                     <strong>
-
                         NPR
                         ${Math.round(
                             costPerSqFt
                         ).toLocaleString()}
-
                     </strong>
 
                 </div>
@@ -846,12 +823,10 @@ function renderBOQ() {
                     </span>
 
                     <strong>
-
                         NPR
                         ${Math.round(
                             total
                         ).toLocaleString()}
-
                     </strong>
 
                 </div>
@@ -870,12 +845,13 @@ function renderBOQ() {
                     </span>
 
                     <h3>
-                        Reference Construction Rates
+                        Nepal District Rate System
                     </h3>
 
                     <p>
-                        Select a construction item
-                        and apply a reference rate.
+                        Select a district and fiscal
+                        year to use the available
+                        reference rate schedule.
                     </p>
 
                 </div>
@@ -884,22 +860,55 @@ function renderBOQ() {
                 <div class="rate-controls">
 
 
+                    <!-- DISTRICT -->
+
                     <div class="rate-field">
 
                         <label>
-                            Location
+                            District
                         </label>
 
                         <select id="rateLocation">
-
-                            <option value="Kathmandu">
-                                Kathmandu
-                            </option>
 
                         </select>
 
                     </div>
 
+
+                    <!-- FISCAL YEAR -->
+
+                    <div class="rate-field">
+
+                        <label>
+                            Fiscal Year
+                        </label>
+
+                        <select id="rateYear">
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SOURCE -->
+
+                    <div class="rate-field">
+
+                        <label>
+                            Rate Source
+                        </label>
+
+                        <input
+                            id="rateSource"
+                            type="text"
+                            readonly
+                            placeholder="—"
+                        >
+
+                    </div>
+
+
+                    <!-- BOQ ITEM -->
 
                     <div class="rate-field">
 
@@ -918,6 +927,8 @@ function renderBOQ() {
                     </div>
 
 
+                    <!-- UNIT -->
+
                     <div class="rate-field">
 
                         <label>
@@ -933,6 +944,8 @@ function renderBOQ() {
 
                     </div>
 
+
+                    <!-- RATE -->
 
                     <div class="rate-field">
 
@@ -951,6 +964,8 @@ function renderBOQ() {
                     </div>
 
 
+                    <!-- APPLY -->
+
                     <div class="rate-action">
 
                         <button
@@ -967,14 +982,26 @@ function renderBOQ() {
                 </div>
 
 
+                <div
+                    id="rateStatus"
+                    class="rate-status">
+
+                    Select a district and fiscal year.
+
+                </div>
+
+
                 <div class="rate-warning">
 
-                    ⚠️ <strong>Reference rate:</strong>
+                    ⚠️
 
-                    Verify rates against current
-                    local market quotations and
-                    applicable official schedules
-                    before commercial use.
+                    <strong>
+                        Reference rate:
+                    </strong>
+
+                    Verify rates against the current
+                    official schedule and local market
+                    quotations before commercial use.
 
                 </div>
 
@@ -1056,7 +1083,9 @@ function renderBOQ() {
                                                         class="boq-input"
                                                         data-field="category"
                                                         data-id="${item.id}"
-                                                        value="${escapeAttribute(item.category)}"
+                                                        value="${escapeAttribute(
+                                                            item.category
+                                                        )}"
                                                     >
 
                                                 </td>
@@ -1068,7 +1097,9 @@ function renderBOQ() {
                                                         class="boq-input item-input"
                                                         data-field="item"
                                                         data-id="${item.id}"
-                                                        value="${escapeAttribute(item.item)}"
+                                                        value="${escapeAttribute(
+                                                            item.item
+                                                        )}"
                                                     >
 
                                                 </td>
@@ -1080,7 +1111,9 @@ function renderBOQ() {
                                                         class="boq-input unit-input"
                                                         data-field="unit"
                                                         data-id="${item.id}"
-                                                        value="${escapeAttribute(item.unit)}"
+                                                        value="${escapeAttribute(
+                                                            item.unit
+                                                        )}"
                                                     >
 
                                                 </td>
@@ -1167,10 +1200,13 @@ function renderBOQ() {
                                                 class="no-boq-items">
 
                                                 No BOQ items.
+
                                                 Click
+
                                                 <strong>
                                                     + Add BOQ Item
                                                 </strong>
+
                                                 to add one.
 
                                             </td>
@@ -1219,7 +1255,7 @@ function renderBOQ() {
             </div>
 
 
-            <!-- CUSTOM ITEM FORM -->
+            <!-- CUSTOM BOQ -->
 
             <div
                 id="addBOQForm"
@@ -1376,8 +1412,9 @@ function renderBOQ() {
                     Preliminary Estimate:
                 </strong>
 
-                Reference rates should be
-                verified before commercial use.
+                Reference rates should be verified
+                against the applicable official
+                schedule before commercial use.
 
             </div>
 
@@ -1387,11 +1424,24 @@ function renderBOQ() {
     `;
 
 
-    populateRateItems();
+    /*
+    ========================================================
+    INITIALIZE RATE SYSTEM
+    ========================================================
+    */
+
+    initializeRateSystem();
+
+
+    /*
+    ========================================================
+    EXISTING BOQ EVENTS
+    ========================================================
+    */
 
     attachBOQEvents();
-}
 
+}
 
 // ==========================================================
 // POPULATE RATE DROPDOWN
