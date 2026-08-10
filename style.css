@@ -805,3 +805,72 @@ button {
     font-size: 13px;
     line-height: 1.5;
 }
+/* ==========================================================
+   CATEGORY SUMMARY
+   ========================================================== */
+
+.category-summary-card {
+    background: var(--card-background, #ffffff);
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.category-summary-header {
+    margin-bottom: 18px;
+}
+
+.category-summary-header h3 {
+    margin: 10px 0 6px;
+}
+
+.category-summary-header p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.category-summary-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.category-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.category-summary-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.category-summary-name span {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.category-summary-amount {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.category-summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 18px;
+    margin-top: 4px;
+    font-size: 18px;
+}
+
+.category-empty {
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+}
