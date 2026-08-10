@@ -1,107 +1,88 @@
 function showNewProject() {
-
     document.getElementById("dashboard").classList.add("hidden");
-
     document.getElementById("newProject").classList.remove("hidden");
-
 }
-
 
 function showDashboard() {
-
     document.getElementById("newProject").classList.add("hidden");
-
     document.getElementById("dashboard").classList.remove("hidden");
-
 }
 
+document.addEventListener("DOMContentLoaded", function () {
 
-const floorsInput = document.getElementById("floors");
+    const floorsInput = document.getElementById("floors");
+    const areaInput = document.getElementById("area");
+    const totalArea = document.getElementById("totalArea");
+    const projectForm = document.getElementById("projectForm");
 
-const areaInput = document.getElementById("area");
+    function calculateTotalArea() {
 
-const totalArea = document.getElementById("totalArea");
+        const floors = parseFloat(floorsInput.value) || 0;
+        const area = parseFloat(areaInput.value) || 0;
 
+        const total = floors * area;
 
-function calculateTotalArea() {
+        totalArea.textContent =
+            total.toLocaleString() + " sq.ft";
+    }
 
-    const floors = parseFloat(floorsInput.value) || 0;
+    floorsInput.addEventListener(
+        "input",
+        calculateTotalArea
+    );
 
-    const area = parseFloat(areaInput.value) || 0;
-
-    const total = floors * area;
-
-    totalArea.textContent =
-        total.toLocaleString() + " sq.ft";
-
-}
-
-
-floorsInput.addEventListener(
-    "input",
-    calculateTotalArea
-);
-
-
-areaInput.addEventListener(
-    "input",
-    calculateTotalArea
-);
+    areaInput.addEventListener(
+        "input",
+        calculateTotalArea
+    );
 
 
-document
-    .getElementById("projectForm")
-    .addEventListener("submit", function(event) {
+    projectForm.addEventListener("submit", function (event) {
 
         event.preventDefault();
 
-        const projectName =
-            document.getElementById("projectName").value;
+        const project = {
 
-        const clientName =
-            document.getElementById("clientName").value;
+            projectName:
+                document.getElementById("projectName").value.trim(),
 
-        const location =
-            document.getElementById("location").value;
+            clientName:
+                document.getElementById("clientName").value.trim(),
 
-        const buildingType =
-            document.getElementById("buildingType").value;
+            location:
+                document.getElementById("location").value.trim(),
 
-        const floors =
-            parseFloat(
-                document.getElementById("floors").value
-            );
+            buildingType:
+                document.getElementById("buildingType").value,
 
-        const area =
-            parseFloat(
-                document.getElementById("area").value
-            );
+            floors:
+                parseFloat(
+                    document.getElementById("floors").value
+                ),
 
-        const total =
-            floors * area;
+            area:
+                parseFloat(
+                    document.getElementById("area").value
+                )
+        };
+
+
+        project.totalArea =
+            project.floors * project.area;
 
 
         localStorage.setItem(
             "currentProject",
-            JSON.stringify({
-
-                projectName,
-                clientName,
-                location,
-                buildingType,
-                floors,
-                area,
-                totalArea: total
-
-            })
+            JSON.stringify(project)
         );
 
 
-        alert(
-            "Project created successfully!"
-        );
+        console.log("Project saved:", project);
 
+        alert("Project created successfully!");
 
         showDashboard();
 
     });
+
+});
