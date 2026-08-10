@@ -703,3 +703,153 @@ button {
     }
 
 }
+/* ==========================================
+   BOQ SCREEN
+========================================== */
+
+.boq-screen {
+    width: 100%;
+}
+
+.boq-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.boq-header {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 35px rgba(20, 40, 80, 0.06);
+}
+
+.boq-header h2 {
+    font-size: 32px;
+    margin: 15px 0 5px;
+}
+
+.boq-header p {
+    color: #68778c;
+}
+
+.estimate-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 24px;
+    box-shadow: 0 8px 25px rgba(20, 40, 80, 0.05);
+}
+
+.summary-card span {
+    display: block;
+    color: #718096;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.summary-card strong {
+    font-size: 22px;
+}
+
+.summary-card.total {
+    background: #2864e8;
+    color: #ffffff;
+}
+
+.summary-card.total span {
+    color: #dbe7ff;
+}
+
+.boq-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 10px 35px rgba(20, 40, 80, 0.06);
+}
+
+.boq-title {
+    margin-bottom: 22px;
+}
+
+.boq-title h3 {
+    font-size: 24px;
+}
+
+.boq-title p {
+    color: #718096;
+}
+
+.boq-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.boq-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+.boq-table th {
+    background: #f3f6fa;
+    color: #52647a;
+    font-size: 13px;
+    text-align: left;
+    padding: 14px;
+    white-space: nowrap;
+}
+
+.boq-table td {
+    padding: 15px 14px;
+    border-bottom: 1px solid #edf0f4;
+    font-size: 14px;
+}
+
+.boq-table tbody tr:hover {
+    background: #fafbfd;
+}
+
+.boq-table tfoot td {
+    padding: 18px 14px;
+    background: #f7f9fc;
+}
+
+.boq-note {
+    margin-top: 20px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    background: #fff8e6;
+    border: 1px solid #f4df9b;
+    color: #765c13;
+    font-size: 13px;
+}
+
+
+/* MOBILE BOQ */
+
+@media (max-width: 700px) {
+
+    .estimate-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .boq-header {
+        padding: 24px 20px;
+    }
+
+    .boq-header h2 {
+        font-size: 25px;
+    }
+
+    .boq-card {
+        padding: 20px 15px;
+    }
+
+}
