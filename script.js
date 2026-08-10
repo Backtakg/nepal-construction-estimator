@@ -4743,7 +4743,191 @@ function initializeTheme() {
 
 
 initializeTheme();
+// ==========================================================
+// MODERN DAY / NIGHT THEME
+// ==========================================================
 
+function initializeTheme() {
+
+    const savedTheme =
+        localStorage.getItem("nce-theme");
+
+    if (savedTheme === "dark") {
+
+        document.documentElement.classList.add(
+            "dark-mode"
+        );
+
+    } else {
+
+        document.documentElement.classList.remove(
+            "dark-mode"
+        );
+
+    }
+
+    createThemeToggle();
+
+}
+
+
+// ==========================================================
+// CREATE THEME TOGGLE
+// ==========================================================
+
+function createThemeToggle() {
+
+    // Don't create duplicate button
+    if (
+        document.getElementById(
+            "themeToggle"
+        )
+    ) {
+        return;
+    }
+
+
+    const button =
+        document.createElement("button");
+
+
+    button.id =
+        "themeToggle";
+
+
+    button.className =
+        "theme-toggle";
+
+
+    button.type =
+        "button";
+
+
+    button.setAttribute(
+        "aria-label",
+        "Toggle day and night mode"
+    );
+
+
+    button.setAttribute(
+        "title",
+        "Toggle day / night mode"
+    );
+
+
+    const circle =
+        document.createElement("span");
+
+
+    circle.className =
+        "theme-toggle-circle";
+
+
+    button.appendChild(
+        circle
+    );
+
+
+    // ------------------------------------------------------
+    // FIND HEADER
+    // ------------------------------------------------------
+
+    let header =
+        document.querySelector(
+            ".app-header"
+        );
+
+
+    // If there is no custom app header,
+    // create a floating top-right control.
+
+    if (!header) {
+
+        button.style.position =
+            "fixed";
+
+        button.style.top =
+            "18px";
+
+        button.style.right =
+            "22px";
+
+        button.style.zIndex =
+            "9999";
+
+        document.body.appendChild(
+            button
+        );
+
+    } else {
+
+        header.appendChild(
+            button
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // TOGGLE
+    // ------------------------------------------------------
+
+    button.addEventListener(
+        "click",
+        function() {
+
+            const isDark =
+                document.documentElement.classList.toggle(
+                    "dark-mode"
+                );
+
+
+            localStorage.setItem(
+                "nce-theme",
+                isDark
+                    ? "dark"
+                    : "light"
+            );
+
+
+            // Small animation
+            button.animate(
+                [
+                    {
+                        transform:
+                            "scale(1)"
+                    },
+                    {
+                        transform:
+                            "scale(.88) rotate(-8deg)"
+                    },
+                    {
+                        transform:
+                            "scale(1.06) rotate(4deg)"
+                    },
+                    {
+                        transform:
+                            "scale(1)"
+                    }
+                ],
+                {
+                    duration: 420,
+                    easing:
+                        "cubic-bezier(.68,-0.55,.27,1.55)"
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// START THEME SYSTEM
+// ==========================================================
+
+initializeTheme();
 
 // ==========================================================
 // START APP
