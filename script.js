@@ -1,10 +1,13 @@
 // ==========================================================
 // NEPAL CONSTRUCTION ESTIMATOR
+// COMPLETE SCRIPT
 // PROJECTS + BOQ + EDITABLE RATES + CUSTOM ITEMS
 // + NEPAL REFERENCE RATE SYSTEM
+// + DAY / NIGHT THEME
 // ==========================================================
 
 "use strict";
+
 
 // ==========================================================
 // GLOBAL STATE
@@ -42,6 +45,395 @@ const totalArea =
 
 
 // ==========================================================
+// THEME SETTINGS
+// ==========================================================
+
+const THEME_STORAGE_KEY =
+    "nepalEstimatorTheme";
+
+
+// ==========================================================
+// THEME - APPLY
+// ==========================================================
+
+function applyTheme(theme) {
+
+    const root =
+        document.documentElement;
+
+    if (theme === "dark") {
+
+        root.setAttribute(
+            "data-theme",
+            "dark"
+        );
+
+    } else {
+
+        root.setAttribute(
+            "data-theme",
+            "light"
+        );
+
+    }
+
+    updateThemeButton(theme);
+}
+
+
+// ==========================================================
+// THEME - GET SAVED
+// ==========================================================
+
+function getSavedTheme() {
+
+    const saved =
+        localStorage.getItem(
+            THEME_STORAGE_KEY
+        );
+
+    if (
+        saved === "dark" ||
+        saved === "light"
+    ) {
+
+        return saved;
+
+    }
+
+
+    // Automatically use system preference
+    if (
+        window.matchMedia &&
+        window.matchMedia(
+            "(prefers-color-scheme: dark)"
+        ).matches
+    ) {
+
+        return "dark";
+
+    }
+
+
+    return "light";
+}
+
+
+// ==========================================================
+// THEME - UPDATE BUTTON
+// ==========================================================
+
+function updateThemeButton(theme) {
+
+    const button =
+        document.getElementById(
+            "themeToggle"
+        );
+
+    if (!button) {
+
+        return;
+
+    }
+
+
+    if (theme === "dark") {
+
+        button.innerHTML =
+            "☀️";
+
+        button.setAttribute(
+            "aria-label",
+            "Switch to day mode"
+        );
+
+        button.setAttribute(
+            "title",
+            "Switch to day mode"
+        );
+
+        button.dataset.theme =
+            "dark";
+
+    } else {
+
+        button.innerHTML =
+            "🌙";
+
+        button.setAttribute(
+            "aria-label",
+            "Switch to night mode"
+        );
+
+        button.setAttribute(
+            "title",
+            "Switch to night mode"
+        );
+
+        button.dataset.theme =
+            "light";
+
+    }
+
+}
+
+
+// ==========================================================
+// THEME - TOGGLE
+// ==========================================================
+
+function toggleTheme() {
+
+    const current =
+        document.documentElement.getAttribute(
+            "data-theme"
+        ) || "light";
+
+
+    const next =
+        current === "dark"
+            ? "light"
+            : "dark";
+
+
+    localStorage.setItem(
+        THEME_STORAGE_KEY,
+        next
+    );
+
+
+    applyTheme(next);
+
+}
+
+
+// ==========================================================
+// CREATE THEME BUTTON
+// ==========================================================
+
+function createThemeToggle() {
+
+    let button =
+        document.getElementById(
+            "themeToggle"
+        );
+
+
+    // If already exists in HTML,
+    // use the existing button.
+    if (!button) {
+
+        button =
+            document.createElement(
+                "button"
+            );
+
+        button.id =
+            "themeToggle";
+
+        button.type =
+            "button";
+
+        button.className =
+            "theme-toggle";
+
+        button.innerHTML =
+            "🌙";
+
+        button.setAttribute(
+            "aria-label",
+            "Switch to night mode"
+        );
+
+        button.setAttribute(
+            "title",
+            "Switch to night mode"
+        );
+
+
+        document.body.appendChild(
+            button
+        );
+
+    }
+
+
+    // Avoid duplicate event listeners.
+    if (
+        button.dataset.themeListener !==
+        "attached"
+    ) {
+
+        button.addEventListener(
+            "click",
+            toggleTheme
+        );
+
+        button.dataset.themeListener =
+            "attached";
+
+    }
+
+
+    updateThemeButton(
+        document.documentElement.getAttribute(
+            "data-theme"
+        ) || getSavedTheme()
+    );
+
+}
+
+
+// ==========================================================
+// INITIALIZE THEME
+// ==========================================================
+
+function initializeTheme() {
+
+    const theme =
+        getSavedTheme();
+
+
+    applyTheme(
+        theme
+    );
+
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            createThemeToggle,
+            {
+                once: true
+            }
+        );
+
+    } else {
+
+        createThemeToggle();
+
+    }
+
+}
+
+
+// ==========================================================
+// REMOVE OLD BOTTOM BRANDING
+// ==========================================================
+
+function removeOldBottomBranding() {
+
+    const body =
+        document.body;
+
+
+    if (!body) {
+
+        return;
+
+    }
+
+
+    const walker =
+        document.createTreeWalker(
+            body,
+            NodeFilter.SHOW_TEXT
+        );
+
+
+    const textNodes = [];
+
+
+    while (
+        walker.nextNode()
+    ) {
+
+        textNodes.push(
+            walker.currentNode
+        );
+
+    }
+
+
+    textNodes.forEach(
+        function(node) {
+
+            const text =
+                node.textContent
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+                    .trim();
+
+
+            if (
+                text ===
+                    "Nepal Construction Estimator" ||
+                text ===
+                    "BOQ & Cost Estimation Tool for Nepal"
+            ) {
+
+                const parent =
+                    node.parentElement;
+
+
+                if (parent) {
+
+                    parent.style.display =
+                        "none";
+
+                }
+
+            }
+
+        }
+    );
+
+
+    // Also hide common footer wrappers
+    // if they contain the old branding.
+    document
+        .querySelectorAll(
+            "footer, .footer, .app-footer"
+        )
+        .forEach(
+            function(footer) {
+
+                const text =
+                    footer.textContent
+                        .replace(
+                            /\s+/g,
+                            " "
+                        )
+                        .trim();
+
+
+                if (
+                    text.includes(
+                        "Nepal Construction Estimator"
+                    ) &&
+                    text.includes(
+                        "BOQ & Cost Estimation Tool for Nepal"
+                    )
+                ) {
+
+                    footer.style.display =
+                        "none";
+
+                }
+
+            }
+        );
+
+}
+
+
+// ==========================================================
 // NEPAL REFERENCE RATE DATABASE
 // ==========================================================
 //
@@ -49,16 +441,6 @@ const totalArea =
 // They are NOT represented as official government rates.
 // Verify against the applicable official schedule and
 // current market quotations before commercial use.
-//
-// Structure:
-// {
-//     "Item name": {
-//         category: "...",
-//         unit: "...",
-//         rate: number
-//     }
-// }
-//
 // ==========================================================
 
 const NEPAL_RATE_DATABASE = {
@@ -412,28 +794,32 @@ const NEPAL_RATE_SCHEDULES = {
             items:
                 Object.keys(
                     NEPAL_RATE_DATABASE
-                ).map(function(name) {
+                ).map(
+                    function(name) {
 
-                    const data =
-                        NEPAL_RATE_DATABASE[name];
+                        const data =
+                            NEPAL_RATE_DATABASE[
+                                name
+                            ];
 
-                    return {
+                        return {
 
-                        category:
-                            data.category,
+                            category:
+                                data.category,
 
-                        description:
-                            name,
+                            description:
+                                name,
 
-                        unit:
-                            data.unit,
+                            unit:
+                                data.unit,
 
-                        rate:
-                            data.rate
+                            rate:
+                                data.rate
 
-                    };
+                        };
 
-                })
+                    }
+                )
 
         }
 
@@ -448,6 +834,17 @@ const NEPAL_RATE_SCHEDULES = {
 
 function getRateLocations() {
 
+    if (
+        !NEPAL_RATE_SCHEDULES ||
+        typeof NEPAL_RATE_SCHEDULES !==
+            "object"
+    ) {
+
+        return [];
+
+    }
+
+
     return Object.keys(
         NEPAL_RATE_SCHEDULES
     );
@@ -455,19 +852,34 @@ function getRateLocations() {
 }
 
 
-function getRateYears(location) {
+function getRateYears(
+    location
+) {
 
     if (
-        !NEPAL_RATE_SCHEDULES[location]
+        !location ||
+        !NEPAL_RATE_SCHEDULES ||
+        !NEPAL_RATE_SCHEDULES[
+            location
+        ]
     ) {
 
         return [];
 
     }
 
-    return Object.keys(
-        NEPAL_RATE_SCHEDULES[location]
-    );
+
+    const years =
+        Object.keys(
+            NEPAL_RATE_SCHEDULES[
+                location
+            ]
+        );
+
+
+    return Array.isArray(years)
+        ? years
+        : [];
 
 }
 
@@ -486,25 +898,43 @@ function getRateSchedule(
 
     }
 
-    const schedule =
+
+    const locationData =
         NEPAL_RATE_SCHEDULES[
             location
-        ] &&
-        NEPAL_RATE_SCHEDULES[
-            location
-        ][year];
+        ];
 
 
-    if (!schedule) {
+    if (
+        !locationData ||
+        typeof locationData !==
+            "object"
+    ) {
 
         return null;
 
     }
 
 
-    // SAFETY FIX:
-    // Always guarantee items is an array.
+    const schedule =
+        locationData[
+            year
+        ];
 
+
+    if (
+        !schedule ||
+        typeof schedule !==
+            "object"
+    ) {
+
+        return null;
+
+    }
+
+
+    // Critical safety fix.
+    // NEVER allow undefined.items.
     if (
         !Array.isArray(
             schedule.items
@@ -521,11 +951,17 @@ function getRateSchedule(
 }
 
 
-function isVerifiedRate(item) {
+function isVerifiedRate(
+    item
+) {
 
     return !!(
         item &&
-        typeof item.rate === "number" &&
+        typeof item.rate ===
+            "number" &&
+        Number.isFinite(
+            item.rate
+        ) &&
         item.rate > 0
     );
 
@@ -556,11 +992,15 @@ function loadProjects() {
     try {
 
         const data =
-            JSON.parse(saved);
+            JSON.parse(
+                saved
+            );
 
 
         projects =
-            Array.isArray(data)
+            Array.isArray(
+                data
+            )
                 ? data
                 : [];
 
@@ -586,10 +1026,23 @@ function loadProjects() {
 
 function saveProjects() {
 
-    localStorage.setItem(
-        "constructionProjects",
-        JSON.stringify(projects)
-    );
+    try {
+
+        localStorage.setItem(
+            "constructionProjects",
+            JSON.stringify(
+                projects
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not save projects:",
+            error
+        );
+
+    }
 
 }
 
@@ -693,6 +1146,17 @@ function displayProjects() {
 
 
     if (
+        !Array.isArray(
+            projects
+        )
+    ) {
+
+        projects = [];
+
+    }
+
+
+    if (
         projects.length === 0
     ) {
 
@@ -748,7 +1212,8 @@ function displayProjects() {
     }
 
 
-    projectList.innerHTML = "";
+    projectList.innerHTML =
+        "";
 
 
     projects.forEach(
@@ -808,7 +1273,8 @@ function displayProjects() {
 
                         <strong>
                             ${escapeHTML(
-                                project.clientName || "—"
+                                project.clientName ||
+                                "—"
                             )}
                         </strong>
 
@@ -822,7 +1288,10 @@ function displayProjects() {
                         </span>
 
                         <strong>
-                            ${project.floors || 0}
+                            ${Number(
+                                project.floors ||
+                                0
+                            )}
                         </strong>
 
                     </div>
@@ -837,7 +1306,8 @@ function displayProjects() {
                         <strong>
 
                             ${Number(
-                                project.totalArea || 0
+                                project.totalArea ||
+                                0
                             ).toLocaleString()}
 
                             sq.ft
@@ -878,11 +1348,15 @@ function displayProjects() {
             );
 
 
-            card
-                .querySelector(
+            const openButton =
+                card.querySelector(
                     ".open-project-button"
-                )
-                .addEventListener(
+                );
+
+
+            if (openButton) {
+
+                openButton.addEventListener(
                     "click",
                     function() {
 
@@ -893,12 +1367,18 @@ function displayProjects() {
                     }
                 );
 
+            }
 
-            card
-                .querySelector(
+
+            const deleteButton =
+                card.querySelector(
                     ".delete-button"
-                )
-                .addEventListener(
+                );
+
+
+            if (deleteButton) {
+
+                deleteButton.addEventListener(
                     "click",
                     function() {
 
@@ -908,6 +1388,8 @@ function displayProjects() {
 
                     }
                 );
+
+            }
 
         }
     );
@@ -919,7 +1401,9 @@ function displayProjects() {
 // OPEN PROJECT
 // ==========================================================
 
-function openProject(id) {
+function openProject(
+    id
+) {
 
     const project =
         projects.find(
@@ -927,7 +1411,9 @@ function openProject(id) {
 
                 return Number(
                     item.id
-                ) === Number(id);
+                ) === Number(
+                    id
+                );
 
             }
         );
@@ -975,6 +1461,7 @@ function openProject(id) {
 
 
     createBOQScreen();
+
 
     loadProjectBOQ(
         project
@@ -1051,7 +1538,9 @@ function loadProjectBOQ(
 ) {
 
     if (
-        Array.isArray(project.boq) &&
+        Array.isArray(
+            project.boq
+        ) &&
         project.boq.length > 0
     ) {
 
@@ -1071,7 +1560,87 @@ function loadProjectBOQ(
     }
 
 
+    // Normalize older saved BOQ items.
+    activeBOQ =
+        normalizeBOQ(
+            activeBOQ
+        );
+
+
     renderBOQ();
+
+}
+
+
+// ==========================================================
+// NORMALIZE BOQ
+// ==========================================================
+
+function normalizeBOQ(
+    boq
+) {
+
+    if (
+        !Array.isArray(
+            boq
+        )
+    ) {
+
+        return [];
+
+    }
+
+
+    return boq.map(
+        function(item, index) {
+
+            const quantity =
+                Number(
+                    item.quantity
+                ) || 0;
+
+
+            const rate =
+                Number(
+                    item.rate
+                ) || 0;
+
+
+            return {
+
+                id:
+                    item.id !==
+                        undefined
+                        ? item.id
+                        : Date.now() +
+                          index,
+
+                category:
+                    item.category ||
+                    "Other",
+
+                item:
+                    item.item ||
+                    "Unnamed item",
+
+                unit:
+                    item.unit ||
+                    "LS",
+
+                quantity:
+                    quantity,
+
+                rate:
+                    rate,
+
+                amount:
+                    quantity *
+                    rate
+
+            };
+
+        }
+    );
 
 }
 
@@ -1080,287 +1649,250 @@ function loadProjectBOQ(
 // DEFAULT BOQ
 // ==========================================================
 
-function getDefaultBOQ(project) {
+function getDefaultBOQ(
+    project
+) {
 
     const area =
-        Number(project.totalArea) || 0;
+        Number(
+            project.totalArea
+        ) || 0;
+
 
     const now =
         Date.now();
 
+
     return [
 
-        // --------------------------------------------------
-        // 1. EARTHWORK
-        // --------------------------------------------------
-
         {
-            id: now + 1,
 
-            category: "Earthwork",
+            id:
+                now + 1,
 
-            item: "Excavation for foundation",
+            category:
+                "Earthwork",
 
-            unit: "cu.ft",
+            item:
+                "Excavation for foundation",
+
+            unit:
+                "cu.ft",
 
             quantity:
-                Math.round(area * 0.12),
+                Math.round(
+                    area * 0.12
+                ),
 
-            rate: 55
+            rate:
+                55,
+
+            amount:
+                0
+
         },
 
 
-        // --------------------------------------------------
-        // 2. CONCRETE
-        // --------------------------------------------------
-
         {
-            id: now + 2,
 
-            category: "Concrete",
+            id:
+                now + 2,
 
-            item: "PCC 1:4:8",
+            category:
+                "Concrete",
 
-            unit: "cu.ft",
+            item:
+                "PCC 1:4:8",
+
+            unit:
+                "cu.ft",
 
             quantity:
-                Math.round(area * 0.08),
+                Math.round(
+                    area * 0.08
+                ),
 
-            rate: 180
+            rate:
+                180,
+
+            amount:
+                0
+
         },
 
 
         {
-            id: now + 3,
 
-            category: "Concrete",
+            id:
+                now + 3,
 
-            item: "RCC work",
+            category:
+                "Concrete",
 
-            unit: "cu.ft",
+            item:
+                "RCC work",
+
+            unit:
+                "cu.ft",
 
             quantity:
-                Math.round(area * 0.35),
+                Math.round(
+                    area * 0.35
+                ),
 
-            rate: 850
+            rate:
+                850,
+
+            amount:
+                0
+
         },
 
 
-        // --------------------------------------------------
-        // 3. REINFORCEMENT
-        // --------------------------------------------------
-
         {
-            id: now + 4,
 
-            category: "Reinforcement",
+            id:
+                now + 4,
 
-            item: "Reinforcement steel",
+            category:
+                "Reinforcement",
 
-            unit: "kg",
+            item:
+                "Reinforcement steel",
+
+            unit:
+                "kg",
 
             quantity:
-                Math.round(area * 4),
+                Math.round(
+                    area * 4
+                ),
 
-            rate: 115
+            rate:
+                115,
+
+            amount:
+                0
+
         },
 
 
-        // --------------------------------------------------
-        // 4. MASONRY
-        // --------------------------------------------------
-
         {
-            id: now + 5,
 
-            category: "Masonry",
+            id:
+                now + 5,
 
-            item: "Brick masonry",
+            category:
+                "Masonry",
 
-            unit: "cu.ft",
+            item:
+                "Brick masonry",
+
+            unit:
+                "cu.ft",
 
             quantity:
-                Math.round(area * 0.25),
+                Math.round(
+                    area * 0.25
+                ),
 
-            rate: 220
+            rate:
+                220,
+
+            amount:
+                0
+
         },
 
 
-        // --------------------------------------------------
-        // 5. PLASTER
-        // --------------------------------------------------
-
         {
-            id: now + 6,
 
-            category: "Plaster",
+            id:
+                now + 6,
 
-            item: "Cement plaster",
+            category:
+                "Plaster",
 
-            unit: "sq.ft",
+            item:
+                "Cement plaster",
+
+            unit:
+                "sq.ft",
 
             quantity:
-                Math.round(area * 1.8),
+                Math.round(
+                    area * 1.8
+                ),
 
-            rate: 65
+            rate:
+                65,
+
+            amount:
+                0
+
         },
 
 
-        // --------------------------------------------------
-        // 6. FLOORING
-        // --------------------------------------------------
-
         {
-            id: now + 7,
 
-            category: "Flooring",
+            id:
+                now + 7,
 
-            item: "Floor tiles",
+            category:
+                "Flooring",
 
-            unit: "sq.ft",
+            item:
+                "Floor tiles",
+
+            unit:
+                "sq.ft",
 
             quantity:
-                Math.round(area),
+                Math.round(
+                    area
+                ),
 
-            rate: 140
+            rate:
+                140,
+
+            amount:
+                0
+
         },
 
 
-        // --------------------------------------------------
-        // 7. PAINTING
-        // --------------------------------------------------
-
         {
-            id: now + 8,
 
-            category: "Painting",
+            id:
+                now + 8,
 
-            item: "Interior & exterior painting",
+            category:
+                "Painting",
 
-            unit: "sq.ft",
+            item:
+                "Interior & exterior painting",
+
+            unit:
+                "sq.ft",
 
             quantity:
-                Math.round(area * 2.5),
+                Math.round(
+                    area * 2.5
+                ),
 
-            rate: 45
-        },
+            rate:
+                45,
 
+            amount:
+                0
 
-        // --------------------------------------------------
-        // 8. PLUMBING
-        // --------------------------------------------------
-
-        {
-            id: now + 9,
-
-            category: "Plumbing",
-
-            item: "Plumbing and sanitary works",
-
-            unit: "LS",
-
-            quantity: 1,
-
-            rate: 0
-        },
-
-
-        // --------------------------------------------------
-        // 9. ELECTRICAL
-        // --------------------------------------------------
-
-        {
-            id: now + 10,
-
-            category: "Electrical",
-
-            item: "Electrical installation",
-
-            unit: "LS",
-
-            quantity: 1,
-
-            rate: 0
-        },
-
-
-        // --------------------------------------------------
-        // 10. DOORS & WINDOWS
-        // --------------------------------------------------
-
-        {
-            id: now + 11,
-
-            category: "Doors & Windows",
-
-            item: "Doors and windows",
-
-            unit: "LS",
-
-            quantity: 1,
-
-            rate: 0
-        },
-
-
-        // --------------------------------------------------
-        // 11. TOOLS & EQUIPMENT
-        // --------------------------------------------------
-
-        {
-            id: now + 12,
-
-            category: "Tools & Equipment",
-
-            item: "Tools and construction equipment",
-
-            unit: "LS",
-
-            quantity: 1,
-
-            rate: 0
-        },
-
-
-        // --------------------------------------------------
-        // 12. CONTINGENCIES
-        // --------------------------------------------------
-
-        {
-            id: now + 13,
-
-            category: "Contingencies",
-
-            item: "Contingencies",
-
-            unit: "%",
-
-            quantity: 1,
-
-            rate: 0
-        },
-
-
-        // --------------------------------------------------
-        // 13. CONTRACTOR'S PROFIT
-        // --------------------------------------------------
-
-        {
-            id: now + 14,
-
-            category: "Contractor's Profit",
-
-            item: "Contractor's profit",
-
-            unit: "%",
-
-            quantity: 1,
-
-            rate: 0
         }
 
     ];
+
 }
+
+
 // ==========================================================
 // SAVE CURRENT BOQ
 // ==========================================================
@@ -1406,18 +1938,29 @@ function saveCurrentBOQ() {
     saveProjects();
 
 
-    localStorage.setItem(
-        "activeProject",
-        JSON.stringify(
-            project
-        )
-    );
+    try {
+
+        localStorage.setItem(
+            "activeProject",
+            JSON.stringify(
+                project
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Could not save active project:",
+            error
+        );
+
+    }
 
 }
 
 
 // ==========================================================
-// ALIAS FOR COMPATIBILITY
+// COMPATIBILITY ALIAS
 // ==========================================================
 
 function saveActiveBOQ() {
@@ -1428,539 +1971,55 @@ function saveActiveBOQ() {
 
 
 // ==========================================================
-// CALCULATE BOQ COST BREAKDOWN
+// CALCULATE BOQ TOTAL
 // ==========================================================
 
 function calculateBOQTotal() {
 
-    if (!Array.isArray(activeBOQ)) {
-        activeBOQ = [];
+    let total =
+        0;
+
+
+    if (
+        !Array.isArray(
+            activeBOQ
+        )
+    ) {
+
+        return 0;
+
     }
 
-    let directCost = 0;
-    let toolsEquipment = 0;
-    let contingencies = 0;
-    let contractorProfit = 0;
+
+    activeBOQ.forEach(
+        function(item) {
+
+            item.quantity =
+                Number(
+                    item.quantity
+                ) || 0;
 
 
-    // ======================================================
-    // CALCULATE NORMAL BOQ ITEMS
-    // ======================================================
-
-    activeBOQ.forEach(function(item) {
-
-        item.quantity =
-            Number(item.quantity) || 0;
-
-        item.rate =
-            Number(item.rate) || 0;
+            item.rate =
+                Number(
+                    item.rate
+                ) || 0;
 
 
-        const category =
-            normalizeText(item.category);
-
-        const itemName =
-            normalizeText(item.item);
+            item.amount =
+                item.quantity *
+                item.rate;
 
 
-        // --------------------------------------------------
-        // CONTINGENCY ITEM
-        // --------------------------------------------------
-
-        if (
-            category === "contingencies" ||
-            itemName === "contingencies"
-        ) {
-            return;
-        }
-
-
-        // --------------------------------------------------
-        // CONTRACTOR PROFIT ITEM
-        // --------------------------------------------------
-
-        if (
-            category === "contractor's profit" ||
-            category === "contractors profit" ||
-            itemName === "contractor's profit" ||
-            itemName === "contractors profit"
-        ) {
-            return;
-        }
-
-
-        // --------------------------------------------------
-        // NORMAL AMOUNT
-        // --------------------------------------------------
-
-        item.amount =
-            item.quantity *
-            item.rate;
-
-
-        // --------------------------------------------------
-        // TOOLS & EQUIPMENT
-        // --------------------------------------------------
-
-        if (
-            category === "tools & equipment" ||
-            category === "tools and equipment" ||
-            itemName.includes(
-                "tools and construction equipment"
-            )
-        ) {
-
-            toolsEquipment +=
+            total +=
                 item.amount;
 
-            return;
         }
+    );
 
 
-        // --------------------------------------------------
-        // DIRECT CONSTRUCTION COST
-        // --------------------------------------------------
+    return total;
 
-        directCost +=
-            item.amount;
-
-    });
-
-
-    // ======================================================
-    // SUBTOTAL
-    // ======================================================
-
-    const subtotal =
-        directCost +
-        toolsEquipment;
-
-
-    // ======================================================
-    // FIND CONTINGENCY
-    // ======================================================
-
-    const contingencyItem =
-        activeBOQ.find(function(item) {
-
-            const category =
-                normalizeText(item.category);
-
-            const itemName =
-                normalizeText(item.item);
-
-            return (
-                category === "contingencies" ||
-                itemName === "contingencies"
-            );
-
-        });
-
-
-    const contingencyRate =
-        contingencyItem
-            ? Number(contingencyItem.rate) || 0
-            : 0;
-
-
-    // Contingency is calculated
-    // as a percentage of subtotal.
-
-    contingencies =
-        subtotal *
-        contingencyRate /
-        100;
-
-
-    if (contingencyItem) {
-
-        contingencyItem.quantity =
-            1;
-
-        contingencyItem.amount =
-            contingencies;
-
-    }
-
-
-    // ======================================================
-    // COST BEFORE CONTRACTOR PROFIT
-    // ======================================================
-
-    const costBeforeProfit =
-        subtotal +
-        contingencies;
-
-
-    // ======================================================
-    // FIND CONTRACTOR PROFIT
-    // ======================================================
-
-    const profitItem =
-        activeBOQ.find(function(item) {
-
-            const category =
-                normalizeText(item.category);
-
-            const itemName =
-                normalizeText(item.item);
-
-            return (
-                category === "contractor's profit" ||
-                category === "contractors profit" ||
-                itemName === "contractor's profit" ||
-                itemName === "contractors profit"
-            );
-
-        });
-
-
-    const profitRate =
-        profitItem
-            ? Number(profitItem.rate) || 0
-            : 0;
-
-
-    // Contractor profit is calculated
-    // after contingency.
-
-    contractorProfit =
-        costBeforeProfit *
-        profitRate /
-        100;
-
-
-    if (profitItem) {
-
-        profitItem.quantity =
-            1;
-
-        profitItem.amount =
-            contractorProfit;
-
-    }
-
-
-    // ======================================================
-    // GRAND TOTAL
-    // ======================================================
-
-    const total =
-        costBeforeProfit +
-        contractorProfit;
-
-
-    // ======================================================
-    // RETURN BREAKDOWN
-    // ======================================================
-
-    return {
-
-        directCost:
-            directCost,
-
-        toolsEquipment:
-            toolsEquipment,
-
-        subtotal:
-            subtotal,
-
-        contingencyRate:
-            contingencyRate,
-
-        contingencies:
-            contingencies,
-
-        costBeforeProfit:
-            costBeforeProfit,
-
-        profitRate:
-            profitRate,
-
-        contractorProfit:
-            contractorProfit,
-
-        total:
-            total
-
-    };
-
-}
-// ==========================================================
-// CATEGORY-WISE BOQ SUMMARY
-// ==========================================================
-
-function calculateCategorySummary() {
-
-    const categories = {};
-
-    if (!Array.isArray(activeBOQ)) {
-        return categories;
-    }
-
-    activeBOQ.forEach(function(item) {
-
-        const category =
-            String(item.category || "Uncategorized").trim() ||
-            "Uncategorized";
-
-        const quantity =
-            Number(item.quantity) || 0;
-
-        const rate =
-            Number(item.rate) || 0;
-
-        const amount =
-            quantity * rate;
-
-        if (!categories[category]) {
-
-            categories[category] = {
-                category: category,
-                itemCount: 0,
-                amount: 0
-            };
-
-        }
-
-        categories[category].itemCount += 1;
-
-        categories[category].amount += amount;
-
-    });
-
-    return categories;
-}
-// ==========================================================
-// MATERIAL / LABOUR / OTHER SUMMARY
-// ==========================================================
-
-function calculateCostTypeSummary() {
-
-    const summary = {
-        Material: 0,
-        Labour: 0,
-        Other: 0
-    };
-
-    if (!Array.isArray(activeBOQ)) {
-        return summary;
-    }
-
-    activeBOQ.forEach(function(item) {
-
-        const amount =
-            Number(item.quantity || 0) *
-            Number(item.rate || 0);
-
-        let type =
-            String(
-                item.costType || "Material"
-            ).trim();
-
-        if (
-            type !== "Material" &&
-            type !== "Labour" &&
-            type !== "Other"
-        ) {
-            type = "Other";
-        }
-
-        summary[type] += amount;
-
-    });
-
-    return summary;
-}
-// ==========================================================
-// RENDER MATERIAL / LABOUR SUMMARY
-// ==========================================================
-
-function renderCostTypeSummary() {
-
-    const container =
-        document.getElementById(
-            "costTypeSummary"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    const summary =
-        calculateCostTypeSummary();
-
-    const total =
-        summary.Material +
-        summary.Labour +
-        summary.Other;
-
-    container.innerHTML = `
-
-        <div class="cost-type-row">
-
-            <span>
-                🧱 Material
-            </span>
-
-            <strong>
-                NPR
-                ${Math.round(
-                    summary.Material
-                ).toLocaleString()}
-            </strong>
-
-        </div>
-
-
-        <div class="cost-type-row">
-
-            <span>
-                👷 Labour
-            </span>
-
-            <strong>
-                NPR
-                ${Math.round(
-                    summary.Labour
-                ).toLocaleString()}
-            </strong>
-
-        </div>
-
-
-        <div class="cost-type-row">
-
-            <span>
-                📦 Other
-            </span>
-
-            <strong>
-                NPR
-                ${Math.round(
-                    summary.Other
-                ).toLocaleString()}
-            </strong>
-
-        </div>
-
-
-        <div class="cost-type-total">
-
-            <strong>
-                TOTAL
-            </strong>
-
-            <strong>
-                NPR
-                ${Math.round(
-                    total
-                ).toLocaleString()}
-            </strong>
-
-        </div>
-
-    `;
-}
-
-// ==========================================================
-// RENDER CATEGORY SUMMARY
-// ==========================================================
-
-function renderCategorySummary() {
-
-    const container =
-        document.getElementById(
-            "categorySummary"
-        );
-
-    if (!container) {
-        return;
-    }
-
-    const categories =
-        calculateCategorySummary();
-
-    const categoryNames =
-        Object.keys(categories);
-
-    if (categoryNames.length === 0) {
-
-        container.innerHTML = `
-            <div class="category-empty">
-                No BOQ categories available.
-            </div>
-        `;
-
-        return;
-    }
-
-    let html = "";
-
-    categoryNames.forEach(function(category) {
-
-        const data =
-            categories[category];
-
-        html += `
-            <div class="category-summary-row">
-
-                <div class="category-summary-name">
-
-                    <strong>
-                        ${escapeHTML(category)}
-                    </strong>
-
-                    <span>
-                        ${data.itemCount}
-                        ${data.itemCount === 1 ? "item" : "items"}
-                    </span>
-
-                </div>
-
-                <div class="category-summary-amount">
-
-                    NPR
-                    ${Math.round(
-                        data.amount
-                    ).toLocaleString()}
-
-                </div>
-
-            </div>
-        `;
-
-    });
-
-    const total =
-        categoryNames.reduce(
-            function(sum, category) {
-
-                return sum +
-                    categories[category].amount;
-
-            },
-            0
-        );
-
-    html += `
-        <div class="category-summary-total">
-
-            <strong>
-                TOTAL
-            </strong>
-
-            <strong>
-                NPR
-                ${Math.round(
-                    total
-                ).toLocaleString()}
-            </strong>
-
-        </div>
-    `;
-
-    container.innerHTML = html;
 }
 
 
@@ -1986,29 +2045,14 @@ function renderBOQ() {
     }
 
 
-    if (!Array.isArray(activeBOQ)) {
-
-        activeBOQ = [];
-
-    }
-
-
-    // ======================================================
-    // CALCULATE COST BREAKDOWN
-    // ======================================================
-
-    const breakdown =
-        calculateBOQTotal();
-
-
-    const total =
-        breakdown.total;
-
-
     const area =
         Number(
             activeProject.totalArea
         ) || 0;
+
+
+    const total =
+        calculateBOQTotal();
 
 
     const costPerSqFt =
@@ -2017,34 +2061,11 @@ function renderBOQ() {
             : 0;
 
 
-    // ======================================================
-    // FORMAT MONEY
-    // ======================================================
-
-    function money(value) {
-
-        return (
-            "NPR " +
-            Math.round(
-                Number(value) || 0
-            ).toLocaleString()
-        );
-
-    }
-
-
-    // ======================================================
-    // SCREEN HTML
-    // ======================================================
-
     screen.innerHTML = `
 
         <div class="boq-container">
 
-
-            <!-- ==================================================
-                 HEADER
-                 ================================================== -->
+            <!-- HEADER -->
 
             <div class="boq-header">
 
@@ -2086,12 +2107,9 @@ function renderBOQ() {
             </div>
 
 
-            <!-- ==================================================
-                 SUMMARY
-                 ================================================== -->
+            <!-- SUMMARY -->
 
             <div class="estimate-summary">
-
 
                 <div class="summary-card">
 
@@ -2116,9 +2134,7 @@ function renderBOQ() {
                     </span>
 
                     <strong>
-
                         ${activeBOQ.length}
-
                     </strong>
 
                 </div>
@@ -2132,9 +2148,10 @@ function renderBOQ() {
 
                     <strong>
 
-                        ${money(
+                        NPR
+                        ${Math.round(
                             costPerSqFt
-                        )}
+                        ).toLocaleString()}
 
                     </strong>
 
@@ -2149,331 +2166,31 @@ function renderBOQ() {
 
                     <strong>
 
-                        ${money(total)}
+                        NPR
+                        ${Math.round(
+                            total
+                        ).toLocaleString()}
 
                     </strong>
 
                 </div>
 
-
             </div>
 
 
-            <!-- ==================================================
-                 COST BREAKDOWN
-                 ================================================== -->
-
-            <div class="cost-breakdown-card">
-
-
-                <div class="cost-breakdown-header">
-
-                    <div>
-
-                        <span class="badge">
-
-                            💰 Cost Breakdown
-
-                        </span>
-
-                        <h3>
-
-                            Project Cost Summary
-
-                        </h3>
-
-                        <p>
-
-                            Clear view of where your
-                            construction budget goes.
-
-                        </p>
-
-                    </div>
-
-
-                    <div class="cost-breakdown-total">
-
-                        <span>
-                            Grand Total
-                        </span>
-
-                        <strong>
-
-                            ${money(total)}
-
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="cost-breakdown-list">
-
-
-                    <!-- DIRECT COST -->
-
-                    <div class="cost-breakdown-row">
-
-                        <div class="cost-row-info">
-
-                            <div class="cost-row-icon">
-                                🧱
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Direct Construction Cost
-                                </strong>
-
-                                <span>
-                                    Materials, labour and
-                                    main BOQ works
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="cost-row-value">
-
-                            ${money(
-                                breakdown.directCost
-                            )}
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- TOOLS -->
-
-                    <div class="cost-breakdown-row">
-
-                        <div class="cost-row-info">
-
-                            <div class="cost-row-icon">
-                                🛠️
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Tools & Equipment
-                                </strong>
-
-                                <span>
-                                    Construction tools
-                                    and equipment
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="cost-row-value">
-
-                            ${money(
-                                breakdown.toolsEquipment
-                            )}
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- SUBTOTAL -->
-
-                    <div class="cost-breakdown-row subtotal-row">
-
-                        <div class="cost-row-info">
-
-                            <div class="cost-row-icon">
-                                📊
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Subtotal
-                                </strong>
-
-                                <span>
-                                    Before contingencies
-                                    and contractor profit
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="cost-row-value">
-
-                            ${money(
-                                breakdown.subtotal
-                            )}
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- CONTINGENCIES -->
-
-                    <div class="cost-breakdown-row">
-
-                        <div class="cost-row-info">
-
-                            <div class="cost-row-icon">
-                                🛡️
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Contingencies
-                                </strong>
-
-                                <span>
-
-                                    ${breakdown.contingencyRate}%
-                                    allowance
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="cost-row-value">
-
-                            ${money(
-                                breakdown.contingencies
-                            )}
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- CONTRACTOR PROFIT -->
-
-                    <div class="cost-breakdown-row">
-
-                        <div class="cost-row-info">
-
-                            <div class="cost-row-icon">
-                                📈
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Contractor's Profit
-                                </strong>
-
-                                <span>
-
-                                    ${breakdown.profitRate}%
-                                    margin
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="cost-row-value">
-
-                            ${money(
-                                breakdown.contractorProfit
-                            )}
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-
-
-                <!-- GRAND TOTAL -->
-
-                <div class="cost-breakdown-grand-total">
-
-                    <div>
-
-                        <span>
-                            TOTAL PROJECT ESTIMATE
-                        </span>
-
-                        <strong>
-                            Grand Total
-                        </strong>
-
-                    </div>
-
-
-                    <strong>
-
-                        ${money(total)}
-
-                    </strong>
-
-                </div>
-
-
-                <div class="cost-breakdown-footer">
-
-                    <span>
-
-                        📐
-                        ${money(costPerSqFt)}
-                        per sq.ft.
-
-                    </span>
-
-
-                    <span>
-
-                        ${area.toLocaleString()}
-                        sq.ft built-up area
-
-                    </span>
-
-                </div>
-
-
-            </div>
-
-
-            <!-- ==================================================
-                 NEPAL RATE SYSTEM
-                 ================================================== -->
+            <!-- NEPAL RATE SYSTEM -->
 
             <div class="nepal-rate-panel">
-
 
                 <div class="rate-panel-header">
 
                     <span class="badge">
-
                         🇳🇵 Nepal Rate System
-
                     </span>
 
 
                     <h3>
-
                         Nepal District Rate System
-
                     </h3>
 
 
@@ -2489,7 +2206,6 @@ function renderBOQ() {
 
 
                 <div class="rate-controls">
-
 
                     <div class="rate-field">
 
@@ -2539,12 +2255,11 @@ function renderBOQ() {
                             BOQ Item
                         </label>
 
-                        <select id="rateItem">
+                        <select
+                            id="rateItem">
 
                             <option value="">
-
                                 Select BOQ item
-
                             </option>
 
                         </select>
@@ -2598,7 +2313,6 @@ function renderBOQ() {
 
                     </div>
 
-
                 </div>
 
 
@@ -2625,16 +2339,12 @@ function renderBOQ() {
 
                 </div>
 
-
             </div>
 
 
-            <!-- ==================================================
-                 BOQ TABLE
-                 ================================================== -->
+            <!-- BOQ -->
 
             <div class="boq-card">
-
 
                 <div class="boq-title">
 
@@ -2668,7 +2378,6 @@ function renderBOQ() {
 
                     <table class="boq-table">
 
-
                         <thead>
 
                             <tr>
@@ -2688,7 +2397,6 @@ function renderBOQ() {
 
 
                         <tbody>
-
 
                             ${
                                 activeBOQ.map(
@@ -2711,7 +2419,9 @@ function renderBOQ() {
                                                     <input
                                                         class="boq-input"
                                                         data-field="category"
-                                                        data-id="${item.id}"
+                                                        data-id="${escapeAttribute(
+                                                            item.id
+                                                        )}"
                                                         value="${escapeAttribute(
                                                             item.category
                                                         )}"
@@ -2725,7 +2435,9 @@ function renderBOQ() {
                                                     <input
                                                         class="boq-input item-input"
                                                         data-field="item"
-                                                        data-id="${item.id}"
+                                                        data-id="${escapeAttribute(
+                                                            item.id
+                                                        )}"
                                                         value="${escapeAttribute(
                                                             item.item
                                                         )}"
@@ -2739,7 +2451,9 @@ function renderBOQ() {
                                                     <input
                                                         class="boq-input unit-input"
                                                         data-field="unit"
-                                                        data-id="${item.id}"
+                                                        data-id="${escapeAttribute(
+                                                            item.id
+                                                        )}"
                                                         value="${escapeAttribute(
                                                             item.unit
                                                         )}"
@@ -2756,7 +2470,9 @@ function renderBOQ() {
                                                         step="0.01"
                                                         class="boq-input number-input"
                                                         data-field="quantity"
-                                                        data-id="${item.id}"
+                                                        data-id="${escapeAttribute(
+                                                            item.id
+                                                        )}"
                                                         value="${item.quantity}"
                                                     >
 
@@ -2771,7 +2487,9 @@ function renderBOQ() {
                                                         step="0.01"
                                                         class="boq-input number-input"
                                                         data-field="rate"
-                                                        data-id="${item.id}"
+                                                        data-id="${escapeAttribute(
+                                                            item.id
+                                                        )}"
                                                         value="${item.rate}"
                                                     >
 
@@ -2782,11 +2500,15 @@ function renderBOQ() {
 
                                                     <strong
                                                         class="amount-cell"
-                                                        data-amount-id="${item.id}">
+                                                        data-amount-id="${escapeAttribute(
+                                                            item.id
+                                                        )}">
 
-                                                        ${money(
-                                                            item.amount || 0
-                                                        )}
+                                                        NPR
+                                                        ${Math.round(
+                                                            item.amount ||
+                                                            0
+                                                        ).toLocaleString()}
 
                                                     </strong>
 
@@ -2798,7 +2520,9 @@ function renderBOQ() {
                                                     <button
                                                         type="button"
                                                         class="delete-boq-button"
-                                                        data-delete-boq="${item.id}">
+                                                        data-delete-boq="${escapeAttribute(
+                                                            item.id
+                                                        )}">
 
                                                         🗑️
 
@@ -2843,7 +2567,6 @@ function renderBOQ() {
                                     : ""
                             }
 
-
                         </tbody>
 
 
@@ -2864,14 +2587,16 @@ function renderBOQ() {
                                     colspan="2"
                                     class="total-value">
 
-                                    ${money(total)}
+                                    NPR
+                                    ${Math.round(
+                                        total
+                                    ).toLocaleString()}
 
                                 </td>
 
                             </tr>
 
                         </tfoot>
-
 
                     </table>
 
@@ -2880,14 +2605,11 @@ function renderBOQ() {
             </div>
 
 
-            <!-- ==================================================
-                 CUSTOM BOQ FORM
-                 ================================================== -->
+            <!-- CUSTOM BOQ FORM -->
 
             <div
                 id="addBOQForm"
                 class="add-boq-form hidden">
-
 
                 <h3>
                     Add Custom BOQ Item
@@ -2895,7 +2617,6 @@ function renderBOQ() {
 
 
                 <div class="add-boq-grid">
-
 
                     <div>
 
@@ -3009,12 +2730,10 @@ function renderBOQ() {
 
                     </div>
 
-
                 </div>
 
 
                 <div class="add-boq-actions">
-
 
                     <button
                         type="button"
@@ -3035,16 +2754,10 @@ function renderBOQ() {
 
                     </button>
 
-
                 </div>
-
 
             </div>
 
-
-            <!-- ==================================================
-                 NOTE
-                 ================================================== -->
 
             <div class="boq-note">
 
@@ -3058,278 +2771,18 @@ function renderBOQ() {
 
             </div>
 
-
         </div>
 
     `;
 
 
-    // ======================================================
-    // INITIALIZE
-    // ======================================================
-
     initializeRateSystem();
+
 
     attachBOQEvents();
 
 }
-// ==========================================================
-// COST BREAKDOWN EVENTS
-// ==========================================================
 
-function attachCostBreakdownEvents() {
-
-    const toolsInput =
-        document.getElementById(
-            "toolsPercent"
-        );
-
-    const contingencyInput =
-        document.getElementById(
-            "contingencyPercent"
-        );
-
-    const profitInput =
-        document.getElementById(
-            "profitPercent"
-        );
-
-
-    function updateCostBreakdown() {
-
-        if (!activeProject) {
-            return;
-        }
-
-
-        const directCost =
-            calculateBOQTotal();
-
-
-        const toolsPercent =
-            Math.max(
-                0,
-                Number(
-                    toolsInput?.value
-                ) || 0
-            );
-
-
-        const contingencyPercent =
-            Math.max(
-                0,
-                Number(
-                    contingencyInput?.value
-                ) || 0
-            );
-
-
-        const profitPercent =
-            Math.max(
-                0,
-                Number(
-                    profitInput?.value
-                ) || 0
-            );
-
-
-        // --------------------------------------------------
-        // CALCULATIONS
-        // --------------------------------------------------
-
-        const toolsCost =
-            directCost *
-            toolsPercent /
-            100;
-
-
-        const contingencyCost =
-            directCost *
-            contingencyPercent /
-            100;
-
-
-        const subtotal =
-            directCost +
-            toolsCost +
-            contingencyCost;
-
-
-        const profitCost =
-            directCost *
-            profitPercent /
-            100;
-
-
-        const grandTotal =
-            subtotal +
-            profitCost;
-
-
-        const area =
-            Number(
-                activeProject.totalArea
-            ) || 0;
-
-
-        const costPerSqFt =
-            area > 0
-                ? grandTotal / area
-                : 0;
-
-
-        // --------------------------------------------------
-        // SAVE
-        // --------------------------------------------------
-
-        activeProject.costSettings = {
-
-            toolsPercent:
-                toolsPercent,
-
-            contingencyPercent:
-                contingencyPercent,
-
-            profitPercent:
-                profitPercent
-
-        };
-
-
-        saveCurrentBOQ();
-
-
-        // --------------------------------------------------
-        // UPDATE DOM
-        // --------------------------------------------------
-
-        setText(
-            "toolsCost",
-            "NPR " +
-            Math.round(
-                toolsCost
-            ).toLocaleString()
-        );
-
-
-        setText(
-            "contingencyCost",
-            "NPR " +
-            Math.round(
-                contingencyCost
-            ).toLocaleString()
-        );
-
-
-        setText(
-            "subtotalCost",
-            "NPR " +
-            Math.round(
-                subtotal
-            ).toLocaleString()
-        );
-
-
-        setText(
-            "profitCost",
-            "NPR " +
-            Math.round(
-                profitCost
-            ).toLocaleString()
-        );
-
-
-        setText(
-            "costBreakdownGrandTotal",
-            "NPR " +
-            Math.round(
-                grandTotal
-            ).toLocaleString()
-        );
-
-
-        setText(
-            "breakdownGrandTotal",
-            "NPR " +
-            Math.round(
-                grandTotal
-            ).toLocaleString()
-        );
-
-
-        setText(
-            "summaryGrandTotal",
-            "NPR " +
-            Math.round(
-                grandTotal
-            ).toLocaleString()
-        );
-
-
-        setText(
-            "summaryCostPerSqFt",
-            "NPR " +
-            Math.round(
-                costPerSqFt
-            ).toLocaleString()
-        );
-
-    }
-
-
-    if (toolsInput) {
-
-        toolsInput.addEventListener(
-            "input",
-            updateCostBreakdown
-        );
-
-    }
-
-
-    if (contingencyInput) {
-
-        contingencyInput.addEventListener(
-            "input",
-            updateCostBreakdown
-        );
-
-    }
-
-
-    if (profitInput) {
-
-        profitInput.addEventListener(
-            "input",
-            updateCostBreakdown
-        );
-
-    }
-
-}
-
-
-// ==========================================================
-// SET TEXT HELPER
-// ==========================================================
-
-function setText(
-    id,
-    value
-) {
-
-    const element =
-        document.getElementById(id);
-
-
-    if (element) {
-
-        element.textContent =
-            value;
-
-    }
-
-}
 
 // ==========================================================
 // INITIALIZE RATE SYSTEM
@@ -3342,36 +2795,30 @@ function initializeRateSystem() {
             "rateLocation"
         );
 
-
     const yearSelect =
         document.getElementById(
             "rateYear"
         );
-
 
     const itemSelect =
         document.getElementById(
             "rateItem"
         );
 
-
     const unitInput =
         document.getElementById(
             "rateUnit"
         );
-
 
     const rateInput =
         document.getElementById(
             "rateValue"
         );
 
-
     const sourceInput =
         document.getElementById(
             "rateSource"
         );
-
 
     const status =
         document.getElementById(
@@ -3397,14 +2844,42 @@ function initializeRateSystem() {
 
 
     // ------------------------------------------------------
-    // DISTRICTS
+    // LOAD LOCATIONS
     // ------------------------------------------------------
 
-    locationSelect.innerHTML = "";
+    locationSelect.innerHTML =
+        "";
 
 
-    const locations =
-        getRateLocations();
+    let locations = [];
+
+
+    try {
+
+        locations =
+            getRateLocations();
+
+    } catch (error) {
+
+        console.error(
+            "Rate locations error:",
+            error
+        );
+
+        locations = [];
+
+    }
+
+
+    if (
+        !Array.isArray(
+            locations
+        )
+    ) {
+
+        locations = [];
+
+    }
 
 
     locations.forEach(
@@ -3433,26 +2908,35 @@ function initializeRateSystem() {
 
 
     // ------------------------------------------------------
-    // LOAD YEARS
+    // ADD CURRENT BOQ OPTIONS
     // ------------------------------------------------------
 
-    function loadYears() {
+    function addCurrentBOQOptions() {
 
-        const location =
-            locationSelect.value;
+        if (
+            !Array.isArray(
+                activeBOQ
+            ) ||
+            activeBOQ.length === 0
+        ) {
+
+            return;
+
+        }
 
 
-        yearSelect.innerHTML = "";
-
-
-        const years =
-            getRateYears(
-                location
+        const group =
+            document.createElement(
+                "optgroup"
             );
 
 
-        years.forEach(
-            function(year) {
+        group.label =
+            "📋 Current BOQ Items";
+
+
+        activeBOQ.forEach(
+            function(item) {
 
                 const option =
                     document.createElement(
@@ -3461,14 +2945,15 @@ function initializeRateSystem() {
 
 
                 option.value =
-                    year;
+                    "boq:" +
+                    item.id;
 
 
                 option.textContent =
-                    year;
+                    `${item.category || "Other"} — ${item.item || "Unnamed item"}`;
 
 
-                yearSelect.appendChild(
+                group.appendChild(
                     option
                 );
 
@@ -3476,7 +2961,9 @@ function initializeRateSystem() {
         );
 
 
-        loadSchedule();
+        itemSelect.appendChild(
+            group
+        );
 
     }
 
@@ -3511,6 +2998,10 @@ function initializeRateSystem() {
         `;
 
 
+        // Always add current BOQ first.
+        addCurrentBOQOptions();
+
+
         if (!schedule) {
 
             if (sourceInput) {
@@ -3528,8 +3019,6 @@ function initializeRateSystem() {
 
             }
 
-
-            addCustomBOQOptions();
 
             return;
 
@@ -3554,15 +3043,16 @@ function initializeRateSystem() {
 
 
         // --------------------------------------------------
-        // CURRENT BOQ ITEMS
+        // CRITICAL SAFETY CHECK
         // --------------------------------------------------
 
-        addCustomBOQOptions();
+        const items =
+            Array.isArray(
+                schedule.items
+            )
+                ? schedule.items
+                : [];
 
-
-        // --------------------------------------------------
-        // REFERENCE RATE ITEMS
-        // --------------------------------------------------
 
         const referenceGroup =
             document.createElement(
@@ -3574,8 +3064,19 @@ function initializeRateSystem() {
             "🇳🇵 Nepal Reference Rates";
 
 
-        schedule.items.forEach(
+        items.forEach(
             function(item, index) {
+
+                if (
+                    !item ||
+                    typeof item !==
+                        "object"
+                ) {
+
+                    return;
+
+                }
+
 
                 const option =
                     document.createElement(
@@ -3584,11 +3085,12 @@ function initializeRateSystem() {
 
 
                 option.value =
-                    "rate:" + index;
+                    "rate:" +
+                    index;
 
 
                 option.textContent =
-                    `${item.category} — ${item.description}`;
+                    `${item.category || "Other"} — ${item.description || "Unnamed rate"}`;
 
 
                 referenceGroup.appendChild(
@@ -3599,43 +3101,69 @@ function initializeRateSystem() {
         );
 
 
-        itemSelect.appendChild(
-            referenceGroup
-        );
+        if (
+            referenceGroup.children.length >
+            0
+        ) {
+
+            itemSelect.appendChild(
+                referenceGroup
+            );
+
+        }
 
     }
 
 
     // ------------------------------------------------------
-    // ADD CURRENT BOQ ITEMS
+    // LOAD YEARS
     // ------------------------------------------------------
 
-    function addCustomBOQOptions() {
+    function loadYears() {
 
-        if (
-            !Array.isArray(
-                activeBOQ
-            ) ||
-            activeBOQ.length === 0
-        ) {
+        const location =
+            locationSelect.value;
 
-            return;
+
+        yearSelect.innerHTML =
+            "";
+
+
+        let years = [];
+
+
+        try {
+
+            years =
+                getRateYears(
+                    location
+                );
+
+        } catch (error) {
+
+            console.error(
+                "Rate years error:",
+                error
+            );
+
+            years = [];
 
         }
 
 
-        const boqGroup =
-            document.createElement(
-                "optgroup"
-            );
+        if (
+            !Array.isArray(
+                years
+            )
+        ) {
+
+            years = [];
+
+        }
 
 
-        boqGroup.label =
-            "📋 Current BOQ Items";
-
-
-        activeBOQ.forEach(
-            function(item) {
+        years.forEach(
+            function(year) {
 
                 const option =
                     document.createElement(
@@ -3644,14 +3172,14 @@ function initializeRateSystem() {
 
 
                 option.value =
-                    "boq:" + item.id;
+                    year;
 
 
                 option.textContent =
-                    `${item.category || "Custom"} — ${item.item || "Unnamed item"}`;
+                    year;
 
 
-                boqGroup.appendChild(
+                yearSelect.appendChild(
                     option
                 );
 
@@ -3659,15 +3187,13 @@ function initializeRateSystem() {
         );
 
 
-        itemSelect.appendChild(
-            boqGroup
-        );
+        loadSchedule();
 
     }
 
 
     // ------------------------------------------------------
-    // ITEM SELECTED
+    // ITEM CHANGE
     // ------------------------------------------------------
 
     itemSelect.addEventListener(
@@ -3688,10 +3214,6 @@ function initializeRateSystem() {
 
             rateInput.readOnly =
                 false;
-
-
-            rateInput.placeholder =
-                "Enter rate";
 
 
             if (!value) {
@@ -3719,7 +3241,9 @@ function initializeRateSystem() {
             ) {
 
                 const id =
-                    value.substring(4);
+                    value.substring(
+                        4
+                    );
 
 
                 const boqItem =
@@ -3728,7 +3252,9 @@ function initializeRateSystem() {
 
                             return String(
                                 item.id
-                            ) === String(id);
+                            ) === String(
+                                id
+                            );
 
                         }
                     );
@@ -3742,11 +3268,13 @@ function initializeRateSystem() {
 
 
                 unitInput.value =
-                    boqItem.unit || "";
+                    boqItem.unit ||
+                    "";
 
 
                 rateInput.value =
-                    boqItem.rate || "";
+                    boqItem.rate ||
+                    "";
 
 
                 rateInput.readOnly =
@@ -3778,7 +3306,9 @@ function initializeRateSystem() {
 
                 const index =
                     Number(
-                        value.substring(5)
+                        value.substring(
+                            5
+                        )
                     );
 
 
@@ -3794,7 +3324,9 @@ function initializeRateSystem() {
                     !Array.isArray(
                         schedule.items
                     ) ||
-                    !schedule.items[index]
+                    !schedule.items[
+                        index
+                    ]
                 ) {
 
                     return;
@@ -3803,15 +3335,19 @@ function initializeRateSystem() {
 
 
                 const item =
-                    schedule.items[index];
+                    schedule.items[
+                        index
+                    ];
 
 
                 unitInput.value =
-                    item.unit || "";
+                    item.unit ||
+                    "";
 
 
                 rateInput.value =
-                    typeof item.rate === "number"
+                    typeof item.rate ===
+                        "number"
                         ? item.rate
                         : "";
 
@@ -3834,7 +3370,7 @@ function initializeRateSystem() {
 
 
     // ------------------------------------------------------
-    // DISTRICT CHANGE
+    // LOCATION CHANGE
     // ------------------------------------------------------
 
     locationSelect.addEventListener(
@@ -3862,7 +3398,7 @@ function initializeRateSystem() {
 
 
     // ------------------------------------------------------
-    // APPLY RATE
+    // APPLY BUTTON
     // ------------------------------------------------------
 
     const applyButton =
@@ -3953,7 +3489,9 @@ function applySelectedRate() {
 
 
     if (
-        !Number.isFinite(rate) ||
+        !Number.isFinite(
+            rate
+        ) ||
         rate <= 0
     ) {
 
@@ -3981,7 +3519,9 @@ function applySelectedRate() {
     ) {
 
         const id =
-            selected.substring(4);
+            selected.substring(
+                4
+            );
 
 
         const boqItem =
@@ -3990,7 +3530,9 @@ function applySelectedRate() {
 
                     return String(
                         item.id
-                    ) === String(id);
+                    ) === String(
+                        id
+                    );
 
                 }
             );
@@ -4021,7 +3563,8 @@ function applySelectedRate() {
 
         boqItem.amount =
             Number(
-                boqItem.quantity || 0
+                boqItem.quantity ||
+                0
             ) *
             rate;
 
@@ -4049,20 +3592,44 @@ function applySelectedRate() {
 
         const index =
             Number(
-                selected.substring(5)
+                selected.substring(
+                    5
+                )
             );
 
 
-        const location =
+        const locationElement =
             document.getElementById(
                 "rateLocation"
-            ).value;
+            );
+
+
+        const yearElement =
+            document.getElementById(
+                "rateYear"
+            );
+
+
+        if (
+            !locationElement ||
+            !yearElement
+        ) {
+
+            alert(
+                "Rate schedule controls could not be found."
+            );
+
+            return;
+
+        }
+
+
+        const location =
+            locationElement.value;
 
 
         const year =
-            document.getElementById(
-                "rateYear"
-            ).value;
+            yearElement.value;
 
 
         const schedule =
@@ -4077,7 +3644,9 @@ function applySelectedRate() {
             !Array.isArray(
                 schedule.items
             ) ||
-            !schedule.items[index]
+            !schedule.items[
+                index
+            ]
         ) {
 
             alert(
@@ -4090,11 +3659,13 @@ function applySelectedRate() {
 
 
         const referenceItem =
-            schedule.items[index];
+            schedule.items[
+                index
+            ];
 
 
         // --------------------------------------------------
-        // TRY DESCRIPTION MATCH
+        // EXACT DESCRIPTION MATCH
         // --------------------------------------------------
 
         let matchingItem =
@@ -4113,7 +3684,7 @@ function applySelectedRate() {
 
 
         // --------------------------------------------------
-        // TRY PARTIAL DESCRIPTION
+        // PARTIAL DESCRIPTION MATCH
         // --------------------------------------------------
 
         if (!matchingItem) {
@@ -4134,6 +3705,16 @@ function applySelectedRate() {
                             );
 
 
+                        if (
+                            !boqText ||
+                            !rateText
+                        ) {
+
+                            return false;
+
+                        }
+
+
                         return (
                             boqText.includes(
                                 rateText
@@ -4150,7 +3731,7 @@ function applySelectedRate() {
 
 
         // --------------------------------------------------
-        // TRY CATEGORY
+        // CATEGORY MATCH
         // --------------------------------------------------
 
         if (!matchingItem) {
@@ -4198,7 +3779,8 @@ function applySelectedRate() {
 
         matchingItem.amount =
             Number(
-                matchingItem.quantity || 0
+                matchingItem.quantity ||
+                0
             ) *
             rate;
 
@@ -4405,9 +3987,7 @@ function updateBOQItem(
 ) {
 
     const id =
-        Number(
-            input.dataset.id
-        );
+        input.dataset.id;
 
 
     const field =
@@ -4418,9 +3998,11 @@ function updateBOQItem(
         activeBOQ.find(
             function(boqItem) {
 
-                return Number(
+                return String(
                     boqItem.id
-                ) === id;
+                ) === String(
+                    id
+                );
 
             }
         );
@@ -4453,10 +4035,12 @@ function updateBOQItem(
 
     item.amount =
         Number(
-            item.quantity || 0
+            item.quantity ||
+            0
         ) *
         Number(
-            item.rate || 0
+            item.rate ||
+            0
         );
 
 
@@ -4465,7 +4049,7 @@ function updateBOQItem(
 
     const amountCell =
         document.querySelector(
-            `[data-amount-id="${id}"]`
+            `[data-amount-id="${CSS.escape(String(id))}"]`
         );
 
 
@@ -4480,9 +4064,7 @@ function updateBOQItem(
     }
 
 
-   updateBOQSummary();
-
-renderCategorySummary(); 
+    updateBOQSummary();
 
 }
 
@@ -4493,7 +4075,8 @@ renderCategorySummary();
 
 function updateBOQSummary() {
 
-    let total = 0;
+    let total =
+        0;
 
 
     activeBOQ.forEach(
@@ -4501,10 +4084,12 @@ function updateBOQSummary() {
 
             total +=
                 Number(
-                    item.quantity || 0
+                    item.quantity ||
+                    0
                 ) *
                 Number(
-                    item.rate || 0
+                    item.rate ||
+                    0
                 );
 
         }
@@ -4513,6 +4098,7 @@ function updateBOQSummary() {
 
     const area =
         Number(
+            activeProject &&
             activeProject.totalArea
         ) || 0;
 
@@ -4564,7 +4150,7 @@ function updateBOQSummary() {
             ).toLocaleString();
 
     }
-renderCategorySummary();
+
 }
 
 
@@ -4690,7 +4276,8 @@ function addCustomBOQItem() {
         id:
             Date.now() +
             Math.floor(
-                Math.random() * 1000
+                Math.random() *
+                1000
             ),
 
         category:
@@ -4737,7 +4324,9 @@ function deleteBOQItem(
 
                 return Number(
                     boqItem.id
-                ) === Number(id);
+                ) === Number(
+                    id
+                );
 
             }
         );
@@ -4771,7 +4360,9 @@ function deleteBOQItem(
 
                 return Number(
                     boqItem.id
-                ) !== Number(id);
+                ) !== Number(
+                    id
+                );
 
             }
         );
@@ -4799,7 +4390,9 @@ function deleteProject(
 
                 return Number(
                     item.id
-                ) === Number(id);
+                ) === Number(
+                    id
+                );
 
             }
         );
@@ -4833,10 +4426,28 @@ function deleteProject(
 
                 return Number(
                     item.id
-                ) !== Number(id);
+                ) !== Number(
+                    id
+                );
 
             }
         );
+
+
+    if (
+        activeProject &&
+        Number(
+            activeProject.id
+        ) === Number(id)
+    ) {
+
+        activeProject =
+            null;
+
+        activeBOQ =
+            [];
+
+    }
 
 
     saveProjects();
@@ -4877,7 +4488,8 @@ function calculateArea() {
 
 
     const total =
-        floors * area;
+        floors *
+        area;
 
 
     totalArea.textContent =
@@ -4920,49 +4532,64 @@ if (projectForm) {
             event.preventDefault();
 
 
+            const projectNameElement =
+                document.getElementById(
+                    "projectName"
+                );
+
+
+            const clientNameElement =
+                document.getElementById(
+                    "clientName"
+                );
+
+
+            const locationElement =
+                document.getElementById(
+                    "location"
+                );
+
+
+            const buildingTypeElement =
+                document.getElementById(
+                    "buildingType"
+                );
+
+
             const projectName =
-                document
-                    .getElementById(
-                        "projectName"
-                    )
-                    .value
-                    .trim();
+                projectNameElement
+                    ? projectNameElement.value.trim()
+                    : "";
 
 
             const clientName =
-                document
-                    .getElementById(
-                        "clientName"
-                    )
-                    .value
-                    .trim();
+                clientNameElement
+                    ? clientNameElement.value.trim()
+                    : "";
 
 
             const location =
-                document
-                    .getElementById(
-                        "location"
-                    )
-                    .value
-                    .trim();
+                locationElement
+                    ? locationElement.value.trim()
+                    : "";
 
 
             const buildingType =
-                document
-                    .getElementById(
-                        "buildingType"
-                    )
-                    .value;
+                buildingTypeElement
+                    ? buildingTypeElement.value
+                    : "";
 
 
             const floors =
                 Number(
+                    floorsInput &&
                     floorsInput.value
                 );
 
 
             const area =
                 Number(
+                    areaInput &&
                     areaInput.value
                 );
 
@@ -4990,7 +4617,9 @@ if (projectForm) {
 
 
             if (
-                !floors ||
+                !Number.isFinite(
+                    floors
+                ) ||
                 floors <= 0
             ) {
 
@@ -5004,7 +4633,9 @@ if (projectForm) {
 
 
             if (
-                !area ||
+                !Number.isFinite(
+                    area
+                ) ||
                 area <= 0
             ) {
 
@@ -5041,7 +4672,8 @@ if (projectForm) {
                     area,
 
                 totalArea:
-                    floors * area,
+                    floors *
+                    area,
 
                 boq:
                     []
@@ -5128,7 +4760,7 @@ connectButton(
 
 
 // ==========================================================
-// SECURITY
+// SECURITY - HTML
 // ==========================================================
 
 function escapeHTML(
@@ -5142,7 +4774,10 @@ function escapeHTML(
 
 
     div.textContent =
-        value || "";
+        value === undefined ||
+        value === null
+            ? ""
+            : String(value);
 
 
     return div.innerHTML;
@@ -5150,12 +4785,19 @@ function escapeHTML(
 }
 
 
+// ==========================================================
+// SECURITY - ATTRIBUTE
+// ==========================================================
+
 function escapeAttribute(
     value
 ) {
 
     return String(
-        value || ""
+        value === undefined ||
+        value === null
+            ? ""
+            : value
     )
         .replace(
             /&/g,
@@ -5164,6 +4806,10 @@ function escapeAttribute(
         .replace(
             /"/g,
             "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#39;"
         )
         .replace(
             /</g,
@@ -5202,340 +4848,23 @@ function normalizeText(
 // START APP
 // ==========================================================
 
+initializeTheme();
+
+
 loadProjects();
 
+
 displayProjects();
+
+
+removeOldBottomBranding();
+
 
 console.log(
     "Nepal Construction Estimator loaded successfully."
 );
-// ==========================================================
-// DAY / NIGHT / THEME SYSTEM
-// ==========================================================
 
-(function initializeThemeSystem() {
 
-    const dayButton =
-        document.getElementById(
-            "dayModeBtn"
-        );
-
-    const nightButton =
-        document.getElementById(
-            "nightModeBtn"
-        );
-
-    const themeButton =
-        document.getElementById(
-            "themeBtn"
-        );
-
-
-    if (
-        !dayButton &&
-        !nightButton &&
-        !themeButton
-    ) {
-
-        return;
-
-    }
-
-
-    // ------------------------------------------------------
-    // APPLY MODE
-    // ------------------------------------------------------
-
-    function applyMode(mode) {
-
-        if (mode === "night") {
-
-            document.body.classList.add(
-                "dark-mode"
-            );
-
-        } else {
-
-            document.body.classList.remove(
-                "dark-mode"
-            );
-
-        }
-
-
-        updateButtons(
-            mode
-        );
-
-
-        localStorage.setItem(
-            "estimatorThemeMode",
-            mode
-        );
-
-    }
-
-
-    // ------------------------------------------------------
-    // UPDATE BUTTON STATES
-    // ------------------------------------------------------
-
-    function updateButtons(mode) {
-
-        if (dayButton) {
-
-            dayButton.classList.toggle(
-                "active",
-                mode === "day"
-            );
-
-        }
-
-
-        if (nightButton) {
-
-            nightButton.classList.toggle(
-                "active",
-                mode === "night"
-            );
-
-        }
-
-    }
-
-
-    // ------------------------------------------------------
-    // DAY
-    // ------------------------------------------------------
-
-    if (dayButton) {
-
-        dayButton.addEventListener(
-            "click",
-            function() {
-
-                applyMode(
-                    "day"
-                );
-
-
-                dayButton.classList.add(
-                    "theme-click"
-                );
-
-
-                setTimeout(
-                    function() {
-
-                        dayButton.classList.remove(
-                            "theme-click"
-                        );
-
-                    },
-                    350
-                );
-
-            }
-        );
-
-    }
-
-
-    // ------------------------------------------------------
-    // NIGHT
-    // ------------------------------------------------------
-
-    if (nightButton) {
-
-        nightButton.addEventListener(
-            "click",
-            function() {
-
-                applyMode(
-                    "night"
-                );
-
-
-                nightButton.classList.add(
-                    "theme-click"
-                );
-
-
-                setTimeout(
-                    function() {
-
-                        nightButton.classList.remove(
-                            "theme-click"
-                        );
-
-                    },
-                    350
-                );
-
-            }
-        );
-
-    }
-
-
-    // ------------------------------------------------------
-    // THEME COLORS
-    // ------------------------------------------------------
-
-    const themes = [
-
-        {
-            primary: "#2563eb",
-            dark: "#1d4ed8",
-            accent: "#7c3aed"
-        },
-
-        {
-            primary: "#059669",
-            dark: "#047857",
-            accent: "#14b8a6"
-        },
-
-        {
-            primary: "#ea580c",
-            dark: "#c2410c",
-            accent: "#f59e0b"
-        },
-
-        {
-            primary: "#db2777",
-            dark: "#be185d",
-            accent: "#9333ea"
-        },
-
-        {
-            primary: "#0891b2",
-            dark: "#0e7490",
-            accent: "#2563eb"
-        }
-
-    ];
-
-
-    let currentTheme =
-        Number(
-            localStorage.getItem(
-                "estimatorThemeColor"
-            )
-        );
-
-
-    if (
-        !Number.isFinite(
-            currentTheme
-        )
-    ) {
-
-        currentTheme = 0;
-
-    }
-
-
-    function applyColorTheme(index) {
-
-        const theme =
-            themes[index];
-
-
-        if (!theme) {
-
-            return;
-
-        }
-
-
-        document.documentElement.style.setProperty(
-            "--theme-primary",
-            theme.primary
-        );
-
-
-        document.documentElement.style.setProperty(
-            "--theme-primary-dark",
-            theme.dark
-        );
-
-
-        document.documentElement.style.setProperty(
-            "--theme-accent",
-            theme.accent
-        );
-
-
-        localStorage.setItem(
-            "estimatorThemeColor",
-            String(index)
-        );
-
-    }
-
-
-    // ------------------------------------------------------
-    // THEME BUTTON
-    // ------------------------------------------------------
-
-    if (themeButton) {
-
-        themeButton.addEventListener(
-            "click",
-            function() {
-
-                currentTheme =
-                    (
-                        currentTheme + 1
-                    ) %
-                    themes.length;
-
-
-                applyColorTheme(
-                    currentTheme
-                );
-
-
-                themeButton.classList.add(
-                    "theme-click"
-                );
-
-
-                setTimeout(
-                    function() {
-
-                        themeButton.classList.remove(
-                            "theme-click"
-                        );
-
-                    },
-                    350
-                );
-
-            }
-        );
-
-    }
-
-
-    // ------------------------------------------------------
-    // INITIALIZE
-    // ------------------------------------------------------
-
-    const savedMode =
-        localStorage.getItem(
-            "estimatorThemeMode"
-        ) || "day";
-
-
-    applyMode(
-        savedMode
-    );
-
-
-    applyColorTheme(
-        currentTheme
-    );
-
-})();
+console.log(
+    "Day/Night theme system loaded successfully."
+);
