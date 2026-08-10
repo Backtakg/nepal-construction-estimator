@@ -1,291 +1,449 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-   <a
-    href="#"
-    class="brand-link"
-    aria-label="Construction Estimator Home"
->
+    <meta charset="UTF-8">
 
-    <span class="brand-logo">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
+    <meta
+        name="theme-color"
+        content="#0b0d12"
+    >
 
-            <path
-                d="M4 20V9L12 4L20 9V20"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            />
+    <meta
+        name="description"
+        content="Modern construction BOQ and cost estimation tool."
+    >
 
-            <path
-                d="M8 20V13H16V20"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            />
+    <title>Construction Estimator</title>
 
-            <path
-                d="M9 9H15"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-            />
-
-        </svg>
-
-    </span>
-
-    <span class="brand-name">
-        Nepal Construction Estimator
-    </span>
-
-</a>
+    <link rel="stylesheet" href="style.css">
+</head>
 
 <body>
 
-    <header class="top-header">
-        <div class="header-container">
+<!-- ======================================================
+     BACKGROUND
+====================================================== -->
 
-            <div class="brand">
-                <div class="brand-icon">🏗️</div>
+<div class="ambient ambient-one"></div>
+<div class="ambient ambient-two"></div>
+<div class="ambient ambient-three"></div>
 
-                <div>
-                    <h1>Nepal Construction Estimator</h1>
-                    <p>BOQ & Construction Cost Estimation</p>
-                </div>
+<!-- ======================================================
+     HEADER
+====================================================== -->
+
+<header class="site-header">
+
+    <a
+        href="#"
+        class="brand"
+        onclick="showDashboard(); return false;"
+        aria-label="Construction Estimator Home"
+    >
+
+        <span class="brand-logo">
+
+            <span class="brand-logo-top">N</span>
+
+            <span class="brand-logo-line"></span>
+
+            <span class="brand-logo-bottom">CE</span>
+
+        </span>
+
+        <span class="brand-text">
+
+            <strong>
+                Construction
+            </strong>
+
+            <small>
+                ESTIMATOR
+            </small>
+
+        </span>
+
+    </a>
+
+
+    <div class="header-actions">
+
+        <button
+            id="themeToggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle day and night mode"
+            title="Toggle theme"
+        >
+
+            <span class="theme-icon">☾</span>
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ======================================================
+     MAIN
+====================================================== -->
+
+<main class="app-shell">
+
+
+<!-- ======================================================
+     DASHBOARD
+====================================================== -->
+
+<section
+    id="dashboard"
+    class="page-section"
+>
+
+    <div class="dashboard-hero">
+
+        <div class="hero-content">
+
+            <div class="eyebrow">
+
+                <span class="eyebrow-dot"></span>
+
+                PROJECT WORKSPACE
+
+            </div>
+
+
+            <h1>
+
+                Build smarter.
+                <span>
+                    Estimate faster.
+                </span>
+
+            </h1>
+
+
+            <p>
+
+                A clean workspace for BOQ,
+                quantities, rates and project
+                cost estimation.
+
+            </p>
+
+
+            <div class="hero-actions">
+
+                <button
+                    id="newProjectButton"
+                    class="primary-button hero-button"
+                    type="button"
+                >
+
+                    <span>＋</span>
+
+                    New Project
+
+                </button>
+
             </div>
 
         </div>
-    </header>
 
 
-    <main class="container">
+        <div class="hero-visual">
 
-        <!-- DASHBOARD -->
+            <div class="visual-card visual-card-main">
 
-        <section id="dashboard">
+                <div class="visual-card-top">
 
-            <div class="hero-card">
-
-                <div class="hero-content">
-
-                    <span class="badge">
-                        🇳🇵 Built for Nepal
+                    <span class="visual-label">
+                        ESTIMATE
                     </span>
 
-                    <h2>
-                        Construction Estimation
-                        Made Simple
-                    </h2>
-
-                    <p>
-                        Create construction projects,
-                        calculate built-up area and
-                        prepare BOQs and cost estimates.
-                    </p>
-
-                    <button
-                        type="button"
-                        class="primary-button"
-                        id="newProjectButton">
-                        + New Project
-                    </button>
+                    <span class="visual-status">
+                        LIVE
+                    </span>
 
                 </div>
 
-                <div class="hero-icon">
-                    🏗️
+
+                <div class="visual-number">
+                    ₨
+                </div>
+
+
+                <div class="visual-lines">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
                 </div>
 
             </div>
 
 
-            <div class="projects-section">
+            <div class="floating-chip chip-one">
+                BOQ
+            </div>
 
-                <div class="section-header">
+            <div class="floating-chip chip-two">
+                NPR
+            </div>
 
-                    <div>
-                        <h2>My Projects</h2>
+            <div class="floating-chip chip-three">
+                ✓ SAVED
+            </div>
 
-                        <p>
-                            Manage your construction projects.
-                        </p>
-                    </div>
+        </div>
 
-                    <button
-                        type="button"
-                        class="primary-button"
-                        id="newProjectButton2">
-                        + New Project
-                    </button>
-
-                </div>
+    </div>
 
 
-                <div id="projectList"></div>
+    <!-- PROJECT AREA -->
+
+    <section class="projects-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    YOUR WORKSPACE
+                </span>
+
+                <h2>
+                    Projects
+                </h2>
 
             </div>
 
-        </section>
+
+            <button
+                id="newProjectButton2"
+                class="outline-button"
+                type="button"
+            >
+
+                ＋ New Project
+
+            </button>
+
+        </div>
 
 
-        <!-- NEW PROJECT -->
+        <div
+            id="projectList"
+            class="project-grid"
+        >
 
-        <section id="newProject" class="hidden">
+        </div>
 
-            <div class="form-card">
+    </section>
 
-                <div class="form-header">
+</section>
 
-                    <button
-                        type="button"
-                        class="back-button"
-                        id="backButton">
-                        ← Back
-                    </button>
 
-                    <h2>Create New Project</h2>
+<!-- ======================================================
+     NEW PROJECT
+====================================================== -->
 
-                    <p>
-                        Enter your construction project information.
-                    </p>
+<section
+    id="newProject"
+    class="page-section hidden"
+>
+
+    <div class="form-page">
+
+        <button
+            id="backButton"
+            class="back-button"
+            type="button"
+        >
+
+            ← Projects
+
+        </button>
+
+
+        <div class="form-header">
+
+            <span class="section-kicker">
+                PROJECT SETUP
+            </span>
+
+            <h1>
+                Start a new project.
+            </h1>
+
+            <p>
+                Enter the basic project information
+                to create your estimate workspace.
+            </p>
+
+        </div>
+
+
+        <form
+            id="projectForm"
+            class="project-form"
+        >
+
+            <div class="form-grid">
+
+
+                <!-- PROJECT NAME -->
+
+                <div class="field field-wide">
+
+                    <label for="projectName">
+                        Project name
+                    </label>
+
+                    <input
+                        id="projectName"
+                        type="text"
+                        placeholder="e.g. Residential Building — Kathmandu"
+                        autocomplete="off"
+                        required
+                    >
 
                 </div>
 
 
-                <form id="projectForm">
+                <!-- CLIENT -->
 
-                    <div class="form-group">
+                <div class="field">
 
-                        <label for="projectName">
-                            Project Name *
-                        </label>
+                    <label for="clientName">
+                        Client name
+                    </label>
+
+                    <input
+                        id="clientName"
+                        type="text"
+                        placeholder="Client name"
+                    >
+
+                </div>
+
+
+                <!-- LOCATION -->
+
+                <div class="field">
+
+                    <label for="location">
+                        Location
+                    </label>
+
+                    <input
+                        id="location"
+                        type="text"
+                        placeholder="e.g. Lalitpur"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- BUILDING TYPE -->
+
+                <div class="field">
+
+                    <label for="buildingType">
+                        Building type
+                    </label>
+
+                    <select id="buildingType">
+
+                        <option value="Residential">
+                            Residential
+                        </option>
+
+                        <option value="Commercial">
+                            Commercial
+                        </option>
+
+                        <option value="Institutional">
+                            Institutional
+                        </option>
+
+                        <option value="Industrial">
+                            Industrial
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- FLOORS -->
+
+                <div class="field">
+
+                    <label for="floors">
+                        Number of floors
+                    </label>
+
+                    <input
+                        id="floors"
+                        type="number"
+                        min="1"
+                        step="1"
+                        placeholder="e.g. 3"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- AREA -->
+
+                <div class="field">
+
+                    <label for="area">
+                        Floor area
+                    </label>
+
+                    <div class="input-with-unit">
 
                         <input
-                            type="text"
-                            id="projectName"
-                            placeholder="Example: Sharma Residence"
-                            required>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="clientName">
-                            Client Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="clientName"
-                            placeholder="Example: Ram Sharma">
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="location">
-                            Location *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="location"
-                            placeholder="Example: Kathmandu"
-                            required>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="buildingType">
-                            Building Type *
-                        </label>
-
-                        <select id="buildingType" required>
-
-                            <option value="">
-                                Select building type
-                            </option>
-
-                            <option value="Residential">
-                                Residential
-                            </option>
-
-                            <option value="Commercial">
-                                Commercial
-                            </option>
-
-                            <option value="Institutional">
-                                Institutional
-                            </option>
-
-                            <option value="Industrial">
-                                Industrial
-                            </option>
-
-                            <option value="Other">
-                                Other
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-
-                            <label for="floors">
-                                Number of Floors *
-                            </label>
-
-                            <input
-                                type="number"
-                                id="floors"
-                                min="0.5"
-                                step="0.5"
-                                placeholder="Example: 2"
-                                required>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="area">
-                                Area per Floor (sq.ft) *
-                            </label>
-
-                            <input
-                                type="number"
-                                id="area"
-                                min="1"
-                                step="1"
-                                placeholder="Example: 1200"
-                                required>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="area-result">
+                            id="area"
+                            type="number"
+                            min="1"
+                            step="0.01"
+                            placeholder="e.g. 1200"
+                            required
+                        >
 
                         <span>
-                            Total Built-up Area
+                            sq.ft
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOTAL AREA -->
+
+                <div class="area-preview field-wide">
+
+                    <div>
+
+                        <span>
+                            TOTAL BUILT-UP AREA
                         </span>
 
                         <strong id="totalArea">
@@ -295,51 +453,220 @@
                     </div>
 
 
-                    <div class="form-actions">
+                    <span class="area-icon">
+                        ↗
+                    </span>
 
-                        <button
-                            type="button"
-                            class="secondary-button"
-                            id="cancelButton">
-                            Cancel
-                        </button>
-
-
-                        <button
-                            type="submit"
-                            class="primary-button">
-                            Create Project
-                        </button>
-
-                    </div>
-
-                </form>
+                </div>
 
             </div>
 
-        </section>
 
-    </main>
+            <div class="form-actions">
 
+                <button
+                    id="cancelButton"
+                    class="secondary-button"
+                    type="button"
+                >
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    class="primary-button"
+                    type="submit"
+                >
+
+                    Create Project
+                    <span>→</span>
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     BOQ SCREEN
+====================================================== -->
+
+<section
+    id="boqScreen"
+    class="page-section hidden"
+>
+</section>
+
+
+</main>
+
+
+<!-- ======================================================
+     FOOTER
+====================================================== -->
 
 <footer class="site-footer">
 
-    <div>
-        <strong>© 2026 Nepal Construction Estimator</strong>
-    </div>
+    <div class="footer-inner">
 
-    <div id="footerDate"></div>
+        <div class="footer-brand">
 
-    <div>
-        All rights reserved.
+            <span class="footer-mark">
+                N
+            </span>
+
+            <span>
+                Construction Estimator
+            </span>
+
+        </div>
+
+
+        <span class="footer-copy">
+
+            © <span id="currentYear"></span>
+            All rights reserved.
+
+        </span>
+
     </div>
 
 </footer>
 
 
-    <script src="rates.js"></script>
 <script src="script.js"></script>
 
-</body>
 
+<!-- ======================================================
+     THEME SYSTEM
+====================================================== -->
+
+<script>
+
+(function () {
+
+    const button =
+        document.getElementById(
+            "themeToggle"
+        );
+
+    const savedTheme =
+        localStorage.getItem(
+            "constructionTheme"
+        );
+
+
+    function updateIcon() {
+
+        if (!button) {
+            return;
+        }
+
+
+        const dark =
+            document.body.classList.contains(
+                "light-mode"
+            );
+
+
+        button.innerHTML =
+            dark
+                ? '<span class="theme-icon">☀</span>'
+                : '<span class="theme-icon">☾</span>';
+
+    }
+
+
+    function applyTheme(theme) {
+
+        if (theme === "light") {
+
+            document.body.classList.add(
+                "light-mode"
+            );
+
+        } else {
+
+            document.body.classList.remove(
+                "light-mode"
+            );
+
+        }
+
+
+        updateIcon();
+
+    }
+
+
+    if (savedTheme) {
+
+        applyTheme(
+            savedTheme
+        );
+
+    } else {
+
+        applyTheme("dark");
+
+    }
+
+
+    if (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const isLight =
+                    document.body.classList.contains(
+                        "light-mode"
+                    );
+
+
+                applyTheme(
+                    isLight
+                        ? "dark"
+                        : "light"
+                );
+
+
+                localStorage.setItem(
+                    "constructionTheme",
+                    isLight
+                        ? "dark"
+                        : "light"
+                );
+
+            }
+        );
+
+    }
+
+
+    const year =
+        document.getElementById(
+            "currentYear"
+        );
+
+
+    if (year) {
+
+        year.textContent =
+            new Date().getFullYear();
+
+    }
+
+})();
+
+</script>
+
+</body>
 </html>
