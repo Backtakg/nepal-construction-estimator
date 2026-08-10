@@ -2924,3 +2924,591 @@ button {
         height: 40px;
     }
 }
+/* ==========================================================
+   FINAL CONSTRUCTOR ESTIMATOR THEME
+   BLUE + WHITE / BLUE DARK MODE
+   ========================================================== */
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #eff6ff;
+
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --surface-alt: #f1f5f9;
+
+    --text: #0f172a;
+    --text-muted: #64748b;
+
+    --border: #dbe3ee;
+
+    --success: #2563eb;
+
+    --shadow:
+        0 10px 30px rgba(15, 23, 42, 0.08);
+
+    color-scheme: light;
+}
+
+
+/* ==========================================================
+   DARK MODE
+   ========================================================== */
+
+html[data-theme="dark"] {
+
+    --primary: #60a5fa;
+    --primary-dark: #3b82f6;
+    --primary-light: rgba(59, 130, 246, 0.12);
+
+    --background: #080b12;
+    --surface: #111827;
+    --surface-alt: #182131;
+
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+
+    --border: #263449;
+
+    --shadow:
+        0 15px 40px rgba(0, 0, 0, 0.35);
+
+    color-scheme: dark;
+}
+
+
+/* ==========================================================
+   BODY
+   ========================================================== */
+
+html,
+body {
+
+    background: var(--background) !important;
+
+    color: var(--text) !important;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+
+body {
+
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(37, 99, 235, 0.08),
+            transparent 30%
+        ),
+        var(--background) !important;
+}
+
+
+/* ==========================================================
+   REMOVE OLD GREEN
+   ========================================================== */
+
+/* Override common old green backgrounds */
+
+[class*="green"],
+[class*="lime"],
+[class*="nepal-green"] {
+    background-color: transparent;
+}
+
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+
+.site-header {
+
+    background:
+        rgba(255, 255, 255, 0.88) !important;
+
+    border-bottom:
+        1px solid var(--border) !important;
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+}
+
+
+html[data-theme="dark"] .site-header {
+
+    background:
+        rgba(8, 11, 18, 0.88) !important;
+}
+
+
+/* ==========================================================
+   BRAND LOGO
+   ========================================================== */
+
+.brand-logo {
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        ) !important;
+
+    color: #ffffff !important;
+
+    box-shadow:
+        0 8px 22px
+        rgba(37, 99, 235, 0.28) !important;
+}
+
+
+/* ==========================================================
+   BRAND TEXT
+   ========================================================== */
+
+.brand-text strong {
+
+    color:
+        var(--text) !important;
+}
+
+.brand-text span {
+
+    color:
+        var(--text-muted) !important;
+}
+
+
+/* ==========================================================
+   THEME BUTTON
+   ========================================================== */
+
+.theme-toggle {
+
+    background:
+        var(--surface) !important;
+
+    color:
+        var(--text) !important;
+
+    border:
+        1px solid var(--border) !important;
+}
+
+.theme-toggle:hover {
+
+    border-color:
+        var(--primary) !important;
+
+    box-shadow:
+        0 8px 25px
+        rgba(37, 99, 235, 0.20) !important;
+}
+
+
+/* ==========================================================
+   ALL CARDS
+   ========================================================== */
+
+.project-card,
+.boq-card,
+.nepal-rate-panel,
+.add-boq-form,
+.summary-card,
+.estimate-summary,
+.project-form,
+.form-card {
+
+    background:
+        var(--surface) !important;
+
+    color:
+        var(--text) !important;
+
+    border-color:
+        var(--border) !important;
+
+    box-shadow:
+        var(--shadow);
+}
+
+
+/* ==========================================================
+   INPUTS
+   ========================================================== */
+
+input,
+select,
+textarea {
+
+    background:
+        var(--surface) !important;
+
+    color:
+        var(--text) !important;
+
+    border:
+        1px solid var(--border) !important;
+}
+
+
+/* ==========================================================
+   SELECT DROPDOWN
+   ========================================================== */
+
+select {
+
+    background-color:
+        var(--surface) !important;
+
+    color:
+        var(--text) !important;
+}
+
+select option {
+
+    background:
+        #ffffff !important;
+
+    color:
+        #0f172a !important;
+}
+
+html[data-theme="dark"] select option {
+
+    background:
+        #111827 !important;
+
+    color:
+        #f8fafc !important;
+}
+
+
+/* ==========================================================
+   FOCUS
+   ========================================================== */
+
+input:focus,
+select:focus,
+textarea:focus {
+
+    border-color:
+        var(--primary) !important;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(37, 99, 235, 0.12) !important;
+}
+
+
+/* ==========================================================
+   BUTTONS — BLUE
+   ========================================================== */
+
+button.primary-button,
+.primary-button,
+#createProjectButton,
+#newProjectButton,
+#newProjectButton2,
+#saveCustomBOQ,
+#applyNepalRate,
+#addBOQButton {
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        ) !important;
+
+    color:
+        #ffffff !important;
+
+    border:
+        none !important;
+
+    box-shadow:
+        0 8px 22px
+        rgba(37, 99, 235, 0.24) !important;
+}
+
+
+button.primary-button:hover,
+.primary-button:hover,
+#createProjectButton:hover,
+#newProjectButton:hover,
+#newProjectButton2:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #2563eb
+        ) !important;
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 28px
+        rgba(37, 99, 235, 0.32) !important;
+}
+
+
+/* ==========================================================
+   SECONDARY BUTTONS
+   ========================================================== */
+
+.secondary-button,
+.cancel-button,
+.back-button {
+
+    background:
+        var(--surface) !important;
+
+    color:
+        var(--text) !important;
+
+    border:
+        1px solid var(--border) !important;
+}
+
+
+/* ==========================================================
+   LINKS
+   ========================================================== */
+
+a {
+
+    color:
+        var(--primary);
+}
+
+
+/* ==========================================================
+   BADGES
+   ========================================================== */
+
+.badge {
+
+    background:
+        var(--primary-light) !important;
+
+    color:
+        var(--primary-dark) !important;
+
+    border:
+        1px solid
+        rgba(37, 99, 235, 0.18) !important;
+}
+
+
+/* ==========================================================
+   SUMMARY CARDS
+   ========================================================== */
+
+.summary-card strong {
+
+    color:
+        var(--primary) !important;
+}
+
+
+/* ==========================================================
+   COST BREAKDOWN
+   ========================================================== */
+
+.cost-breakdown,
+.cost-breakdown-card {
+
+    background:
+        var(--surface) !important;
+
+    color:
+        var(--text) !important;
+
+    border-color:
+        var(--border) !important;
+}
+
+
+/* ==========================================================
+   TABLE
+   ========================================================== */
+
+.boq-table {
+
+    color:
+        var(--text) !important;
+
+    background:
+        var(--surface) !important;
+}
+
+.boq-table th {
+
+    background:
+        var(--surface-alt) !important;
+
+    color:
+        var(--text) !important;
+}
+
+.boq-table td {
+
+    border-color:
+        var(--border) !important;
+}
+
+
+/* ==========================================================
+   RATE SYSTEM
+   ========================================================== */
+
+.nepal-rate-panel {
+
+    background:
+        var(--surface) !important;
+}
+
+.rate-status {
+
+    color:
+        var(--primary) !important;
+}
+
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+
+/*
+   Remove the old bottom-left branding/logo.
+*/
+
+.site-footer-brand,
+.footer-brand,
+.footer-logo,
+.footer-left,
+.footer-branding {
+
+    display:
+        none !important;
+}
+
+
+/*
+   Put the entire footer in the center.
+*/
+
+.site-footer {
+
+    width:
+        100% !important;
+
+    display:
+        flex !important;
+
+    align-items:
+        center !important;
+
+    justify-content:
+        center !important;
+
+    text-align:
+        center !important;
+
+    padding:
+        24px 20px !important;
+
+    margin-top:
+        40px !important;
+
+    background:
+        transparent !important;
+
+    border-top:
+        1px solid var(--border) !important;
+
+    color:
+        var(--text-muted) !important;
+}
+
+
+/*
+   Any footer content becomes centered.
+*/
+
+.site-footer > * {
+
+    margin-left:
+        auto !important;
+
+    margin-right:
+        auto !important;
+
+    text-align:
+        center !important;
+}
+
+
+/*
+   If your footer has left/right wrappers,
+   force them into one centered layout.
+*/
+
+.site-footer .footer-left,
+.site-footer .footer-right {
+
+    float:
+        none !important;
+
+    position:
+        static !important;
+
+    left:
+        auto !important;
+
+    right:
+        auto !important;
+
+    text-align:
+        center !important;
+}
+
+
+/* ==========================================================
+   FOOTER TEXT
+   ========================================================== */
+
+.site-footer,
+.site-footer p,
+.site-footer span {
+
+    font-size:
+        13px;
+
+    line-height:
+        1.6;
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 700px) {
+
+    .site-footer {
+
+        padding:
+            20px 14px !important;
+    }
+
+}
