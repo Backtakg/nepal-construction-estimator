@@ -11,25 +11,33 @@
 
 <body>
 
-    <header class="header">
-        <div>
-            <h1>🏗️ Nepal Construction Estimator</h1>
-            <p>BOQ • Cost Estimation • Construction Management</p>
-        </div>
-    </header>
+<header class="header">
+    <div>
+        <h1>🏗️ Nepal Construction Estimator</h1>
+        <p>BOQ • Cost Estimation • Construction Management</p>
+    </div>
+</header>
 
-    <main class="container">
+
+<main class="container">
+
+    <!-- DASHBOARD -->
+
+    <section id="dashboard">
 
         <section class="hero">
+
             <h2>Construction Estimation Made Simple</h2>
+
             <p>
                 Create projects, calculate quantities, generate BOQs
                 and estimate construction costs.
             </p>
 
-            <button onclick="createProject()">
+            <button onclick="showNewProject()">
                 + New Project
             </button>
+
         </section>
 
 
@@ -42,6 +50,7 @@
             <div id="projectList" class="project-list">
 
                 <div class="empty-state">
+
                     <div class="empty-icon">🏗️</div>
 
                     <h3>No projects yet</h3>
@@ -51,24 +60,214 @@
                         to start estimating.
                     </p>
 
-                    <button onclick="createProject()">
+                    <button onclick="showNewProject()">
                         Create Project
                     </button>
+
                 </div>
 
             </div>
 
         </section>
 
-    </main>
+    </section>
 
 
-    <footer>
-        <p>© 2026 Nepal Construction Estimator</p>
-    </footer>
+    <!-- NEW PROJECT FORM -->
+
+    <section id="newProject" class="form-section hidden">
+
+        <div class="form-header">
+
+            <button class="back-button" onclick="showDashboard()">
+                ← Back
+            </button>
+
+            <h2>Create New Project</h2>
+
+            <p>
+                Enter the basic information about your construction project.
+            </p>
+
+        </div>
 
 
-    <script src="script.js"></script>
+        <form id="projectForm">
+
+            <div class="form-card">
+
+                <h3>Project Information</h3>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="projectName">
+                            Project Name *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="projectName"
+                            placeholder="e.g. Sharma Residence"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="clientName">
+                            Client Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="clientName"
+                            placeholder="e.g. Ram Sharma"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="location">
+                            Project Location *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="location"
+                            placeholder="e.g. Kathmandu"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="buildingType">
+                            Building Type *
+                        </label>
+
+                        <select id="buildingType" required>
+
+                            <option value="">
+                                Select building type
+                            </option>
+
+                            <option value="Residential">
+                                Residential
+                            </option>
+
+                            <option value="Commercial">
+                                Commercial
+                            </option>
+
+                            <option value="Apartment">
+                                Apartment
+                            </option>
+
+                            <option value="Institutional">
+                                Institutional
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="floors">
+                            Number of Floors *
+                        </label>
+
+                        <input
+                            type="number"
+                            id="floors"
+                            min="1"
+                            step="0.5"
+                            placeholder="e.g. 2.5"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="area">
+                            Built-up Area per Floor (sq.ft) *
+                        </label>
+
+                        <input
+                            type="number"
+                            id="area"
+                            min="1"
+                            placeholder="e.g. 1200"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="total-area">
+
+                    <span>Total Built-up Area</span>
+
+                    <strong id="totalArea">
+                        0 sq.ft
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    onclick="showDashboard()"
+                >
+                    Cancel
+                </button>
+
+                <button type="submit">
+                    Create Project →
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        © 2026 Nepal Construction Estimator
+    </p>
+
+</footer>
+
+
+<script src="script.js"></script>
 
 </body>
 </html>
