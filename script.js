@@ -1690,42 +1690,120 @@ function renderCategorySummary() {
 function renderBOQ() {
 
     const screen =
-        document.getElementById(
-            "boqScreen"
-        );
+        document.getElementById("boqScreen");
 
-
-    if (
-        !screen ||
-        !activeProject
-    ) {
-
+    if (!screen || !activeProject) {
         return;
-
     }
 
-
     const area =
-        Number(
-            activeProject.totalArea
-        ) || 0;
+        Number(activeProject.totalArea) || 0;
 
+    // ------------------------------------------------------
+    // DIRECT BOQ COST
+    // ------------------------------------------------------
 
-    const total =
+    const directCost =
         calculateBOQTotal();
 
+    // ------------------------------------------------------
+    // COST BREAKDOWN SETTINGS
+    // ------------------------------------------------------
+
+    const toolsPercent =
+        Number(activeProject.costSettings?.toolsPercent);
+
+    const contingencyPercent =
+        Number(activeProject.costSettings?.contingencyPercent);
+
+    const profitPercent =
+        Number(activeProject.costSettings?.profitPercent);
+
+    const toolsRate =
+        Number.isFinite(toolsPercent)
+            ? toolsPercent
+            : 2.5;
+
+    const contingencyRate =
+        Number.isFinite(contingencyPercent)
+            ? contingencyPercent
+            : 10;
+
+    const profitRate =
+        Number.isFinite(profitPercent)
+            ? profitPercent
+            : 10;
+
+    // ------------------------------------------------------
+    // CALCULATE ADDITIONAL COSTS
+    // ------------------------------------------------------
+
+    const toolsCost =
+        directCost *
+        toolsRate /
+        100;
+
+    const contingencyCost =
+        directCost *
+        contingencyRate /
+        100;
+
+    const subtotalWithContingency =
+        directCost +
+        toolsCost +
+        contingencyCost;
+
+    const contractorProfit =
+        directCost *
+        profitRate /
+        100;
+
+    const grandTotal =
+        subtotalWithContingency +
+        contractorProfit;
+
+    // ------------------------------------------------------
+    // COST / SQ.FT
+    // ------------------------------------------------------
 
     const costPerSqFt =
         area > 0
-            ? total / area
+            ? grandTotal / area
             : 0;
 
+    // ------------------------------------------------------
+    // SAVE SETTINGS
+    // ------------------------------------------------------
+
+    if (!activeProject.costSettings) {
+
+        activeProject.costSettings = {
+
+            toolsPercent:
+                toolsRate,
+
+            contingencyPercent:
+                contingencyRate,
+
+            profitPercent:
+                profitRate
+
+        };
+
+        saveCurrentBOQ();
+    }
+
+    // ------------------------------------------------------
+    // SCREEN
+    // ------------------------------------------------------
 
     screen.innerHTML = `
 
         <div class="boq-container">
 
-            <!-- HEADER -->
+            <!-- ==================================================
+                 HEADER
+            ================================================== -->
 
             <div class="boq-header">
 
@@ -1738,36 +1816,29 @@ function renderBOQ() {
 
                 </button>
 
-
                 <span class="badge">
-
                     🇳🇵 Construction Estimate
-
                 </span>
 
-
                 <h2>
-
                     ${escapeHTML(
                         activeProject.projectName
                     )}
-
                 </h2>
 
-
                 <p>
-
                     📍
                     ${escapeHTML(
                         activeProject.location
                     )}
-
                 </p>
 
             </div>
 
 
-            <!-- SUMMARY -->
+            <!-- ==================================================
+                 SUMMARY
+            ================================================== -->
 
             <div class="estimate-summary">
 
@@ -1778,10 +1849,8 @@ function renderBOQ() {
                     </span>
 
                     <strong>
-
                         ${area.toLocaleString()}
                         sq.ft
-
                     </strong>
 
                 </div>
@@ -1806,7 +1875,7 @@ function renderBOQ() {
                         Cost / sq.ft
                     </span>
 
-                    <strong>
+                    <strong id="summaryCostPerSqFt">
 
                         NPR
                         ${Math.round(
@@ -1821,14 +1890,14 @@ function renderBOQ() {
                 <div class="summary-card total">
 
                     <span>
-                        Estimated Cost
+                        Project Estimate
                     </span>
 
-                    <strong>
+                    <strong id="summaryGrandTotal">
 
                         NPR
                         ${Math.round(
-                            total
+                            grandTotal
                         ).toLocaleString()}
 
                     </strong>
@@ -1838,7 +1907,349 @@ function renderBOQ() {
             </div>
 
 
-            <!-- NEPAL RATE SYSTEM -->
+            <!-- ==================================================
+                 COST BREAKDOWN
+            ================================================== -->
+
+            <div class="cost-breakdown-card">
+
+                <div class="cost-breakdown-header">
+
+                    <div>
+
+                        <span class="section-kicker">
+                            PROJECT COST
+                        </span>
+
+                        <h3>
+                            Cost Breakdown
+                        </h3>
+
+                        <p>
+                            Direct construction cost plus
+                            estimating allowances and
+                            contractor profit.
+                        </p>
+
+                    </div>
+
+                    <div class="cost-breakdown-total">
+
+                        <span>
+                            Grand Total
+                        </span>
+
+                        <strong id="breakdownGrandTotal">
+
+                            NPR
+                            ${Math.round(
+                                grandTotal
+                            ).toLocaleString()}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="cost-breakdown-table">
+
+                    <!-- DIRECT COST -->
+
+                    <div class="cost-row primary-cost">
+
+                        <div class="cost-row-title">
+
+                            <span class="cost-icon">
+                                🧱
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Direct BOQ Cost
+                                </strong>
+
+                                <small>
+                                    Materials, labour and
+                                    BOQ work items
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="cost-row-value">
+
+                            NPR
+                            ${Math.round(
+                                directCost
+                            ).toLocaleString()}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TOOLS -->
+
+                    <div class="cost-row">
+
+                        <div class="cost-row-title">
+
+                            <span class="cost-icon">
+                                🛠️
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Tools & Equipment
+                                </strong>
+
+                                <small>
+                                    Site tools and equipment
+                                    allowance
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="cost-row-control">
+
+                            <div class="percentage-control">
+
+                                <input
+                                    type="number"
+                                    id="toolsPercent"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                    value="${toolsRate}"
+                                >
+
+                                <span>
+                                    %
+                                </span>
+
+                            </div>
+
+                            <strong id="toolsCost">
+
+                                NPR
+                                ${Math.round(
+                                    toolsCost
+                                ).toLocaleString()}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONTINGENCY -->
+
+                    <div class="cost-row">
+
+                        <div class="cost-row-title">
+
+                            <span class="cost-icon">
+                                🛡️
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Contingency
+                                </strong>
+
+                                <small>
+                                    Price variation, minor
+                                    changes and unforeseen work
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="cost-row-control">
+
+                            <div class="percentage-control">
+
+                                <input
+                                    type="number"
+                                    id="contingencyPercent"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                    value="${contingencyRate}"
+                                >
+
+                                <span>
+                                    %
+                                </span>
+
+                            </div>
+
+                            <strong id="contingencyCost">
+
+                                NPR
+                                ${Math.round(
+                                    contingencyCost
+                                ).toLocaleString()}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SUBTOTAL -->
+
+                    <div class="cost-row subtotal-row">
+
+                        <div class="cost-row-title">
+
+                            <div>
+
+                                <strong>
+                                    Cost Before Profit
+                                </strong>
+
+                                <small>
+                                    Direct cost + tools &
+                                    contingency
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <strong id="subtotalCost">
+
+                            NPR
+                            ${Math.round(
+                                subtotalWithContingency
+                            ).toLocaleString()}
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- PROFIT -->
+
+                    <div class="cost-row profit-row">
+
+                        <div class="cost-row-title">
+
+                            <span class="cost-icon">
+                                📈
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Contractor's Profit
+                                </strong>
+
+                                <small>
+                                    Contractor profit allowance
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="cost-row-control">
+
+                            <div class="percentage-control">
+
+                                <input
+                                    type="number"
+                                    id="profitPercent"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                    value="${profitRate}"
+                                >
+
+                                <span>
+                                    %
+                                </span>
+
+                            </div>
+
+                            <strong id="profitCost">
+
+                                NPR
+                                ${Math.round(
+                                    contractorProfit
+                                ).toLocaleString()}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GRAND TOTAL -->
+
+                    <div class="grand-total-row">
+
+                        <div>
+
+                            <span>
+                                TOTAL PROJECT ESTIMATE
+                            </span>
+
+                            <small>
+                                Estimated construction
+                                contract value
+                            </small>
+
+                        </div>
+
+                        <strong id="costBreakdownGrandTotal">
+
+                            NPR
+                            ${Math.round(
+                                grandTotal
+                            ).toLocaleString()}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="cost-breakdown-note">
+
+                    <strong>
+                        Estimating note:
+                    </strong>
+
+                    Tools & equipment, contingency and
+                    contractor profit are editable planning
+                    allowances. Verify the appropriate
+                    percentages for the project contract,
+                    procurement method and current market
+                    conditions.
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 NEPAL RATE SYSTEM
+            ================================================== -->
 
             <div class="nepal-rate-panel">
 
@@ -1848,18 +2259,14 @@ function renderBOQ() {
                         🇳🇵 Nepal Rate System
                     </span>
 
-
                     <h3>
                         Nepal District Rate System
                     </h3>
 
-
                     <p>
-
-                        Select a district and fiscal
-                        year, then select a BOQ item
-                        or Nepal reference item.
-
+                        Select a district and fiscal year,
+                        then select a BOQ item or Nepal
+                        reference item.
                     </p>
 
                 </div>
@@ -1867,23 +2274,17 @@ function renderBOQ() {
 
                 <div class="rate-controls">
 
-                    <!-- DISTRICT -->
-
                     <div class="rate-field">
 
                         <label>
                             District
                         </label>
 
-                        <select
-                            id="rateLocation">
-
+                        <select id="rateLocation">
                         </select>
 
                     </div>
 
-
-                    <!-- FISCAL YEAR -->
 
                     <div class="rate-field">
 
@@ -1891,15 +2292,11 @@ function renderBOQ() {
                             Fiscal Year
                         </label>
 
-                        <select
-                            id="rateYear">
-
+                        <select id="rateYear">
                         </select>
 
                     </div>
 
-
-                    <!-- SOURCE -->
 
                     <div class="rate-field">
 
@@ -1917,16 +2314,13 @@ function renderBOQ() {
                     </div>
 
 
-                    <!-- BOQ ITEM -->
-
                     <div class="rate-field">
 
                         <label>
                             BOQ Item
                         </label>
 
-                        <select
-                            id="rateItem">
+                        <select id="rateItem">
 
                             <option value="">
                                 Select BOQ item
@@ -1936,8 +2330,6 @@ function renderBOQ() {
 
                     </div>
 
-
-                    <!-- UNIT -->
 
                     <div class="rate-field">
 
@@ -1955,8 +2347,6 @@ function renderBOQ() {
                     </div>
 
 
-                    <!-- RATE -->
-
                     <div class="rate-field">
 
                         <label>
@@ -1973,8 +2363,6 @@ function renderBOQ() {
 
                     </div>
 
-
-                    <!-- APPLY -->
 
                     <div class="rate-action">
 
@@ -2009,7 +2397,7 @@ function renderBOQ() {
                         Reference rate:
                     </strong>
 
-                    Verify rates against the current
+                    Verify rates against the applicable
                     official schedule and local market
                     quotations before commercial use.
 
@@ -2017,72 +2405,20 @@ function renderBOQ() {
 
             </div>
 
-<!-- CATEGORY SUMMARY -->
 
-<div class="category-summary-card">
-
-    <div class="category-summary-header">
-
-        <div>
-
-            <span class="badge">
-                📊 BOQ Breakdown
-            </span>
-
-            <h3>
-                Category-wise Cost Summary
-            </h3>
-
-            <p>
-                Automatic subtotal of each BOQ category.
-            </p>
-
-        </div>
-
-    </div>
-
-    <div
-        id="categorySummary"
-        class="category-summary-list">
-
-    </div>
-
-</div>
-<!-- MATERIAL / LABOUR SUMMARY -->
-
-<div class="cost-type-summary-card">
-
-    <div class="category-summary-header">
-
-        <span class="badge">
-            💰 Cost Breakdown
-        </span>
-
-        <h3>
-            Material & Labour Cost
-        </h3>
-
-        <p>
-            Automatic breakdown of the BOQ by cost type.
-        </p>
-
-    </div>
-
-
-    <div
-        id="costTypeSummary"
-        class="cost-type-summary">
-
-    </div>
-
-</div>
-            <!-- BOQ -->
+            <!-- ==================================================
+                 BOQ
+            ================================================== -->
 
             <div class="boq-card">
 
                 <div class="boq-title">
 
                     <div>
+
+                        <span class="section-kicker">
+                            QUANTITY SURVEY
+                        </span>
 
                         <h3>
                             Bill of Quantities
@@ -2118,9 +2454,8 @@ function renderBOQ() {
 
                                 <th>#</th>
                                 <th>Category</th>
-<th>Description</th>
-<th>Cost Type</th>
-<th>Unit</th>
+                                <th>Description</th>
+                                <th>Unit</th>
                                 <th>Quantity</th>
                                 <th>Rate (NPR)</th>
                                 <th>Amount (NPR)</th>
@@ -2135,10 +2470,7 @@ function renderBOQ() {
 
                             ${
                                 activeBOQ.map(
-                                    function(
-                                        item,
-                                        index
-                                    ) {
+                                    function(item, index) {
 
                                         return `
 
@@ -2147,7 +2479,6 @@ function renderBOQ() {
                                                 <td>
                                                     ${index + 1}
                                                 </td>
-
 
                                                 <td>
 
@@ -2162,7 +2493,6 @@ function renderBOQ() {
 
                                                 </td>
 
-
                                                 <td>
 
                                                     <input
@@ -2176,7 +2506,6 @@ function renderBOQ() {
 
                                                 </td>
 
-
                                                 <td>
 
                                                     <input
@@ -2189,51 +2518,6 @@ function renderBOQ() {
                                                     >
 
                                                 </td>
-                                                <td>
-
-    <select
-        class="boq-input cost-type-input"
-        data-field="costType"
-        data-id="${item.id}"
-    >
-
-        <option
-            value="Material"
-            ${
-                (item.costType || "Material") === "Material"
-                    ? "selected"
-                    : ""
-            }
-        >
-            Material
-        </option>
-
-        <option
-            value="Labour"
-            ${
-                item.costType === "Labour"
-                    ? "selected"
-                    : ""
-            }
-        >
-            Labour
-        </option>
-
-        <option
-            value="Other"
-            ${
-                item.costType === "Other"
-                    ? "selected"
-                    : ""
-            }
-        >
-            Other
-        </option>
-
-    </select>
-
-</td>
-
 
                                                 <td>
 
@@ -2249,7 +2533,6 @@ function renderBOQ() {
 
                                                 </td>
 
-
                                                 <td>
 
                                                     <input
@@ -2263,7 +2546,6 @@ function renderBOQ() {
                                                     >
 
                                                 </td>
-
 
                                                 <td>
 
@@ -2279,7 +2561,6 @@ function renderBOQ() {
                                                     </strong>
 
                                                 </td>
-
 
                                                 <td>
 
@@ -2342,10 +2623,9 @@ function renderBOQ() {
                                     colspan="6"
                                     class="total-label">
 
-                                    TOTAL ESTIMATED COST
+                                    DIRECT BOQ COST
 
                                 </td>
-
 
                                 <td
                                     colspan="2"
@@ -2353,7 +2633,7 @@ function renderBOQ() {
 
                                     NPR
                                     ${Math.round(
-                                        total
+                                        directCost
                                     ).toLocaleString()}
 
                                 </td>
@@ -2369,7 +2649,9 @@ function renderBOQ() {
             </div>
 
 
-            <!-- CUSTOM BOQ FORM -->
+            <!-- ==================================================
+                 CUSTOM BOQ
+            ================================================== -->
 
             <div
                 id="addBOQForm"
@@ -2378,7 +2660,6 @@ function renderBOQ() {
                 <h3>
                     Add Custom BOQ Item
                 </h3>
-
 
                 <div class="add-boq-grid">
 
@@ -2529,9 +2810,10 @@ function renderBOQ() {
                     Preliminary Estimate:
                 </strong>
 
-                Reference rates should be verified
-                against the applicable official
-                schedule before commercial use.
+                This estimate is intended for planning.
+                Verify quantities, applicable rates,
+                allowances, taxes and contract conditions
+                before commercial use.
 
             </div>
 
@@ -2540,14 +2822,273 @@ function renderBOQ() {
     `;
 
 
-   initializeRateSystem();
+    // ------------------------------------------------------
+    // INITIALIZE
+    // ------------------------------------------------------
 
-attachBOQEvents();
+    initializeRateSystem();
 
-renderCategorySummary();
-renderCostTypeSummary();
+    attachBOQEvents();
+
+    attachCostBreakdownEvents();
+}
+// ==========================================================
+// COST BREAKDOWN EVENTS
+// ==========================================================
+
+function attachCostBreakdownEvents() {
+
+    const toolsInput =
+        document.getElementById(
+            "toolsPercent"
+        );
+
+    const contingencyInput =
+        document.getElementById(
+            "contingencyPercent"
+        );
+
+    const profitInput =
+        document.getElementById(
+            "profitPercent"
+        );
+
+
+    function updateCostBreakdown() {
+
+        if (!activeProject) {
+            return;
+        }
+
+
+        const directCost =
+            calculateBOQTotal();
+
+
+        const toolsPercent =
+            Math.max(
+                0,
+                Number(
+                    toolsInput?.value
+                ) || 0
+            );
+
+
+        const contingencyPercent =
+            Math.max(
+                0,
+                Number(
+                    contingencyInput?.value
+                ) || 0
+            );
+
+
+        const profitPercent =
+            Math.max(
+                0,
+                Number(
+                    profitInput?.value
+                ) || 0
+            );
+
+
+        // --------------------------------------------------
+        // CALCULATIONS
+        // --------------------------------------------------
+
+        const toolsCost =
+            directCost *
+            toolsPercent /
+            100;
+
+
+        const contingencyCost =
+            directCost *
+            contingencyPercent /
+            100;
+
+
+        const subtotal =
+            directCost +
+            toolsCost +
+            contingencyCost;
+
+
+        const profitCost =
+            directCost *
+            profitPercent /
+            100;
+
+
+        const grandTotal =
+            subtotal +
+            profitCost;
+
+
+        const area =
+            Number(
+                activeProject.totalArea
+            ) || 0;
+
+
+        const costPerSqFt =
+            area > 0
+                ? grandTotal / area
+                : 0;
+
+
+        // --------------------------------------------------
+        // SAVE
+        // --------------------------------------------------
+
+        activeProject.costSettings = {
+
+            toolsPercent:
+                toolsPercent,
+
+            contingencyPercent:
+                contingencyPercent,
+
+            profitPercent:
+                profitPercent
+
+        };
+
+
+        saveCurrentBOQ();
+
+
+        // --------------------------------------------------
+        // UPDATE DOM
+        // --------------------------------------------------
+
+        setText(
+            "toolsCost",
+            "NPR " +
+            Math.round(
+                toolsCost
+            ).toLocaleString()
+        );
+
+
+        setText(
+            "contingencyCost",
+            "NPR " +
+            Math.round(
+                contingencyCost
+            ).toLocaleString()
+        );
+
+
+        setText(
+            "subtotalCost",
+            "NPR " +
+            Math.round(
+                subtotal
+            ).toLocaleString()
+        );
+
+
+        setText(
+            "profitCost",
+            "NPR " +
+            Math.round(
+                profitCost
+            ).toLocaleString()
+        );
+
+
+        setText(
+            "costBreakdownGrandTotal",
+            "NPR " +
+            Math.round(
+                grandTotal
+            ).toLocaleString()
+        );
+
+
+        setText(
+            "breakdownGrandTotal",
+            "NPR " +
+            Math.round(
+                grandTotal
+            ).toLocaleString()
+        );
+
+
+        setText(
+            "summaryGrandTotal",
+            "NPR " +
+            Math.round(
+                grandTotal
+            ).toLocaleString()
+        );
+
+
+        setText(
+            "summaryCostPerSqFt",
+            "NPR " +
+            Math.round(
+                costPerSqFt
+            ).toLocaleString()
+        );
+
+    }
+
+
+    if (toolsInput) {
+
+        toolsInput.addEventListener(
+            "input",
+            updateCostBreakdown
+        );
+
+    }
+
+
+    if (contingencyInput) {
+
+        contingencyInput.addEventListener(
+            "input",
+            updateCostBreakdown
+        );
+
+    }
+
+
+    if (profitInput) {
+
+        profitInput.addEventListener(
+            "input",
+            updateCostBreakdown
+        );
+
+    }
+
 }
 
+
+// ==========================================================
+// SET TEXT HELPER
+// ==========================================================
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
+
+}
 
 // ==========================================================
 // INITIALIZE RATE SYSTEM
