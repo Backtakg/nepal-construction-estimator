@@ -874,3 +874,39 @@ button {
     text-align: center;
     color: #6b7280;
 }
+/* ==========================================================
+   MATERIAL / LABOUR SUMMARY
+   ========================================================== */
+
+.cost-type-summary-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.cost-type-summary {
+    display: flex;
+    flex-direction: column;
+}
+
+.cost-type-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.cost-type-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 18px;
+    margin-top: 5px;
+    font-size: 18px;
+}
+
+.cost-type-input {
+    min-width: 110px;
+}
