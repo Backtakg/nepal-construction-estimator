@@ -4337,7 +4337,7 @@ if (areaInput) {
 
 
 // ==========================================================
-// CREATE PROJECT
+// CREATE / UPDATE PROJECT
 // ==========================================================
 
 if (projectForm) {
@@ -4349,71 +4349,61 @@ if (projectForm) {
             event.preventDefault();
 
 
-            const projectNameElement =
-                document.getElementById(
-                    "projectName"
-                );
-
-            const clientNameElement =
-                document.getElementById(
-                    "clientName"
-                );
-
-            const locationElement =
-                document.getElementById(
-                    "location"
-                );
-
-            const buildingTypeElement =
-                document.getElementById(
-                    "buildingType"
-                );
-
-
             const projectName =
-                projectNameElement
-                    ? projectNameElement.value.trim()
-                    : "";
+                document
+                    .getElementById(
+                        "projectName"
+                    )
+                    .value
+                    .trim();
 
 
             const clientName =
-                clientNameElement
-                    ? clientNameElement.value.trim()
-                    : "";
+                document
+                    .getElementById(
+                        "clientName"
+                    )
+                    .value
+                    .trim();
 
 
             const location =
-                locationElement
-                    ? locationElement.value.trim()
-                    : "";
+                document
+                    .getElementById(
+                        "location"
+                    )
+                    .value
+                    .trim();
 
 
             const buildingType =
-                buildingTypeElement
-                    ? buildingTypeElement.value
-                    : "";
+                document
+                    .getElementById(
+                        "buildingType"
+                    )
+                    .value;
 
 
             const floors =
                 Number(
-                    floorsInput
-                        ? floorsInput.value
-                        : 0
+                    floorsInput.value
                 );
 
 
             const area =
                 Number(
-                    areaInput
-                        ? areaInput.value
-                        : 0
+                    areaInput.value
                 );
 
+
+            // ==================================================
+            // VALIDATION
+            // ==================================================
 
             if (!projectName) {
 
                 alert(
-                    "Please enter a project name."
+                    "Please enter the project name."
                 );
 
                 return;
@@ -4438,7 +4428,7 @@ if (projectForm) {
             ) {
 
                 alert(
-                    "Please enter valid floors."
+                    "Please enter valid number of floors."
                 );
 
                 return;
@@ -4459,6 +4449,129 @@ if (projectForm) {
 
             }
 
+
+            // ==================================================
+            // UPDATE EXISTING PROJECT
+            // ==================================================
+
+            if (editingProjectId !== null) {
+
+                const project =
+                    projects.find(
+                        function(item) {
+
+                            return Number(
+                                item.id
+                            ) === Number(
+                                editingProjectId
+                            );
+
+                        }
+                    );
+
+
+                if (!project) {
+
+                    alert(
+                        "Project could not be found."
+                    );
+
+                    return;
+
+                }
+
+
+                // Update only project details
+
+                project.projectName =
+                    projectName;
+
+                project.clientName =
+                    clientName;
+
+                project.location =
+                    location;
+
+                project.buildingType =
+                    buildingType;
+
+                project.floors =
+                    floors;
+
+                project.area =
+                    area;
+
+                project.totalArea =
+                    floors * area;
+
+
+                // Keep existing BOQ
+
+                if (!Array.isArray(project.boq)) {
+
+                    project.boq = [];
+
+                }
+
+
+                saveProjects();
+
+
+                // Update active project if necessary
+
+                if (
+                    activeProject &&
+                    Number(
+                        activeProject.id
+                    ) === Number(
+                        project.id
+                    )
+                ) {
+
+                    activeProject =
+                        project;
+
+                    localStorage.setItem(
+                        "activeProject",
+                        JSON.stringify(
+                            project
+                        )
+                    );
+
+                }
+
+
+                // Reset edit mode
+
+                editingProjectId =
+                    null;
+
+
+                projectForm.reset();
+
+
+                if (totalArea) {
+
+                    totalArea.textContent =
+                        "0 sq.ft";
+
+                }
+
+
+                resetProjectFormUI();
+
+
+                showDashboard();
+
+
+                return;
+
+            }
+
+
+            // ==================================================
+            // CREATE NEW PROJECT
+            // ==================================================
 
             const project = {
 
@@ -4484,8 +4597,7 @@ if (projectForm) {
                     area,
 
                 totalArea:
-                    floors *
-                    area,
+                    floors * area,
 
                 boq:
                     []
@@ -4512,13 +4624,15 @@ if (projectForm) {
             }
 
 
+            resetProjectFormUI();
+
+
             showDashboard();
 
         }
     );
 
 }
-
 
 // ==========================================================
 // NAVIGATION BUTTONS
