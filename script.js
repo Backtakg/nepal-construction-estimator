@@ -2021,58 +2021,34 @@ function initializeRateSystem() {
 }
 function populateRateItems() {
 
-    const select =
-        document.getElementById(
-            "rateItem"
-        );
+    const select = document.getElementById("rateItem");
 
-
-    if (!select) {
-        return;
-    }
-
+    if (!select) return;
 
     select.innerHTML = `
+        <option value="">Select BOQ item</option>
 
-        <option value="">
-            Select BOQ item
-        </option>
+        <optgroup label="🇳🇵 Nepal Reference Rates">
+            ${
+                Object.keys(NEPAL_RATE_DATABASE).map(function(name) {
 
+                    return `
+                        <option value="rate:${escapeAttribute(name)}">
+                            ${escapeHTML(name)}
+                        </option>
+                    `;
+
+                }).join("")
+            }
+        </optgroup>
+
+        <optgroup label="✏️ Custom">
+            <option value="custom">
+                Custom Rate
+            </option>
+        </optgroup>
     `;
-
-
-    const rates =
-        nepalRates.Kathmandu;
-
-
-    Object.keys(rates).forEach(
-        function(item) {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                item;
-
-            option.textContent =
-                item;
-
-            select.appendChild(
-                option
-            );
-
-        }
-    );
-
-
-    select.addEventListener(
-        "change",
-        updateRateFields
-    );
 }
-
 
 // ==========================================================
 // UPDATE RATE FIELDS
