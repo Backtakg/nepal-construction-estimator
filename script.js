@@ -1,3 +1,4 @@
+```javascript
 // ==========================================
 // PAGE NAVIGATION
 // ==========================================
@@ -25,17 +26,27 @@ let projects = JSON.parse(
 
 
 // ==========================================
-// CALCULATE TOTAL AREA
+// PAGE LOADED
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const floorsInput = document.getElementById("floors");
-    const areaInput = document.getElementById("area");
-    const totalArea = document.getElementById("totalArea");
+    const floorsInput =
+        document.getElementById("floors");
 
-    const projectForm = document.getElementById("projectForm");
+    const areaInput =
+        document.getElementById("area");
 
+    const totalArea =
+        document.getElementById("totalArea");
+
+    const projectForm =
+        document.getElementById("projectForm");
+
+
+    // ======================================
+    // CALCULATE TOTAL AREA
+    // ======================================
 
     function calculateTotalArea() {
 
@@ -45,7 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const area =
             parseFloat(areaInput.value) || 0;
 
-        const total = floors * area;
+        const total =
+            floors * area;
 
         totalArea.textContent =
             total.toLocaleString() + " sq.ft";
@@ -122,11 +134,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 project.area;
 
 
-            // Add project
+            // Add project to array
             projects.push(project);
 
 
-            // Save projects
+            // Save projects in browser
             localStorage.setItem(
                 "constructionProjects",
                 JSON.stringify(projects)
@@ -142,17 +154,18 @@ document.addEventListener("DOMContentLoaded", function () {
             // Reset form
             projectForm.reset();
 
-            totalArea.textContent = "0 sq.ft";
+            totalArea.textContent =
+                "0 sq.ft";
 
 
-            // Go dashboard
+            // Return to dashboard
             showDashboard();
 
         }
     );
 
 
-    // Display existing projects
+    // Display saved projects
     displayProjects();
 
 });
@@ -173,6 +186,7 @@ function displayProjects() {
     }
 
 
+    // No projects
     if (projects.length === 0) {
 
         projectList.innerHTML = `
@@ -205,13 +219,16 @@ function displayProjects() {
     }
 
 
+    // Clear current list
     projectList.innerHTML = "";
 
 
+    // Create project cards
     projects.forEach(function (project) {
 
         const card =
             document.createElement("div");
+
 
         card.className =
             "project-card";
@@ -243,26 +260,38 @@ function displayProjects() {
             <div class="project-details">
 
                 <div>
+
                     <span>Client</span>
+
                     <strong>
-                        ${escapeHTML(project.clientName || "—")}
+                        ${escapeHTML(
+                            project.clientName || "—"
+                        )}
                     </strong>
+
                 </div>
 
 
                 <div>
+
                     <span>Floors</span>
+
                     <strong>
                         ${project.floors}
                     </strong>
+
                 </div>
 
 
                 <div>
+
                     <span>Built-up Area</span>
+
                     <strong>
-                        ${project.totalArea.toLocaleString()} sq.ft
+                        ${project.totalArea.toLocaleString()}
+                        sq.ft
                     </strong>
+
                 </div>
 
             </div>
@@ -276,6 +305,7 @@ function displayProjects() {
                 >
                     Open Project →
                 </button>
+
 
                 <button
                     class="delete-button"
@@ -388,8 +418,12 @@ function escapeHTML(value) {
     const div =
         document.createElement("div");
 
+
     div.textContent =
         value;
 
+
     return div.innerHTML;
+
 }
+```
