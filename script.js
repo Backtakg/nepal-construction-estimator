@@ -22,9 +22,9 @@ let activeBOQ = [];
 // ==========================================================
 
 const DEFAULT_COST_SETTINGS = {
-    toolsEquipmentPct: 2,
+    toolsEquipmentPct: 3,
     overheadPct: 5,
-    contingencyPct: 5,
+    contingencyPct: 10,
     profitPct: 10
 };
 
