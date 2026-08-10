@@ -31,48 +31,288 @@ const totalArea = document.getElementById("totalArea");
 // We will replace them with verified rate schedules later.
 // ==========================================================
 
-const nepalRates = {
-    Kathmandu: {
-        "Earthwork": {
-            unit: "cu.ft",
-            rate: 55
-        },
+// ==========================================================
+// NEPAL REFERENCE RATE DATABASE
+// Kathmandu District Rate 2083/84
+// ==========================================================
 
-        "PCC": {
-            unit: "cu.ft",
-            rate: 180
-        },
+const NEPAL_RATE_DATABASE = {
 
-        "RCC": {
-            unit: "cu.ft",
-            rate: 850
-        },
+    "TMT Bar 8 mm dia": {
+        unit: "kg",
+        rate: 94
+    },
 
-        "Reinforcement Steel": {
-            unit: "kg",
-            rate: 115
-        },
+    "TMT Bar 10 mm dia": {
+        unit: "kg",
+        rate: 90
+    },
 
-        "Brick Masonry": {
-            unit: "cu.ft",
-            rate: 220
-        },
+    "TMT Bar 12 mm dia": {
+        unit: "kg",
+        rate: 90
+    },
 
-        "Plaster": {
-            unit: "sq.ft",
-            rate: 65
-        },
+    "TMT Bar 16 mm dia": {
+        unit: "kg",
+        rate: 90
+    },
 
-        "Flooring": {
-            unit: "sq.ft",
-            rate: 140
-        },
+    "TMT Bar 20 mm dia": {
+        unit: "kg",
+        rate: 90
+    },
 
-        "Painting": {
-            unit: "sq.ft",
-            rate: 45
-        }
+    "TMT Bar 25 mm dia": {
+        unit: "kg",
+        rate: 94
+    },
+
+    "TMT Bar 28 mm dia": {
+        unit: "kg",
+        rate: 94
+    },
+
+    "TMT Bar 32 mm dia": {
+        unit: "kg",
+        rate: 94
+    },
+
+    "TMT FE500D 8 mm dia": {
+        unit: "kg",
+        rate: 104
+    },
+
+    "TMT FE500D 10 mm dia": {
+        unit: "kg",
+        rate: 100
+    },
+
+    "TMT FE500D 12 mm dia": {
+        unit: "kg",
+        rate: 100
+    },
+
+    "TMT FE500D 16 mm dia": {
+        unit: "kg",
+        rate: 100
+    },
+
+    "TMT FE500D 20 mm dia": {
+        unit: "kg",
+        rate: 100
+    },
+
+    "TMT FE500D 25 mm dia": {
+        unit: "kg",
+        rate: 104
+    },
+
+    "TMT FE500D 28 mm dia": {
+        unit: "kg",
+        rate: 104
+    },
+
+    "TMT FE500D 32 mm dia": {
+        unit: "kg",
+        rate: 104
+    },
+
+    "TOR Bar 8 mm dia": {
+        unit: "kg",
+        rate: 94
+    },
+
+    "TOR Bar 10 mm dia": {
+        unit: "kg",
+        rate: 91
+    },
+
+    "TOR Bar 12 mm dia": {
+        unit: "kg",
+        rate: 91
+    },
+
+    "TOR Bar 16 mm dia": {
+        unit: "kg",
+        rate: 91
+    },
+
+    "TOR Bar 20 mm dia": {
+        unit: "kg",
+        rate: 91
+    },
+
+    "TOR Bar 25 mm dia": {
+        unit: "kg",
+        rate: 91
+    },
+
+    "TOR Bar 28 mm dia": {
+        unit: "kg",
+        rate: 94
+    },
+
+    "TOR Bar 32 mm dia": {
+        unit: "kg",
+        rate: 94
+    },
+
+    "TOR Kari 4.75 mm": {
+        unit: "kg",
+        rate: 96
+    },
+
+    "TOR Kari 7 mm": {
+        unit: "kg",
+        rate: 96
+    },
+
+    "GI Wire Heavy Zinc Coated 8/10/12 Gauge": {
+        unit: "kg",
+        rate: 129
+    },
+
+    "GI Wire Medium Zinc Coated 8/10/12 Gauge": {
+        unit: "kg",
+        rate: 124
+    },
+
+    "GI Wire Light Zinc Coated 8/10/12 Gauge": {
+        unit: "kg",
+        rate: 117
+    },
+
+    "Barbed Wire": {
+        unit: "kg",
+        rate: 115
+    },
+
+    "U-Hook for Barbed Wire Fencing": {
+        unit: "pc",
+        rate: 0.89
+    },
+
+    "Chain Link Mesh 1 x 1 inch, 12 Gauge": {
+        unit: "sq.ft",
+        rate: 827
+    },
+
+    "Chain Link Mesh 1.6 x 1.6 inch, 12 Gauge": {
+        unit: "sq.ft",
+        rate: 774
+    },
+
+    "Chain Link Mesh 2 x 2 inch, 10 Gauge": {
+        unit: "sq.ft",
+        rate: 613
+    },
+
+    "Chain Link Mesh 3 x 3 inch, 10 Gauge": {
+        unit: "sq.ft",
+        rate: 501
+    },
+
+    "Chain Link Mesh 4 x 4 inch, 10 Gauge": {
+        unit: "sq.ft",
+        rate: 399
+    },
+
+    "Mosquito Proof Net": {
+        unit: "sq.ft",
+        rate: 137
+    },
+
+    "Chicken Wire Mesh": {
+        unit: "sq.ft",
+        rate: 86
+    },
+
+    "Steel Crossing Mesh": {
+        unit: "sq.ft",
+        rate: 180
+    },
+
+    "Steel Mosquito Proof Mesh": {
+        unit: "sq.ft",
+        rate: 312
+    },
+
+    "Steel Bar Coupler 16 mm": {
+        unit: "pc",
+        rate: 65
+    },
+
+    "Steel Bar Coupler 20 mm": {
+        unit: "pc",
+        rate: 160
+    },
+
+    "Steel Bar Coupler 25 mm": {
+        unit: "pc",
+        rate: 250
+    },
+
+    "Steel Bar Coupler 28 mm": {
+        unit: "pc",
+        rate: 300
+    },
+
+    "Steel Bar Coupler 32 mm": {
+        unit: "pc",
+        rate: 380
+    },
+
+    "Steel Bar Coupler 36 mm": {
+        unit: "pc",
+        rate: 512
+    },
+
+    "Steel Bar Coupler 40 mm": {
+        unit: "pc",
+        rate: 700
+    },
+
+    "Thread Cap 16 mm": {
+        unit: "pc",
+        rate: 27
+    },
+
+    "Thread Cap 20 mm": {
+        unit: "pc",
+        rate: 40
+    },
+
+    "Thread Cap 25 mm": {
+        unit: "pc",
+        rate: 74
+    },
+
+    "Thread Cap 28 mm": {
+        unit: "pc",
+        rate: 90
+    },
+
+    "Thread Cap 32 mm": {
+        unit: "pc",
+        rate: 99
+    },
+
+    "Thread Cap 36 mm": {
+        unit: "pc",
+        rate: 165
+    },
+
+    "Thread Cap 40 mm": {
+        unit: "pc",
+        rate: 180
+    },
+
+    "Barbed Wire": {
+        unit: "kg",
+        rate: 115
     }
+
 };
 
 
