@@ -3495,7 +3495,9 @@ function updateBOQItem(
     }
 
 
-    updateBOQSummary();
+   updateBOQSummary();
+
+renderCategorySummary(); 
 
 }
 
