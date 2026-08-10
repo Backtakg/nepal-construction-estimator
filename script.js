@@ -3579,7 +3579,7 @@ function updateBOQSummary() {
             ).toLocaleString();
 
     }
-
+renderCategorySummary();
 }
 
 
