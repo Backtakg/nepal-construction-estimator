@@ -1080,226 +1080,287 @@ function loadProjectBOQ(
 // DEFAULT BOQ
 // ==========================================================
 
-function getDefaultBOQ(
-    project
-) {
+function getDefaultBOQ(project) {
 
     const area =
-        Number(
-            project.totalArea
-        ) || 0;
-
+        Number(project.totalArea) || 0;
 
     const now =
         Date.now();
 
-
     return [
 
+        // --------------------------------------------------
+        // 1. EARTHWORK
+        // --------------------------------------------------
+
         {
+            id: now + 1,
 
-            id:
-                now + 1,
+            category: "Earthwork",
 
-            category:
-                "Earthwork",
+            item: "Excavation for foundation",
 
-            item:
-                "Excavation for foundation",
-
-            unit:
-                "cu.ft",
+            unit: "cu.ft",
 
             quantity:
-                Math.round(
-                    area * 0.12
-                ),
+                Math.round(area * 0.12),
 
-            rate:
-                55
+            rate: 55
+        },
 
+
+        // --------------------------------------------------
+        // 2. CONCRETE
+        // --------------------------------------------------
+
+        {
+            id: now + 2,
+
+            category: "Concrete",
+
+            item: "PCC 1:4:8",
+
+            unit: "cu.ft",
+
+            quantity:
+                Math.round(area * 0.08),
+
+            rate: 180
         },
 
 
         {
+            id: now + 3,
 
-            id:
-                now + 2,
+            category: "Concrete",
 
-            category:
-                "Concrete",
+            item: "RCC work",
 
-            item:
-                "PCC 1:4:8",
-
-            unit:
-                "cu.ft",
+            unit: "cu.ft",
 
             quantity:
-                Math.round(
-                    area * 0.08
-                ),
+                Math.round(area * 0.35),
 
-            rate:
-                180
-
+            rate: 850
         },
 
 
+        // --------------------------------------------------
+        // 3. REINFORCEMENT
+        // --------------------------------------------------
+
         {
+            id: now + 4,
 
-            id:
-                now + 3,
+            category: "Reinforcement",
 
-            category:
-                "Concrete",
+            item: "Reinforcement steel",
 
-            item:
-                "RCC work",
-
-            unit:
-                "cu.ft",
+            unit: "kg",
 
             quantity:
-                Math.round(
-                    area * 0.35
-                ),
+                Math.round(area * 4),
 
-            rate:
-                850
-
+            rate: 115
         },
 
 
+        // --------------------------------------------------
+        // 4. MASONRY
+        // --------------------------------------------------
+
         {
+            id: now + 5,
 
-            id:
-                now + 4,
+            category: "Masonry",
 
-            category:
-                "Reinforcement",
+            item: "Brick masonry",
 
-            item:
-                "Reinforcement steel",
-
-            unit:
-                "kg",
+            unit: "cu.ft",
 
             quantity:
-                Math.round(
-                    area * 4
-                ),
+                Math.round(area * 0.25),
 
-            rate:
-                115
-
+            rate: 220
         },
 
 
+        // --------------------------------------------------
+        // 5. PLASTER
+        // --------------------------------------------------
+
         {
+            id: now + 6,
 
-            id:
-                now + 5,
+            category: "Plaster",
 
-            category:
-                "Masonry",
+            item: "Cement plaster",
 
-            item:
-                "Brick masonry",
-
-            unit:
-                "cu.ft",
+            unit: "sq.ft",
 
             quantity:
-                Math.round(
-                    area * 0.25
-                ),
+                Math.round(area * 1.8),
 
-            rate:
-                220
-
+            rate: 65
         },
 
 
+        // --------------------------------------------------
+        // 6. FLOORING
+        // --------------------------------------------------
+
         {
+            id: now + 7,
 
-            id:
-                now + 6,
+            category: "Flooring",
 
-            category:
-                "Plaster",
+            item: "Floor tiles",
 
-            item:
-                "Cement plaster",
-
-            unit:
-                "sq.ft",
+            unit: "sq.ft",
 
             quantity:
-                Math.round(
-                    area * 1.8
-                ),
+                Math.round(area),
 
-            rate:
-                65
-
+            rate: 140
         },
 
 
+        // --------------------------------------------------
+        // 7. PAINTING
+        // --------------------------------------------------
+
         {
+            id: now + 8,
 
-            id:
-                now + 7,
+            category: "Painting",
 
-            category:
-                "Flooring",
+            item: "Interior & exterior painting",
 
-            item:
-                "Floor tiles",
-
-            unit:
-                "sq.ft",
+            unit: "sq.ft",
 
             quantity:
-                Math.round(
-                    area
-                ),
+                Math.round(area * 2.5),
 
-            rate:
-                140
-
+            rate: 45
         },
 
 
+        // --------------------------------------------------
+        // 8. PLUMBING
+        // --------------------------------------------------
+
         {
+            id: now + 9,
 
-            id:
-                now + 8,
+            category: "Plumbing",
 
-            category:
-                "Painting",
+            item: "Plumbing and sanitary works",
 
-            item:
-                "Interior & exterior painting",
+            unit: "LS",
 
-            unit:
-                "sq.ft",
+            quantity: 1,
 
-            quantity:
-                Math.round(
-                    area * 2.5
-                ),
+            rate: 0
+        },
 
-            rate:
-                45
 
+        // --------------------------------------------------
+        // 9. ELECTRICAL
+        // --------------------------------------------------
+
+        {
+            id: now + 10,
+
+            category: "Electrical",
+
+            item: "Electrical installation",
+
+            unit: "LS",
+
+            quantity: 1,
+
+            rate: 0
+        },
+
+
+        // --------------------------------------------------
+        // 10. DOORS & WINDOWS
+        // --------------------------------------------------
+
+        {
+            id: now + 11,
+
+            category: "Doors & Windows",
+
+            item: "Doors and windows",
+
+            unit: "LS",
+
+            quantity: 1,
+
+            rate: 0
+        },
+
+
+        // --------------------------------------------------
+        // 11. TOOLS & EQUIPMENT
+        // --------------------------------------------------
+
+        {
+            id: now + 12,
+
+            category: "Tools & Equipment",
+
+            item: "Tools and construction equipment",
+
+            unit: "LS",
+
+            quantity: 1,
+
+            rate: 0
+        },
+
+
+        // --------------------------------------------------
+        // 12. CONTINGENCIES
+        // --------------------------------------------------
+
+        {
+            id: now + 13,
+
+            category: "Contingencies",
+
+            item: "Contingencies",
+
+            unit: "%",
+
+            quantity: 1,
+
+            rate: 0
+        },
+
+
+        // --------------------------------------------------
+        // 13. CONTRACTOR'S PROFIT
+        // --------------------------------------------------
+
+        {
+            id: now + 14,
+
+            category: "Contractor's Profit",
+
+            item: "Contractor's profit",
+
+            unit: "%",
+
+            quantity: 1,
+
+            rate: 0
         }
 
     ];
-
 }
-
-
 // ==========================================================
 // SAVE CURRENT BOQ
 // ==========================================================
