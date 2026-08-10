@@ -2337,9 +2337,11 @@ function renderBOQ() {
     `;
 
 
-    initializeRateSystem();
+   initializeRateSystem();
 
-    attachBOQEvents();
+attachBOQEvents();
+
+renderCategorySummary();
 
 }
 
