@@ -5085,3 +5085,126 @@ console.log(
     }
 
 })();
+// ==========================================================
+// CONSTRUCTOR ESTIMATOR THEME SYSTEM
+// ==========================================================
+
+(function initThemeSystem() {
+
+    const themeToggle =
+        document.getElementById(
+            "themeToggle"
+        );
+
+    const themeIcon =
+        themeToggle
+            ? themeToggle.querySelector(
+                ".theme-icon"
+            )
+            : null;
+
+
+    function getSavedTheme() {
+
+        const saved =
+            localStorage.getItem(
+                "constructorEstimatorTheme"
+            );
+
+        if (
+            saved === "light" ||
+            saved === "dark"
+        ) {
+
+            return saved;
+
+        }
+
+
+        return window.matchMedia(
+            "(prefers-color-scheme: dark)"
+        ).matches
+            ? "dark"
+            : "light";
+
+    }
+
+
+    function applyTheme(theme) {
+
+        document.documentElement
+            .setAttribute(
+                "data-theme",
+                theme
+            );
+
+
+        if (themeIcon) {
+
+            themeIcon.textContent =
+                theme === "dark"
+                    ? "☀️"
+                    : "🌙";
+
+        }
+
+
+        if (themeToggle) {
+
+            themeToggle.setAttribute(
+                "aria-label",
+                theme === "dark"
+                    ? "Switch to light mode"
+                    : "Switch to dark mode"
+            );
+
+            themeToggle.setAttribute(
+                "title",
+                theme === "dark"
+                    ? "Light mode"
+                    : "Dark mode"
+            );
+
+        }
+
+
+        localStorage.setItem(
+            "constructorEstimatorTheme",
+            theme
+        );
+
+    }
+
+
+    applyTheme(
+        getSavedTheme()
+    );
+
+
+    if (themeToggle) {
+
+        themeToggle.addEventListener(
+            "click",
+            function() {
+
+                const current =
+                    document.documentElement
+                        .getAttribute(
+                            "data-theme"
+                        ) || "light";
+
+
+                const next =
+                    current === "dark"
+                        ? "light"
+                        : "dark";
+
+
+                applyTheme(next);
+
+            }
+        );
+
+    }
+
+})();
