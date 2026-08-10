@@ -1428,42 +1428,263 @@ function saveActiveBOQ() {
 
 
 // ==========================================================
-// CALCULATE BOQ TOTAL
+// CALCULATE BOQ COST BREAKDOWN
 // ==========================================================
 
 function calculateBOQTotal() {
 
-    let total = 0;
+    let directCost = 0;
+
+    let toolsEquipment = 0;
+
+    let contingencies = 0;
+
+    let contractorProfit = 0;
 
 
-    activeBOQ.forEach(
-        function(item) {
+    // ------------------------------------------------------
+    // CALCULATE DIRECT BOQ ITEMS
+    // ------------------------------------------------------
 
-            item.quantity =
-                Number(
-                    item.quantity
-                ) || 0;
+    activeBOQ.forEach(function(item) {
 
+        const quantity =
+            Number(item.quantity) || 0;
 
-            item.rate =
-                Number(
-                    item.rate
-                ) || 0;
+        const rate =
+            Number(item.rate) || 0;
 
 
-            item.amount =
-                item.quantity *
-                item.rate;
+        // Keep amount updated
+        item.amount =
+            quantity * rate;
 
 
-            total +=
+        const category =
+            normalizeText(
+                item.category
+            );
+
+
+        const itemName =
+            normalizeText(
+                item.item
+            );
+
+
+        // --------------------------------------------------
+        // TOOLS & EQUIPMENT
+        // --------------------------------------------------
+
+        if (
+            category === "tools & equipment" ||
+            category === "tools and equipment" ||
+            itemName.includes("tools and construction equipment")
+        ) {
+
+            toolsEquipment +=
                 item.amount;
 
+            return;
+
         }
-    );
 
 
-    return total;
+        // --------------------------------------------------
+        // CONTINGENCIES
+        // --------------------------------------------------
+
+        if (
+            category === "contingencies" ||
+            itemName === "contingencies"
+        ) {
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // CONTRACTOR PROFIT
+        // --------------------------------------------------
+
+        if (
+            category === "contractor's profit" ||
+            category === "contractors profit" ||
+            itemName === "contractor's profit"
+        ) {
+
+            return;
+
+        }
+
+
+        // --------------------------------------------------
+        // NORMAL DIRECT COST
+        // --------------------------------------------------
+
+        directCost +=
+            item.amount;
+
+    });
+
+
+    // ------------------------------------------------------
+    // SUBTOTAL BEFORE CONTINGENCY / PROFIT
+    // ------------------------------------------------------
+
+    const subtotal =
+        directCost +
+        toolsEquipment;
+
+
+    // ------------------------------------------------------
+    // CONTINGENCY %
+    // ------------------------------------------------------
+
+    const contingencyItem =
+        activeBOQ.find(function(item) {
+
+            const category =
+                normalizeText(
+                    item.category
+                );
+
+            const name =
+                normalizeText(
+                    item.item
+                );
+
+            return (
+                category === "contingencies" ||
+                name === "contingencies"
+            );
+
+        });
+
+
+    const contingencyRate =
+        contingencyItem
+            ? Number(
+                contingencyItem.rate
+            ) || 0
+            : 0;
+
+
+    contingencies =
+        subtotal *
+        contingencyRate /
+        100;
+
+
+    if (contingencyItem) {
+
+        contingencyItem.amount =
+            contingencies;
+
+    }
+
+
+    // ------------------------------------------------------
+    // COST AFTER CONTINGENCY
+    // ------------------------------------------------------
+
+    const costBeforeProfit =
+        subtotal +
+        contingencies;
+
+
+    // ------------------------------------------------------
+    // CONTRACTOR PROFIT %
+    // ------------------------------------------------------
+
+    const profitItem =
+        activeBOQ.find(function(item) {
+
+            const category =
+                normalizeText(
+                    item.category
+                );
+
+            const name =
+                normalizeText(
+                    item.item
+                );
+
+            return (
+                category === "contractor's profit" ||
+                category === "contractors profit" ||
+                name === "contractor's profit"
+            );
+
+        });
+
+
+    const profitRate =
+        profitItem
+            ? Number(
+                profitItem.rate
+            ) || 0
+            : 0;
+
+
+    contractorProfit =
+        costBeforeProfit *
+        profitRate /
+        100;
+
+
+    if (profitItem) {
+
+        profitItem.amount =
+            contractorProfit;
+
+    }
+
+
+    // ------------------------------------------------------
+    // GRAND TOTAL
+    // ------------------------------------------------------
+
+    const total =
+        costBeforeProfit +
+        contractorProfit;
+
+
+    // ------------------------------------------------------
+    // RETURN COMPLETE BREAKDOWN
+    // ------------------------------------------------------
+
+    return {
+
+        directCost:
+            directCost,
+
+        toolsEquipment:
+            toolsEquipment,
+
+        subtotal:
+            subtotal,
+
+        contingencyRate:
+            contingencyRate,
+
+        contingencies:
+            contingencies,
+
+        costBeforeProfit:
+            costBeforeProfit,
+
+        profitRate:
+            profitRate,
+
+        contractorProfit:
+            contractorProfit,
+
+        total:
+            total
+
+    };
 
 }
 // ==========================================================
