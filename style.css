@@ -1733,3 +1733,544 @@ header p {
     }
 
 }
+/* =========================================================
+   MODERN THEME SYSTEM
+   ========================================================= */
+
+:root {
+
+    --theme-primary: #2563eb;
+    --theme-primary-dark: #1d4ed8;
+    --theme-accent: #7c3aed;
+
+    --bg-main: #f6f8fc;
+    --bg-card: #ffffff;
+    --bg-soft: #f1f5f9;
+
+    --text-main: #172033;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+
+    --border-color: #e2e8f0;
+
+    --shadow-soft:
+        0 10px 30px rgba(15, 23, 42, 0.07);
+
+    --shadow-hover:
+        0 18px 45px rgba(15, 23, 42, 0.13);
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+body.dark-mode {
+
+    --bg-main: #0b1020;
+    --bg-card: #111827;
+    --bg-soft: #182235;
+
+    --text-main: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+
+    --border-color: #263449;
+
+    --shadow-soft:
+        0 10px 30px rgba(0, 0, 0, 0.28);
+
+    --shadow-hover:
+        0 18px 45px rgba(0, 0, 0, 0.45);
+}
+
+
+/* =========================================================
+   GLOBAL THEME TRANSITION
+   ========================================================= */
+
+html,
+body,
+button,
+input,
+select,
+textarea,
+.card,
+.project-card,
+.summary-card,
+.boq-card,
+.nepal-rate-panel,
+.add-boq-form,
+.boq-container,
+header,
+section,
+main,
+footer {
+
+    transition:
+        background-color 0.35s ease,
+        color 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+body {
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(37, 99, 235, 0.06),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(124, 58, 237, 0.05),
+            transparent 25%
+        ),
+        var(--bg-main);
+
+    color: var(--text-main);
+
+}
+
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    color: var(--text-main);
+
+}
+
+
+p,
+span,
+label {
+
+    color: var(--text-secondary);
+
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+input,
+select,
+textarea {
+
+    background: var(--bg-card);
+    color: var(--text-main);
+    border-color: var(--border-color);
+
+}
+
+
+input::placeholder,
+textarea::placeholder {
+
+    color: var(--text-muted);
+
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+
+    border-color: var(--theme-primary);
+
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.12);
+
+    outline: none;
+
+}
+
+
+/* =========================================================
+   THEME CONTROLS
+   ========================================================= */
+
+.theme-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 5px;
+
+    border-radius: 14px;
+
+    background: var(--bg-soft);
+
+    border: 1px solid var(--border-color);
+
+    box-shadow: var(--shadow-soft);
+
+}
+
+
+/* =========================================================
+   THEME BUTTON
+   ========================================================= */
+
+.theme-mode-btn {
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: var(--text-main);
+
+    cursor: pointer;
+
+    font-size: 17px;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.theme-mode-btn:hover {
+
+    transform: translateY(-2px) scale(1.05);
+
+    background: var(--bg-card);
+
+}
+
+
+.theme-mode-btn:active {
+
+    transform: scale(0.92);
+
+}
+
+
+.theme-mode-btn.active {
+
+    background: var(--theme-primary);
+
+    color: white;
+
+    box-shadow:
+        0 5px 15px rgba(37, 99, 235, 0.30);
+
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.project-card,
+.summary-card,
+.boq-card,
+.nepal-rate-panel,
+.add-boq-form {
+
+    background: var(--bg-card);
+
+    color: var(--text-main);
+
+    border-color: var(--border-color);
+
+    box-shadow: var(--shadow-soft);
+
+}
+
+
+.project-card:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow: var(--shadow-hover);
+
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.summary-card {
+
+    border: 1px solid var(--border-color);
+
+}
+
+
+.summary-card strong {
+
+    color: var(--text-main);
+
+}
+
+
+/* =========================================================
+   BOQ TABLE
+   ========================================================= */
+
+.boq-table {
+
+    color: var(--text-main);
+
+}
+
+
+.boq-table th {
+
+    background: var(--bg-soft);
+
+    color: var(--text-secondary);
+
+    border-color: var(--border-color);
+
+}
+
+
+.boq-table td {
+
+    border-color: var(--border-color);
+
+}
+
+
+.boq-table tr:hover td {
+
+    background: var(--bg-soft);
+
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.primary-button,
+.add-boq-button {
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--theme-primary),
+            var(--theme-accent)
+        );
+
+    color: white;
+
+    border: none;
+
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.22);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.primary-button:hover,
+.add-boq-button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 28px rgba(37, 99, 235, 0.30);
+
+}
+
+
+.secondary-button {
+
+    background: var(--bg-soft);
+
+    color: var(--text-main);
+
+    border-color: var(--border-color);
+
+}
+
+
+/* =========================================================
+   RATE PANEL
+   ========================================================= */
+
+.nepal-rate-panel {
+
+    border: 1px solid var(--border-color);
+
+}
+
+
+.rate-status {
+
+    background: var(--bg-soft);
+
+    color: var(--text-secondary);
+
+    border-color: var(--border-color);
+
+}
+
+
+/* =========================================================
+   DARK MODE TABLE FIX
+   ========================================================= */
+
+body.dark-mode .boq-table input {
+
+    background: #0f172a;
+
+    color: #f8fafc;
+
+}
+
+
+body.dark-mode .boq-table select {
+
+    background: #0f172a;
+
+    color: #f8fafc;
+
+}
+
+
+body.dark-mode .empty-state {
+
+    background: var(--bg-card);
+
+    color: var(--text-main);
+
+}
+
+
+body.dark-mode .empty-icon {
+
+    background: #182235;
+
+}
+
+
+/* =========================================================
+   SMOOTH PAGE FEEL
+   ========================================================= */
+
+main {
+
+    animation:
+        pageEnter 0.55s ease both;
+
+}
+
+
+@keyframes pageEnter {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   THEME POP ANIMATION
+   ========================================================= */
+
+.theme-mode-btn.theme-click {
+
+    animation:
+        themePop 0.35s ease;
+
+}
+
+
+@keyframes themePop {
+
+    0% {
+
+        transform: scale(1);
+
+    }
+
+    50% {
+
+        transform: scale(1.25) rotate(8deg);
+
+    }
+
+    100% {
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+/* =========================================================
+   REMOVE OLD FOOTER BRANDING
+   ========================================================= */
+
+footer {
+
+    display: none !important;
+
+}
+
+
+/*
+   If the old branding is NOT inside a footer,
+   these classes/containers are also hidden.
+*/
+
+.site-footer,
+.footer,
+.app-footer,
+.brand-footer {
+
+    display: none !important;
+
+}
