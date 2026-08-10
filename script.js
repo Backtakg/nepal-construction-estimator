@@ -2120,3 +2120,469 @@ displayProjects();
 console.log(
     "Nepal Construction Estimator loaded successfully."
 );
+// ======================================================
+// NEPAL RATE DATABASE - VERSION 1
+// ======================================================
+
+const nepalRates = {
+
+    Kathmandu: {
+
+        "Earthwork": {
+            unit: "cu.ft",
+            rate: 55
+        },
+
+        "PCC": {
+            unit: "cu.ft",
+            rate: 180
+        },
+
+        "RCC": {
+            unit: "cu.ft",
+            rate: 850
+        },
+
+        "Reinforcement Steel": {
+            unit: "kg",
+            rate: 115
+        },
+
+        "Brick Masonry": {
+            unit: "cu.ft",
+            rate: 220
+        },
+
+        "Plaster": {
+            unit: "sq.ft",
+            rate: 65
+        },
+
+        "Flooring": {
+            unit: "sq.ft",
+            rate: 140
+        },
+
+        "Painting": {
+            unit: "sq.ft",
+            rate: 45
+        }
+
+    }
+
+};
+
+
+// ======================================================
+// RATE SELECTOR
+// ======================================================
+
+function createRateSelector() {
+
+    if (!activeProject) {
+        return;
+    }
+
+    const boqScreen =
+        document.getElementById("boqScreen");
+
+    if (!boqScreen) {
+        return;
+    }
+
+    const existing =
+        document.getElementById(
+            "nepalRatePanel"
+        );
+
+    if (existing) {
+        existing.remove();
+    }
+
+
+    const panel =
+        document.createElement("div");
+
+    panel.id =
+        "nepalRatePanel";
+
+    panel.className =
+        "nepal-rate-panel";
+
+
+    panel.innerHTML = `
+
+        <div class="rate-panel-header">
+
+            <div>
+
+                <span class="badge">
+                    🇳🇵 Nepal Rate System
+                </span>
+
+                <h3>
+                    Reference Construction Rates
+                </h3>
+
+                <p>
+                    Select an item to apply a
+                    reference rate to your BOQ.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="rate-controls">
+
+            <div class="rate-field">
+
+                <label>
+                    Location
+                </label>
+
+                <select id="rateLocation">
+
+                    <option value="Kathmandu">
+                        Kathmandu
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="rate-field">
+
+                <label>
+                    BOQ Item
+                </label>
+
+                <select id="rateItem">
+
+                    <option value="">
+                        Select BOQ item
+                    </option>
+
+                    ${Object.keys(
+                        nepalRates.Kathmandu
+                    ).map(function(item) {
+
+                        return `
+                            <option value="${escapeAttribute(item)}">
+                                ${escapeHTML(item)}
+                            </option>
+                        `;
+
+                    }).join("")}
+
+                </select>
+
+            </div>
+
+
+            <div class="rate-field">
+
+                <label>
+                    Unit
+                </label>
+
+                <input
+                    id="rateUnit"
+                    type="text"
+                    readonly
+                    placeholder="—"
+                >
+
+            </div>
+
+
+            <div class="rate-field">
+
+                <label>
+                    Suggested Rate (NPR)
+                </label>
+
+                <input
+                    id="rateValue"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="—"
+                >
+
+            </div>
+
+
+            <div class="rate-action">
+
+                <button
+                    type="button"
+                    id="applyNepalRate"
+                    class="primary-button">
+
+                    Apply Rate
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="rate-warning">
+
+            ⚠️ <strong>Reference rate:</strong>
+            Rates are provided for estimating
+            purposes and should be verified
+            against current quotations and
+            applicable official schedules before
+            commercial use.
+
+        </div>
+
+    `;
+
+
+    const boqContainer =
+        boqScreen.querySelector(
+            ".boq-container"
+        );
+
+
+    if (boqContainer) {
+
+        boqContainer.insertBefore(
+            panel,
+            boqContainer.children[1]
+        );
+
+    }
+
+
+    connectRateEvents();
+}
+
+
+// ======================================================
+// RATE EVENTS
+// ======================================================
+
+function connectRateEvents() {
+
+    const itemSelect =
+        document.getElementById(
+            "rateItem"
+        );
+
+    const rateValue =
+        document.getElementById(
+            "rateValue"
+        );
+
+    const rateUnit =
+        document.getElementById(
+            "rateUnit"
+        );
+
+
+    if (!itemSelect) {
+        return;
+    }
+
+
+    itemSelect.addEventListener(
+        "change",
+        function () {
+
+            const selected =
+                itemSelect.value;
+
+
+            if (!selected) {
+
+                rateValue.value = "";
+                rateUnit.value = "";
+
+                return;
+            }
+
+
+            const rate =
+                nepalRates.Kathmandu[
+                    selected
+                ];
+
+
+            if (!rate) {
+                return;
+            }
+
+
+            rateValue.value =
+                rate.rate;
+
+
+            rateUnit.value =
+                rate.unit;
+
+        }
+    );
+
+
+    const applyButton =
+        document.getElementById(
+            "applyNepalRate"
+        );
+
+
+    if (applyButton) {
+
+        applyButton.addEventListener(
+            "click",
+            applySelectedNepalRate
+        );
+
+    }
+}
+
+
+// ======================================================
+// APPLY SELECTED RATE
+// ======================================================
+
+function applySelectedNepalRate() {
+
+    const itemSelect =
+        document.getElementById(
+            "rateItem"
+        );
+
+
+    const rateValue =
+        document.getElementById(
+            "rateValue"
+        );
+
+
+    const rateUnit =
+        document.getElementById(
+            "rateUnit"
+        );
+
+
+    if (
+        !itemSelect ||
+        !rateValue ||
+        !rateUnit
+    ) {
+        return;
+    }
+
+
+    const selected =
+        itemSelect.value;
+
+
+    const rate =
+        Number(
+            rateValue.value
+        ) || 0;
+
+
+    const unit =
+        rateUnit.value;
+
+
+    if (!selected) {
+
+        alert(
+            "Please select a BOQ item."
+        );
+
+        return;
+    }
+
+
+    if (rate <= 0) {
+
+        alert(
+            "Please enter a valid rate."
+        );
+
+        return;
+    }
+
+
+    // Find matching BOQ category/item
+
+    const boqItem =
+        activeBOQ.find(
+            function(item) {
+
+                const category =
+                    String(
+                        item.category || ""
+                    ).toLowerCase();
+
+                const description =
+                    String(
+                        item.item || ""
+                    ).toLowerCase();
+
+
+                const search =
+                    selected.toLowerCase();
+
+
+                return (
+                    category.includes(search) ||
+                    description.includes(search)
+                );
+
+            }
+        );
+
+
+    if (!boqItem) {
+
+        alert(
+            "No matching BOQ item was found.\n\n" +
+            "You can add the item to the BOQ first."
+        );
+
+        return;
+    }
+
+
+    boqItem.rate =
+        rate;
+
+
+    boqItem.unit =
+        unit;
+
+
+    boqItem.amount =
+        Number(
+            boqItem.quantity || 0
+        ) * rate;
+
+
+    saveCurrentBOQ();
+
+
+    renderBOQ();
+
+
+    // Recreate rate panel
+
+    createRateSelector();
+
+
+    alert(
+        selected +
+        " rate applied successfully."
+    );
+}
