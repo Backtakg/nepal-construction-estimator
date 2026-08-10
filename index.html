@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nepal Construction Estimator</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div>
+            <h1>🏗️ Nepal Construction Estimator</h1>
+            <p>BOQ • Cost Estimation • Construction Management</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="hero">
+            <h2>Construction Estimation Made Simple</h2>
+            <p>
+                Create projects, calculate quantities, generate BOQs
+                and estimate construction costs.
+            </p>
+
+            <button onclick="createProject()">
+                + New Project
+            </button>
+        </section>
+
+
+        <section class="projects">
+
+            <div class="section-header">
+                <h2>My Projects</h2>
+            </div>
+
+            <div id="projectList" class="project-list">
+
+                <div class="empty-state">
+                    <div class="empty-icon">🏗️</div>
+
+                    <h3>No projects yet</h3>
+
+                    <p>
+                        Create your first construction project
+                        to start estimating.
+                    </p>
+
+                    <button onclick="createProject()">
+                        Create Project
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>© 2026 Nepal Construction Estimator</p>
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
