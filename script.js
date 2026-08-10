@@ -1,15 +1,8 @@
 // ==========================================
 // NEPAL CONSTRUCTION ESTIMATOR
-// PROJECT + BOQ SYSTEM
-// ==========================================
-
-
-// ==========================================
-// PROJECT DATA
 // ==========================================
 
 let projects = [];
-
 let activeProject = null;
 
 
@@ -18,17 +11,12 @@ let activeProject = null;
 // ==========================================
 
 const dashboard = document.getElementById("dashboard");
-
 const newProject = document.getElementById("newProject");
-
 const projectForm = document.getElementById("projectForm");
-
 const projectList = document.getElementById("projectList");
 
 const floorsInput = document.getElementById("floors");
-
 const areaInput = document.getElementById("area");
-
 const totalArea = document.getElementById("totalArea");
 
 
@@ -38,35 +26,25 @@ const totalArea = document.getElementById("totalArea");
 
 function loadProjects() {
 
-    const saved =
-        localStorage.getItem("constructionProjects");
+    const saved = localStorage.getItem("constructionProjects");
 
     if (!saved) {
-
         projects = [];
-
         return;
     }
 
     try {
-
         projects = JSON.parse(saved);
 
         if (!Array.isArray(projects)) {
-
             projects = [];
-
         }
 
     } catch (error) {
 
-        console.error(
-            "Project loading error:",
-            error
-        );
+        console.error("Could not load projects:", error);
 
         projects = [];
-
     }
 }
 
@@ -85,10 +63,16 @@ function saveProjects() {
 
 
 // ==========================================
-// SHOW DASHBOARD
+// DASHBOARD
 // ==========================================
 
 function showDashboard() {
+
+    const boqScreen = document.getElementById("boqScreen");
+
+    if (boqScreen) {
+        boqScreen.classList.add("hidden");
+    }
 
     newProject.classList.add("hidden");
 
@@ -99,15 +83,20 @@ function showDashboard() {
 
 
 // ==========================================
-// SHOW NEW PROJECT
+// NEW PROJECT
 // ==========================================
 
 function showNewProject() {
 
+    const boqScreen = document.getElementById("boqScreen");
+
+    if (boqScreen) {
+        boqScreen.classList.add("hidden");
+    }
+
     dashboard.classList.add("hidden");
 
     newProject.classList.remove("hidden");
-
 }
 
 
@@ -121,16 +110,12 @@ function displayProjects() {
         return;
     }
 
-
     if (projects.length === 0) {
 
         projectList.innerHTML = `
-
             <div class="empty-state">
 
-                <div class="empty-icon">
-                    🏠
-                </div>
+                <div class="empty-icon">🏠</div>
 
                 <h3>No projects yet</h3>
 
@@ -143,24 +128,15 @@ function displayProjects() {
                     type="button"
                     class="primary-button"
                     id="createFirstProjectButton">
-
                     Create Your First Project
-
                 </button>
 
             </div>
         `;
 
-
         document
-            .getElementById(
-                "createFirstProjectButton"
-            )
-            .addEventListener(
-                "click",
-                showNewProject
-            );
-
+            .getElementById("createFirstProjectButton")
+            .addEventListener("click", showNewProject);
 
         return;
     }
@@ -171,12 +147,9 @@ function displayProjects() {
 
     projects.forEach(function (project) {
 
-        const card =
-            document.createElement("div");
+        const card = document.createElement("div");
 
-
-        card.className =
-            "project-card";
+        card.className = "project-card";
 
 
         card.innerHTML = `
@@ -186,29 +159,17 @@ function displayProjects() {
                 <div>
 
                     <h3>
-                        ${escapeHTML(
-                            project.projectName
-                        )}
+                        ${escapeHTML(project.projectName)}
                     </h3>
 
                     <span class="project-location">
-
-                        📍
-                        ${escapeHTML(
-                            project.location
-                        )}
-
+                        📍 ${escapeHTML(project.location)}
                     </span>
 
                 </div>
 
-
                 <span class="project-type">
-
-                    ${escapeHTML(
-                        project.buildingType
-                    )}
-
+                    ${escapeHTML(project.buildingType)}
                 </span>
 
             </div>
@@ -217,43 +178,30 @@ function displayProjects() {
             <div class="project-details">
 
                 <div>
-
                     <span>Client</span>
 
                     <strong>
-                        ${escapeHTML(
-                            project.clientName || "—"
-                        )}
+                        ${escapeHTML(project.clientName || "—")}
                     </strong>
-
                 </div>
 
 
                 <div>
-
                     <span>Floors</span>
 
                     <strong>
                         ${project.floors}
                     </strong>
-
                 </div>
 
 
                 <div>
-
                     <span>Built-up Area</span>
 
                     <strong>
-
-                        ${Number(
-                            project.totalArea || 0
-                        ).toLocaleString()}
-
+                        ${Number(project.totalArea || 0).toLocaleString()}
                         sq.ft
-
                     </strong>
-
                 </div>
 
             </div>
@@ -264,18 +212,13 @@ function displayProjects() {
                 <button
                     type="button"
                     class="open-project-button">
-
                     Open Project →
-
                 </button>
-
 
                 <button
                     type="button"
                     class="delete-button">
-
                     Delete
-
                 </button>
 
             </div>
@@ -285,35 +228,28 @@ function displayProjects() {
         projectList.appendChild(card);
 
 
-        // OPEN PROJECT
+        // OPEN
 
         card
             .querySelector(".open-project-button")
-            .addEventListener(
-                "click",
-                function () {
+            .addEventListener("click", function () {
 
-                    openProject(project.id);
+                openProject(project.id);
 
-                }
-            );
+            });
 
 
-        // DELETE PROJECT
+        // DELETE
 
         card
             .querySelector(".delete-button")
-            .addEventListener(
-                "click",
-                function () {
+            .addEventListener("click", function () {
 
-                    deleteProject(project.id);
+                deleteProject(project.id);
 
-                }
-            );
+            });
 
     });
-
 }
 
 
@@ -323,18 +259,20 @@ function displayProjects() {
 
 function openProject(id) {
 
-    const project =
-        projects.find(function (item) {
+    console.log("Opening project:", id);
 
-            return item.id === id;
+    const project = projects.find(function (item) {
 
-        });
+        return Number(item.id) === Number(id);
+
+    });
 
 
     if (!project) {
 
-        return;
+        alert("Project could not be found.");
 
+        return;
     }
 
 
@@ -347,21 +285,23 @@ function openProject(id) {
     );
 
 
-    showBOQ(project);
+    dashboard.classList.add("hidden");
+
+    newProject.classList.add("hidden");
+
+
+    createBOQScreen();
+
+    renderBOQ(project);
 
 }
 
 
 // ==========================================
-// BOQ SCREEN
+// CREATE BOQ SCREEN
 // ==========================================
 
-function showBOQ(project) {
-
-    dashboard.classList.add("hidden");
-
-    newProject.classList.add("hidden");
-
+function createBOQScreen() {
 
     let boqScreen =
         document.getElementById("boqScreen");
@@ -372,35 +312,32 @@ function showBOQ(project) {
         boqScreen =
             document.createElement("section");
 
-        boqScreen.id =
-            "boqScreen";
+        boqScreen.id = "boqScreen";
 
-        boqScreen.className =
-            "boq-screen";
+        boqScreen.className = "boq-screen hidden";
 
-        document
-            .querySelector("main")
-            .appendChild(boqScreen);
 
+        const main =
+            document.querySelector("main");
+
+
+        main.appendChild(boqScreen);
     }
 
 
     boqScreen.classList.remove("hidden");
 
-
-    renderBOQ(project);
-
 }
 
 
 // ==========================================
-// BOQ DATA
+// BOQ ITEMS
 // ==========================================
 
 function getBOQItems(project) {
 
-    const totalArea =
-        Number(project.totalArea || 0);
+    const area =
+        Number(project.totalArea) || 0;
 
 
     return [
@@ -410,9 +347,7 @@ function getBOQItems(project) {
             category: "Earthwork",
             item: "Excavation for foundation",
             unit: "cu.ft",
-            quantity: Math.round(
-                totalArea * 0.12
-            ),
+            quantity: Math.round(area * 0.12),
             rate: 55
         },
 
@@ -421,9 +356,7 @@ function getBOQItems(project) {
             category: "Concrete",
             item: "PCC 1:4:8",
             unit: "cu.ft",
-            quantity: Math.round(
-                totalArea * 0.08
-            ),
+            quantity: Math.round(area * 0.08),
             rate: 180
         },
 
@@ -432,9 +365,7 @@ function getBOQItems(project) {
             category: "Concrete",
             item: "RCC work",
             unit: "cu.ft",
-            quantity: Math.round(
-                totalArea * 0.35
-            ),
+            quantity: Math.round(area * 0.35),
             rate: 850
         },
 
@@ -443,9 +374,7 @@ function getBOQItems(project) {
             category: "Reinforcement",
             item: "Reinforcement steel",
             unit: "kg",
-            quantity: Math.round(
-                totalArea * 4
-            ),
+            quantity: Math.round(area * 4),
             rate: 115
         },
 
@@ -454,9 +383,7 @@ function getBOQItems(project) {
             category: "Masonry",
             item: "Brick masonry",
             unit: "cu.ft",
-            quantity: Math.round(
-                totalArea * 0.25
-            ),
+            quantity: Math.round(area * 0.25),
             rate: 220
         },
 
@@ -465,9 +392,7 @@ function getBOQItems(project) {
             category: "Plaster",
             item: "Cement plaster",
             unit: "sq.ft",
-            quantity: Math.round(
-                totalArea * 1.8
-            ),
+            quantity: Math.round(area * 1.8),
             rate: 65
         },
 
@@ -476,9 +401,7 @@ function getBOQItems(project) {
             category: "Flooring",
             item: "Floor tiles",
             unit: "sq.ft",
-            quantity: Math.round(
-                totalArea
-            ),
+            quantity: Math.round(area),
             rate: 140
         },
 
@@ -487,14 +410,11 @@ function getBOQItems(project) {
             category: "Painting",
             item: "Interior & exterior painting",
             unit: "sq.ft",
-            quantity: Math.round(
-                totalArea * 2.5
-            ),
+            quantity: Math.round(area * 2.5),
             rate: 45
         }
 
     ];
-
 }
 
 
@@ -508,23 +428,33 @@ function renderBOQ(project) {
         document.getElementById("boqScreen");
 
 
+    if (!boqScreen) {
+
+        console.error("BOQ screen was not created.");
+
+        return;
+    }
+
+
     const items =
         getBOQItems(project);
 
 
-    let total =
-        0;
+    let total = 0;
 
 
     items.forEach(function (item) {
 
         item.amount =
-            item.quantity *
-            item.rate;
+            item.quantity * item.rate;
 
         total += item.amount;
 
     });
+
+
+    const builtUpArea =
+        Number(project.totalArea) || 0;
 
 
     boqScreen.innerHTML = `
@@ -549,23 +479,12 @@ function renderBOQ(project) {
 
 
                 <h2>
-                    ${escapeHTML(
-                        project.projectName
-                    )}
+                    ${escapeHTML(project.projectName)}
                 </h2>
 
 
                 <p>
-
-                    📍 ${escapeHTML(
-                        project.location
-                    )}
-
-                    &nbsp; • &nbsp;
-
-                    ${project.totalArea.toLocaleString()}
-                    sq.ft
-
+                    📍 ${escapeHTML(project.location)}
                 </p>
 
             </div>
@@ -580,8 +499,7 @@ function renderBOQ(project) {
                     </span>
 
                     <strong>
-                        ${project.totalArea.toLocaleString()}
-                        sq.ft
+                        ${builtUpArea.toLocaleString()} sq.ft
                     </strong>
 
                 </div>
@@ -619,17 +537,13 @@ function renderBOQ(project) {
 
                 <div class="boq-title">
 
-                    <div>
+                    <h3>
+                        Bill of Quantities
+                    </h3>
 
-                        <h3>
-                            Bill of Quantities
-                        </h3>
-
-                        <p>
-                            Preliminary construction estimate
-                        </p>
-
-                    </div>
+                    <p>
+                        Preliminary construction estimate
+                    </p>
 
                 </div>
 
@@ -668,15 +582,11 @@ function renderBOQ(project) {
                                         </td>
 
                                         <td>
-                                            ${escapeHTML(
-                                                item.category
-                                            )}
+                                            ${escapeHTML(item.category)}
                                         </td>
 
                                         <td>
-                                            ${escapeHTML(
-                                                item.item
-                                            )}
+                                            ${escapeHTML(item.item)}
                                         </td>
 
                                         <td>
@@ -710,8 +620,7 @@ function renderBOQ(project) {
 
                             <tr>
 
-                                <td
-                                    colspan="6"
+                                <td colspan="6"
                                     style="text-align:right">
 
                                     <strong>
@@ -742,13 +651,12 @@ function renderBOQ(project) {
             <div class="boq-note">
 
                 <strong>
-                    Important:
+                    Note:
                 </strong>
 
                 This is a preliminary estimate.
-                Quantities and rates should be verified
-                against the actual design, specifications
-                and current local market rates.
+                Actual quantities and market rates
+                should be verified before construction.
 
             </div>
 
@@ -756,18 +664,15 @@ function renderBOQ(project) {
     `;
 
 
+    // BACK BUTTON
+
     document
         .getElementById("boqBackButton")
-        .addEventListener(
-            "click",
-            function () {
+        .addEventListener("click", function () {
 
-                boqScreen.classList.add("hidden");
+            showDashboard();
 
-                showDashboard();
-
-            }
-        );
+        });
 
 }
 
@@ -781,15 +686,13 @@ function deleteProject(id) {
     const project =
         projects.find(function (item) {
 
-            return item.id === id;
+            return Number(item.id) === Number(id);
 
         });
 
 
     if (!project) {
-
         return;
-
     }
 
 
@@ -802,16 +705,14 @@ function deleteProject(id) {
 
 
     if (!confirmed) {
-
         return;
-
     }
 
 
     projects =
         projects.filter(function (item) {
 
-            return item.id !== id;
+            return Number(item.id) !== Number(id);
 
         });
 
@@ -830,15 +731,11 @@ function deleteProject(id) {
 function calculateArea() {
 
     const floors =
-        Number(
-            floorsInput.value
-        ) || 0;
+        Number(floorsInput.value) || 0;
 
 
     const area =
-        Number(
-            areaInput.value
-        ) || 0;
+        Number(areaInput.value) || 0;
 
 
     const total =
@@ -846,8 +743,7 @@ function calculateArea() {
 
 
     totalArea.textContent =
-        total.toLocaleString() +
-        " sq.ft";
+        total.toLocaleString() + " sq.ft";
 
 }
 
@@ -922,12 +818,10 @@ projectForm.addEventListener(
 
         projects.push(project);
 
-
         saveProjects();
 
 
         projectForm.reset();
-
 
         totalArea.textContent =
             "0 sq.ft";
@@ -940,7 +834,7 @@ projectForm.addEventListener(
 
 
 // ==========================================
-// NAVIGATION BUTTONS
+// NAVIGATION
 // ==========================================
 
 document
@@ -988,12 +882,11 @@ function escapeHTML(value) {
         value || "";
 
     return div.innerHTML;
-
 }
 
 
 // ==========================================
-// START APP
+// START
 // ==========================================
 
 loadProjects();
