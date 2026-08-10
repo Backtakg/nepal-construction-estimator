@@ -4943,3 +4943,145 @@ calculateArea();
 console.log(
     "Nepal Construction Estimator loaded successfully."
 );
+// ==========================================================
+// MODERN DAY / NIGHT THEME
+// ==========================================================
+
+(function initializeTheme() {
+
+    const themeToggle =
+        document.getElementById("themeToggle");
+
+    const brandHome =
+        document.getElementById("brandHome");
+
+    const footerDate =
+        document.getElementById("footerDate");
+
+
+    // ------------------------------------------------------
+    // LOAD SAVED THEME
+    // ------------------------------------------------------
+
+    let savedTheme =
+        localStorage.getItem(
+            "nce-theme"
+        );
+
+
+    if (!savedTheme) {
+
+        savedTheme =
+            window.matchMedia &&
+            window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches
+                ? "dark"
+                : "light";
+
+    }
+
+
+    if (savedTheme === "dark") {
+
+        document.body.classList.add(
+            "dark"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "dark"
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // TOGGLE
+    // ------------------------------------------------------
+
+    if (themeToggle) {
+
+        themeToggle.addEventListener(
+            "click",
+            function() {
+
+                const isDark =
+                    document.body.classList.toggle(
+                        "dark"
+                    );
+
+
+                const newTheme =
+                    isDark
+                        ? "dark"
+                        : "light";
+
+
+                localStorage.setItem(
+                    "nce-theme",
+                    newTheme
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // BRAND → DASHBOARD
+    // ------------------------------------------------------
+
+    if (brandHome) {
+
+        brandHome.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+
+
+                if (
+                    typeof showDashboard ===
+                    "function"
+                ) {
+
+                    showDashboard();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // FOOTER DATE
+    // ------------------------------------------------------
+
+    if (footerDate) {
+
+        const now =
+            new Date();
+
+
+        const formattedDate =
+            now.toLocaleDateString(
+                "en-NP",
+                {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+
+        footerDate.textContent =
+            formattedDate;
+
+    }
+
+})();
