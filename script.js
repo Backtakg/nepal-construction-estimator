@@ -1446,7 +1446,579 @@ function renderBOQ() {
 // ==========================================================
 // POPULATE RATE DROPDOWN
 // ==========================================================
+// ==========================================================
+// NEPAL RATE SYSTEM
+// ==========================================================
 
+function initializeRateSystem() {
+
+    const locationSelect =
+        document.getElementById("rateLocation");
+
+    const yearSelect =
+        document.getElementById("rateYear");
+
+    const itemSelect =
+        document.getElementById("rateItem");
+
+    const unitInput =
+        document.getElementById("rateUnit");
+
+    const rateInput =
+        document.getElementById("rateValue");
+
+    const sourceInput =
+        document.getElementById("rateSource");
+
+    const status =
+        document.getElementById("rateStatus");
+
+
+    if (
+        !locationSelect ||
+        !yearSelect ||
+        !itemSelect
+    ) {
+        console.warn(
+            "Nepal rate system elements not found."
+        );
+
+        return;
+    }
+
+
+    // ------------------------------------------------------
+    // LOAD DISTRICTS
+    // ------------------------------------------------------
+
+    locationSelect.innerHTML = "";
+
+    const locations =
+        getRateLocations();
+
+
+    locations.forEach(
+        function(location) {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                location;
+
+            option.textContent =
+                location;
+
+            locationSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    // ------------------------------------------------------
+    // LOAD YEARS
+    // ------------------------------------------------------
+
+    function loadYears() {
+
+        const location =
+            locationSelect.value;
+
+
+        yearSelect.innerHTML = "";
+
+
+        const years =
+            getRateYears(
+                location
+            );
+
+
+        years.forEach(
+            function(year) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    year;
+
+                option.textContent =
+                    year;
+
+                yearSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        loadSchedule();
+    }
+
+
+    // ------------------------------------------------------
+    // LOAD RATE SCHEDULE
+    // ------------------------------------------------------
+
+    function loadSchedule() {
+
+        const location =
+            locationSelect.value;
+
+        const year =
+            yearSelect.value;
+
+
+        const schedule =
+            getRateSchedule(
+                location,
+                year
+            );
+
+
+        itemSelect.innerHTML = `
+            <option value="">
+                Select BOQ item
+            </option>
+        `;
+
+
+        if (!schedule) {
+
+            if (sourceInput) {
+                sourceInput.value =
+                    "No schedule available";
+            }
+
+            if (status) {
+                status.textContent =
+                    "No rate schedule found.";
+            }
+
+            return;
+        }
+
+
+        // --------------------------------------------------
+        // SOURCE
+        // --------------------------------------------------
+
+        if (sourceInput) {
+
+            sourceInput.value =
+                schedule.source ||
+                "Unknown";
+
+        }
+
+
+        // --------------------------------------------------
+        // STATUS
+        // --------------------------------------------------
+
+        if (status) {
+
+            status.textContent =
+                `${schedule.sourceType || "Reference"} • ${schedule.sourceYear || year}`;
+
+        }
+
+
+        // --------------------------------------------------
+        // RATE ITEMS
+        // --------------------------------------------------
+
+        schedule.items.forEach(
+            function(item, index) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    index;
+
+
+                option.textContent =
+                    `${item.category} — ${item.description}`;
+
+
+                itemSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // ITEM SELECTED
+    // ------------------------------------------------------
+
+    itemSelect.addEventListener(
+        "change",
+        function() {
+
+            const location =
+                locationSelect.value;
+
+            const year =
+                yearSelect.value;
+
+            const index =
+                Number(
+                    itemSelect.value
+                );
+
+
+            const schedule =
+                getRateSchedule(
+                    location,
+                    year
+                );
+
+
+            if (
+                !schedule ||
+                !schedule.items[index]
+            ) {
+
+                if (unitInput) {
+                    unitInput.value = "";
+                }
+
+                if (rateInput) {
+                    rateInput.value = "";
+                }
+
+                return;
+
+            }
+
+
+            const item =
+                schedule.items[index];
+
+
+            // UNIT
+
+            if (unitInput) {
+
+                unitInput.value =
+                    item.unit || "";
+
+            }
+
+
+            // RATE
+
+            if (rateInput) {
+
+                if (
+                    typeof item.rate === "number" &&
+                    item.rate > 0
+                ) {
+
+                    rateInput.value =
+                        item.rate;
+
+                } else {
+
+                    rateInput.value =
+                        "";
+
+                    rateInput.placeholder =
+                        "Rate not loaded";
+
+                }
+
+            }
+
+
+            // STATUS
+
+            if (status) {
+
+                if (
+                    isVerifiedRate(item)
+                ) {
+
+                    status.textContent =
+                        "Verified rate available.";
+
+                } else {
+
+                    status.textContent =
+                        "Rate not yet loaded. Enter a verified rate manually.";
+
+                }
+
+            }
+
+        }
+    );
+
+
+    // ------------------------------------------------------
+    // LOCATION CHANGED
+    // ------------------------------------------------------
+
+    locationSelect.addEventListener(
+        "change",
+        function() {
+
+            loadYears();
+
+        }
+    );
+
+
+    // ------------------------------------------------------
+    // YEAR CHANGED
+    // ------------------------------------------------------
+
+    yearSelect.addEventListener(
+        "change",
+        function() {
+
+            loadSchedule();
+
+        }
+    );
+
+
+    // ------------------------------------------------------
+    // APPLY RATE
+    // ------------------------------------------------------
+
+    const applyButton =
+        document.getElementById(
+            "applyNepalRate"
+        );
+
+
+    if (applyButton) {
+
+        applyButton.addEventListener(
+            "click",
+            function() {
+
+                const rate =
+                    Number(
+                        rateInput.value
+                    );
+
+
+                if (
+                    !rate ||
+                    rate <= 0
+                ) {
+
+                    alert(
+                        "Please enter a valid rate first."
+                    );
+
+                    return;
+
+                }
+
+
+                const itemIndex =
+                    Number(
+                        itemSelect.value
+                    );
+
+
+                if (
+                    Number.isNaN(
+                        itemIndex
+                    )
+                ) {
+
+                    alert(
+                        "Please select a BOQ item."
+                    );
+
+                    return;
+
+                }
+
+
+                const location =
+                    locationSelect.value;
+
+                const year =
+                    yearSelect.value;
+
+
+                const schedule =
+                    getRateSchedule(
+                        location,
+                        year
+                    );
+
+
+                if (
+                    !schedule ||
+                    !schedule.items[itemIndex]
+                ) {
+
+                    alert(
+                        "Rate item could not be found."
+                    );
+
+                    return;
+
+                }
+
+
+                const rateItem =
+                    schedule.items[itemIndex];
+
+
+                /*
+                ------------------------------------------------
+                FIND MATCHING BOQ ITEM
+                ------------------------------------------------
+                */
+
+                let boqItem =
+                    activeBOQ.find(
+                        function(item) {
+
+                            return (
+                                String(
+                                    item.item
+                                )
+                                    .toLowerCase()
+                                    .includes(
+                                        String(
+                                            rateItem.description
+                                        )
+                                            .toLowerCase()
+                                    )
+                            );
+
+                        }
+                    );
+
+
+                /*
+                ------------------------------------------------
+                IF EXACT DESCRIPTION NOT FOUND,
+                TRY CATEGORY
+                ------------------------------------------------
+                */
+
+                if (!boqItem) {
+
+                    boqItem =
+                        activeBOQ.find(
+                            function(item) {
+
+                                return (
+                                    String(
+                                        item.category
+                                    )
+                                        .toLowerCase()
+                                        ===
+                                    String(
+                                        rateItem.category
+                                    )
+                                        .toLowerCase()
+                                );
+
+                            }
+                        );
+
+                }
+
+
+                /*
+                ------------------------------------------------
+                IF STILL NOT FOUND
+                ------------------------------------------------
+                */
+
+                if (!boqItem) {
+
+                    alert(
+                        "No matching BOQ item was found.\n\n" +
+                        "Please make sure the BOQ contains " +
+                        rateItem.description +
+                        "."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                ------------------------------------------------
+                APPLY RATE
+                ------------------------------------------------
+                */
+
+                boqItem.rate =
+                    rate;
+
+
+                boqItem.amount =
+                    Number(
+                        boqItem.quantity || 0
+                    ) *
+                    rate;
+
+
+                /*
+                ------------------------------------------------
+                SAVE
+                ------------------------------------------------
+                */
+
+                saveActiveBOQ();
+
+
+                /*
+                ------------------------------------------------
+                REFRESH
+                ------------------------------------------------
+                */
+
+                renderBOQ();
+
+
+                alert(
+                    "Rate applied successfully.\n\n" +
+                    rateItem.description +
+                    "\nRate: NPR " +
+                    rate.toLocaleString()
+                );
+
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------------------
+    // INITIAL LOAD
+    // ------------------------------------------------------
+
+    loadYears();
+
+}
 function populateRateItems() {
 
     const select =
