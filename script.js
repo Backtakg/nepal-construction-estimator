@@ -2118,8 +2118,9 @@ function renderBOQ() {
 
                                 <th>#</th>
                                 <th>Category</th>
-                                <th>Description</th>
-                                <th>Unit</th>
+<th>Description</th>
+<th>Cost Type</th>
+<th>Unit</th>
                                 <th>Quantity</th>
                                 <th>Rate (NPR)</th>
                                 <th>Amount (NPR)</th>
@@ -2188,6 +2189,50 @@ function renderBOQ() {
                                                     >
 
                                                 </td>
+                                                <td>
+
+    <select
+        class="boq-input cost-type-input"
+        data-field="costType"
+        data-id="${item.id}"
+    >
+
+        <option
+            value="Material"
+            ${
+                (item.costType || "Material") === "Material"
+                    ? "selected"
+                    : ""
+            }
+        >
+            Material
+        </option>
+
+        <option
+            value="Labour"
+            ${
+                item.costType === "Labour"
+                    ? "selected"
+                    : ""
+            }
+        >
+            Labour
+        </option>
+
+        <option
+            value="Other"
+            ${
+                item.costType === "Other"
+                    ? "selected"
+                    : ""
+            }
+        >
+            Other
+        </option>
+
+    </select>
+
+</td>
 
 
                                                 <td>
@@ -2500,7 +2545,7 @@ function renderBOQ() {
 attachBOQEvents();
 
 renderCategorySummary();
-
+renderCostTypeSummary();
 }
 
 
