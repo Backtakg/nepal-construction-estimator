@@ -1887,7 +1887,37 @@ function renderBOQ() {
 
             </div>
 
+<!-- CATEGORY SUMMARY -->
 
+<div class="category-summary-card">
+
+    <div class="category-summary-header">
+
+        <div>
+
+            <span class="badge">
+                📊 BOQ Breakdown
+            </span>
+
+            <h3>
+                Category-wise Cost Summary
+            </h3>
+
+            <p>
+                Automatic subtotal of each BOQ category.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div
+        id="categorySummary"
+        class="category-summary-list">
+
+    </div>
+
+</div>
             <!-- BOQ -->
 
             <div class="boq-card">
