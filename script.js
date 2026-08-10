@@ -1,73 +1,103 @@
-// ======================================================
+// ==========================================================
 // NEPAL CONSTRUCTION ESTIMATOR
-// FULL VERSION
-// PROJECTS + BOQ + EDIT + ADD + DELETE
-// NEPAL RATE SYSTEM + COST/SQ.FT.
-// ======================================================
-
-
-// ======================================================
-// PROJECT DATA
-// ======================================================
+// PROJECTS + BOQ + EDITABLE RATES + CUSTOM ITEMS
+// + NEPAL REFERENCE RATE SYSTEM
+// ==========================================================
 
 let projects = [];
 let activeProject = null;
 let activeBOQ = [];
 
 
-// ======================================================
-// GET ELEMENTS
-// ======================================================
+// ==========================================================
+// ELEMENTS
+// ==========================================================
 
-const dashboard =
-    document.getElementById("dashboard");
+const dashboard = document.getElementById("dashboard");
+const newProject = document.getElementById("newProject");
+const projectForm = document.getElementById("projectForm");
+const projectList = document.getElementById("projectList");
 
-const newProject =
-    document.getElementById("newProject");
-
-const projectForm =
-    document.getElementById("projectForm");
-
-const projectList =
-    document.getElementById("projectList");
-
-const floorsInput =
-    document.getElementById("floors");
-
-const areaInput =
-    document.getElementById("area");
-
-const totalArea =
-    document.getElementById("totalArea");
+const floorsInput = document.getElementById("floors");
+const areaInput = document.getElementById("area");
+const totalArea = document.getElementById("totalArea");
 
 
-// ======================================================
-// LOCAL STORAGE
-// ======================================================
+// ==========================================================
+// NEPAL REFERENCE RATES
+// ==========================================================
+// These are DEMONSTRATION / REFERENCE values.
+// They are NOT represented as official government rates.
+// We will replace them with verified rate schedules later.
+// ==========================================================
+
+const nepalRates = {
+    Kathmandu: {
+        "Earthwork": {
+            unit: "cu.ft",
+            rate: 55
+        },
+
+        "PCC": {
+            unit: "cu.ft",
+            rate: 180
+        },
+
+        "RCC": {
+            unit: "cu.ft",
+            rate: 850
+        },
+
+        "Reinforcement Steel": {
+            unit: "kg",
+            rate: 115
+        },
+
+        "Brick Masonry": {
+            unit: "cu.ft",
+            rate: 220
+        },
+
+        "Plaster": {
+            unit: "sq.ft",
+            rate: 65
+        },
+
+        "Flooring": {
+            unit: "sq.ft",
+            rate: 140
+        },
+
+        "Painting": {
+            unit: "sq.ft",
+            rate: 45
+        }
+    }
+};
+
+
+// ==========================================================
+// LOAD PROJECTS
+// ==========================================================
 
 function loadProjects() {
 
-    const saved =
-        localStorage.getItem(
-            "constructionProjects"
-        );
+    const saved = localStorage.getItem(
+        "constructionProjects"
+    );
 
     if (!saved) {
-
         projects = [];
-
         return;
     }
 
     try {
 
-        const data =
-            JSON.parse(saved);
+        const data = JSON.parse(saved);
 
-        projects =
-            Array.isArray(data)
-                ? data
-                : [];
+        projects = Array.isArray(data)
+            ? data
+            : [];
 
     } catch (error) {
 
@@ -81,6 +111,10 @@ function loadProjects() {
 }
 
 
+// ==========================================================
+// SAVE PROJECTS
+// ==========================================================
+
 function saveProjects() {
 
     localStorage.setItem(
@@ -90,78 +124,63 @@ function saveProjects() {
 }
 
 
-// ======================================================
-// NAVIGATION
-// ======================================================
-
-function hideBOQScreen() {
-
-    const screen =
-        document.getElementById(
-            "boqScreen"
-        );
-
-    if (screen) {
-
-        screen.classList.add(
-            "hidden"
-        );
-    }
-}
-
+// ==========================================================
+// DASHBOARD
+// ==========================================================
 
 function showDashboard() {
 
-    hideBOQScreen();
+    const boqScreen =
+        document.getElementById("boqScreen");
+
+    if (boqScreen) {
+        boqScreen.classList.add("hidden");
+    }
 
     if (newProject) {
-
-        newProject.classList.add(
-            "hidden"
-        );
+        newProject.classList.add("hidden");
     }
 
     if (dashboard) {
-
-        dashboard.classList.remove(
-            "hidden"
-        );
+        dashboard.classList.remove("hidden");
     }
 
     displayProjects();
 }
 
 
+// ==========================================================
+// NEW PROJECT
+// ==========================================================
+
 function showNewProject() {
 
-    hideBOQScreen();
+    const boqScreen =
+        document.getElementById("boqScreen");
+
+    if (boqScreen) {
+        boqScreen.classList.add("hidden");
+    }
 
     if (dashboard) {
-
-        dashboard.classList.add(
-            "hidden"
-        );
+        dashboard.classList.add("hidden");
     }
 
     if (newProject) {
-
-        newProject.classList.remove(
-            "hidden"
-        );
+        newProject.classList.remove("hidden");
     }
 }
 
 
-// ======================================================
+// ==========================================================
 // DISPLAY PROJECTS
-// ======================================================
+// ==========================================================
 
 function displayProjects() {
 
     if (!projectList) {
         return;
     }
-
 
     if (projects.length === 0) {
 
@@ -193,20 +212,16 @@ function displayProjects() {
 
         `;
 
-
         const button =
             document.getElementById(
                 "createFirstProjectButton"
             );
 
-
         if (button) {
-
             button.addEventListener(
                 "click",
                 showNewProject
             );
-
         }
 
         return;
@@ -216,47 +231,32 @@ function displayProjects() {
     projectList.innerHTML = "";
 
 
-    projects.forEach(
-        function(project) {
+    projects.forEach(function (project) {
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+        const card =
+            document.createElement("div");
 
-
-            card.className =
-                "project-card";
+        card.className =
+            "project-card";
 
 
-            card.innerHTML = `
+        card.innerHTML = `
 
-                <div class="project-card-header">
+            <div class="project-card-header">
 
-                    <div>
+                <div>
 
-                        <h3>
-                            ${escapeHTML(
-                                project.projectName
-                            )}
-                        </h3>
-
-                        <span class="project-location">
-
-                            📍
-                            ${escapeHTML(
-                                project.location
-                            )}
-
-                        </span>
-
-                    </div>
-
-
-                    <span class="project-type">
-
+                    <h3>
                         ${escapeHTML(
-                            project.buildingType
+                            project.projectName
+                        )}
+                    </h3>
+
+                    <span class="project-location">
+
+                        📍
+                        ${escapeHTML(
+                            project.location
                         )}
 
                     </span>
@@ -264,140 +264,145 @@ function displayProjects() {
                 </div>
 
 
-                <div class="project-details">
+                <span class="project-type">
 
-                    <div>
+                    ${escapeHTML(
+                        project.buildingType
+                    )}
 
-                        <span>
-                            Client
-                        </span>
+                </span>
 
-                        <strong>
-
-                            ${escapeHTML(
-                                project.clientName ||
-                                "—"
-                            )}
-
-                        </strong>
-
-                    </div>
+            </div>
 
 
-                    <div>
+            <div class="project-details">
 
-                        <span>
-                            Floors
-                        </span>
+                <div>
 
-                        <strong>
-                            ${project.floors || 0}
-                        </strong>
+                    <span>
+                        Client
+                    </span>
 
-                    </div>
+                    <strong>
 
+                        ${escapeHTML(
+                            project.clientName || "—"
+                        )}
 
-                    <div>
-
-                        <span>
-                            Built-up Area
-                        </span>
-
-                        <strong>
-
-                            ${Number(
-                                project.totalArea || 0
-                            ).toLocaleString()}
-
-                            sq.ft
-
-                        </strong>
-
-                    </div>
+                    </strong>
 
                 </div>
 
 
-                <div class="project-card-footer">
+                <div>
 
-                    <button
-                        type="button"
-                        class="open-project-button">
+                    <span>
+                        Floors
+                    </span>
 
-                        Open Project →
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="delete-button">
-
-                        Delete
-
-                    </button>
+                    <strong>
+                        ${project.floors || 0}
+                    </strong>
 
                 </div>
 
-            `;
+
+                <div>
+
+                    <span>
+                        Built-up Area
+                    </span>
+
+                    <strong>
+
+                        ${Number(
+                            project.totalArea || 0
+                        ).toLocaleString()}
+
+                        sq.ft
+
+                    </strong>
+
+                </div>
+
+            </div>
 
 
-            projectList.appendChild(
-                card
+            <div class="project-card-footer">
+
+                <button
+                    type="button"
+                    class="open-project-button">
+
+                    Open Project →
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="delete-button">
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        projectList.appendChild(card);
+
+
+        card
+            .querySelector(
+                ".open-project-button"
+            )
+            .addEventListener(
+                "click",
+                function () {
+
+                    openProject(
+                        project.id
+                    );
+
+                }
             );
 
 
-            card
-                .querySelector(
-                    ".open-project-button"
-                )
-                .addEventListener(
-                    "click",
-                    function() {
+        card
+            .querySelector(
+                ".delete-button"
+            )
+            .addEventListener(
+                "click",
+                function () {
 
-                        openProject(
-                            project.id
-                        );
+                    deleteProject(
+                        project.id
+                    );
 
-                    }
-                );
+                }
+            );
 
-
-            card
-                .querySelector(
-                    ".delete-button"
-                )
-                .addEventListener(
-                    "click",
-                    function() {
-
-                        deleteProject(
-                            project.id
-                        );
-
-                    }
-                );
-
-        }
-    );
+    });
 }
 
 
-// ======================================================
+// ==========================================================
 // OPEN PROJECT
-// ======================================================
+// ==========================================================
 
 function openProject(id) {
 
     const project =
-        projects.find(
-            function(item) {
+        projects.find(function (item) {
 
-                return Number(item.id) ===
-                    Number(id);
+            return Number(item.id) ===
+                Number(id);
 
-            }
-        );
+        });
 
 
     if (!project) {
@@ -421,32 +426,23 @@ function openProject(id) {
 
 
     if (dashboard) {
-
-        dashboard.classList.add(
-            "hidden"
-        );
+        dashboard.classList.add("hidden");
     }
 
-
     if (newProject) {
-
-        newProject.classList.add(
-            "hidden"
-        );
+        newProject.classList.add("hidden");
     }
 
 
     createBOQScreen();
 
-    loadProjectBOQ(
-        project
-    );
+    loadProjectBOQ(project);
 }
 
 
-// ======================================================
+// ==========================================================
 // CREATE BOQ SCREEN
-// ======================================================
+// ==========================================================
 
 function createBOQScreen() {
 
@@ -463,19 +459,15 @@ function createBOQScreen() {
                 "section"
             );
 
-
         screen.id =
             "boqScreen";
-
 
         screen.className =
             "boq-screen hidden";
 
 
         const main =
-            document.querySelector(
-                "main"
-            );
+            document.querySelector("main");
 
 
         if (!main) {
@@ -488,9 +480,7 @@ function createBOQScreen() {
         }
 
 
-        main.appendChild(
-            screen
-        );
+        main.appendChild(screen);
     }
 
 
@@ -500,13 +490,11 @@ function createBOQScreen() {
 }
 
 
-// ======================================================
+// ==========================================================
 // LOAD BOQ
-// ======================================================
+// ==========================================================
 
-function loadProjectBOQ(
-    project
-) {
+function loadProjectBOQ(project) {
 
     if (
         Array.isArray(project.boq) &&
@@ -519,9 +507,7 @@ function loadProjectBOQ(
     } else {
 
         activeBOQ =
-            getDefaultBOQ(
-                project
-            );
+            getDefaultBOQ(project);
 
         saveCurrentBOQ();
     }
@@ -531,13 +517,11 @@ function loadProjectBOQ(
 }
 
 
-// ======================================================
+// ==========================================================
 // DEFAULT BOQ
-// ======================================================
+// ==========================================================
 
-function getDefaultBOQ(
-    project
-) {
+function getDefaultBOQ(project) {
 
     const area =
         Number(
@@ -545,14 +529,14 @@ function getDefaultBOQ(
         ) || 0;
 
 
-    const id =
+    const now =
         Date.now();
 
 
     return [
 
         {
-            id: id + 1,
+            id: now + 1,
             category: "Earthwork",
             item: "Excavation for foundation",
             unit: "cu.ft",
@@ -564,9 +548,9 @@ function getDefaultBOQ(
 
 
         {
-            id: id + 2,
-            category: "PCC",
-            item: "Plain Cement Concrete",
+            id: now + 2,
+            category: "Concrete",
+            item: "PCC 1:4:8",
             unit: "cu.ft",
             quantity: Math.round(
                 area * 0.08
@@ -576,9 +560,9 @@ function getDefaultBOQ(
 
 
         {
-            id: id + 3,
-            category: "RCC",
-            item: "Reinforced Cement Concrete",
+            id: now + 3,
+            category: "Concrete",
+            item: "RCC work",
             unit: "cu.ft",
             quantity: Math.round(
                 area * 0.35
@@ -588,8 +572,8 @@ function getDefaultBOQ(
 
 
         {
-            id: id + 4,
-            category: "Reinforcement Steel",
+            id: now + 4,
+            category: "Reinforcement",
             item: "Reinforcement steel",
             unit: "kg",
             quantity: Math.round(
@@ -600,8 +584,8 @@ function getDefaultBOQ(
 
 
         {
-            id: id + 5,
-            category: "Brick Masonry",
+            id: now + 5,
+            category: "Masonry",
             item: "Brick masonry",
             unit: "cu.ft",
             quantity: Math.round(
@@ -612,7 +596,7 @@ function getDefaultBOQ(
 
 
         {
-            id: id + 6,
+            id: now + 6,
             category: "Plaster",
             item: "Cement plaster",
             unit: "sq.ft",
@@ -624,7 +608,7 @@ function getDefaultBOQ(
 
 
         {
-            id: id + 7,
+            id: now + 7,
             category: "Flooring",
             item: "Floor tiles",
             unit: "sq.ft",
@@ -636,9 +620,9 @@ function getDefaultBOQ(
 
 
         {
-            id: id + 8,
+            id: now + 8,
             category: "Painting",
-            item: "Interior and exterior painting",
+            item: "Interior & exterior painting",
             unit: "sq.ft",
             quantity: Math.round(
                 area * 2.5
@@ -650,9 +634,9 @@ function getDefaultBOQ(
 }
 
 
-// ======================================================
+// ==========================================================
 // SAVE CURRENT BOQ
-// ======================================================
+// ==========================================================
 
 function saveCurrentBOQ() {
 
@@ -662,14 +646,12 @@ function saveCurrentBOQ() {
 
 
     const project =
-        projects.find(
-            function(item) {
+        projects.find(function (item) {
 
-                return Number(item.id) ===
-                    Number(activeProject.id);
+            return Number(item.id) ===
+                Number(activeProject.id);
 
-            }
-        );
+        });
 
 
     if (!project) {
@@ -695,48 +677,40 @@ function saveCurrentBOQ() {
 }
 
 
-// ======================================================
-// CALCULATE TOTAL
-// ======================================================
+// ==========================================================
+// CALCULATE BOQ TOTAL
+// ==========================================================
 
 function calculateBOQTotal() {
 
     let total = 0;
 
 
-    activeBOQ.forEach(
-        function(item) {
+    activeBOQ.forEach(function (item) {
 
-            const quantity =
-                Number(
-                    item.quantity
-                ) || 0;
+        item.quantity =
+            Number(item.quantity) || 0;
 
+        item.rate =
+            Number(item.rate) || 0;
 
-            const rate =
-                Number(
-                    item.rate
-                ) || 0;
+        item.amount =
+            item.quantity *
+            item.rate;
 
+        total +=
+            item.amount;
 
-            item.amount =
-                quantity * rate;
-
-
-            total +=
-                item.amount;
-
-        }
-    );
+    });
 
 
     return total;
 }
 
 
-// ======================================================
+// ==========================================================
 // RENDER BOQ
-// ======================================================
+// ==========================================================
 
 function renderBOQ() {
 
@@ -746,10 +720,7 @@ function renderBOQ() {
         );
 
 
-    if (
-        !screen ||
-        !activeProject
-    ) {
+    if (!screen || !activeProject) {
         return;
     }
 
@@ -820,7 +791,6 @@ function renderBOQ() {
             <!-- SUMMARY -->
 
             <div class="estimate-summary">
-
 
                 <div class="summary-card">
 
@@ -893,28 +863,19 @@ function renderBOQ() {
 
             <div class="nepal-rate-panel">
 
-
                 <div class="rate-panel-header">
 
                     <span class="badge">
-
                         🇳🇵 Nepal Rate System
-
                     </span>
 
-
                     <h3>
-
                         Reference Construction Rates
-
                     </h3>
 
-
                     <p>
-
-                        Select a BOQ item and
-                        apply a reference rate.
-
+                        Select a construction item
+                        and apply a reference rate.
                     </p>
 
                 </div>
@@ -929,8 +890,7 @@ function renderBOQ() {
                             Location
                         </label>
 
-                        <select
-                            id="rateLocation">
+                        <select id="rateLocation">
 
                             <option value="Kathmandu">
                                 Kathmandu
@@ -947,8 +907,7 @@ function renderBOQ() {
                             BOQ Item
                         </label>
 
-                        <select
-                            id="rateItem">
+                        <select id="rateItem">
 
                             <option value="">
                                 Select BOQ item
@@ -969,7 +928,8 @@ function renderBOQ() {
                             id="rateUnit"
                             type="text"
                             readonly
-                            placeholder="—">
+                            placeholder="—"
+                        >
 
                     </div>
 
@@ -985,7 +945,8 @@ function renderBOQ() {
                             type="number"
                             min="0"
                             step="0.01"
-                            placeholder="—">
+                            placeholder="—"
+                        >
 
                     </div>
 
@@ -1010,22 +971,19 @@ function renderBOQ() {
 
                     ⚠️ <strong>Reference rate:</strong>
 
-                    These values are reference/demo
-                    rates for the estimator.
-                    Verify current local market
-                    quotations and applicable
-                    official schedules before
-                    commercial use.
+                    Verify rates against current
+                    local market quotations and
+                    applicable official schedules
+                    before commercial use.
 
                 </div>
 
             </div>
 
 
-            <!-- BOQ TABLE -->
+            <!-- BOQ -->
 
             <div class="boq-card">
-
 
                 <div class="boq-title">
 
@@ -1036,10 +994,8 @@ function renderBOQ() {
                         </h3>
 
                         <p>
-
                             Edit quantities and rates
                             directly in the table.
-
                         </p>
 
                     </div>
@@ -1059,43 +1015,20 @@ function renderBOQ() {
 
                 <div class="boq-table-wrapper">
 
-
                     <table class="boq-table">
-
 
                         <thead>
 
                             <tr>
 
                                 <th>#</th>
-
-                                <th>
-                                    Category
-                                </th>
-
-                                <th>
-                                    Description
-                                </th>
-
-                                <th>
-                                    Unit
-                                </th>
-
-                                <th>
-                                    Quantity
-                                </th>
-
-                                <th>
-                                    Rate (NPR)
-                                </th>
-
-                                <th>
-                                    Amount (NPR)
-                                </th>
-
-                                <th>
-                                    Action
-                                </th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Unit</th>
+                                <th>Quantity</th>
+                                <th>Rate (NPR)</th>
+                                <th>Amount (NPR)</th>
+                                <th>Action</th>
 
                             </tr>
 
@@ -1104,13 +1037,9 @@ function renderBOQ() {
 
                         <tbody>
 
-
                             ${
                                 activeBOQ.map(
-                                    function(
-                                        item,
-                                        index
-                                    ) {
+                                    function(item, index) {
 
                                         return `
 
@@ -1124,11 +1053,11 @@ function renderBOQ() {
                                                 <td>
 
                                                     <input
-                                                        type="text"
                                                         class="boq-input"
-                                                        data-id="${item.id}"
                                                         data-field="category"
-                                                        value="${escapeAttribute(item.category)}">
+                                                        data-id="${item.id}"
+                                                        value="${escapeAttribute(item.category)}"
+                                                    >
 
                                                 </td>
 
@@ -1136,11 +1065,11 @@ function renderBOQ() {
                                                 <td>
 
                                                     <input
-                                                        type="text"
                                                         class="boq-input item-input"
-                                                        data-id="${item.id}"
                                                         data-field="item"
-                                                        value="${escapeAttribute(item.item)}">
+                                                        data-id="${item.id}"
+                                                        value="${escapeAttribute(item.item)}"
+                                                    >
 
                                                 </td>
 
@@ -1148,11 +1077,11 @@ function renderBOQ() {
                                                 <td>
 
                                                     <input
-                                                        type="text"
                                                         class="boq-input unit-input"
-                                                        data-id="${item.id}"
                                                         data-field="unit"
-                                                        value="${escapeAttribute(item.unit)}">
+                                                        data-id="${item.id}"
+                                                        value="${escapeAttribute(item.unit)}"
+                                                    >
 
                                                 </td>
 
@@ -1164,9 +1093,10 @@ function renderBOQ() {
                                                         min="0"
                                                         step="0.01"
                                                         class="boq-input number-input"
-                                                        data-id="${item.id}"
                                                         data-field="quantity"
-                                                        value="${item.quantity}">
+                                                        data-id="${item.id}"
+                                                        value="${item.quantity}"
+                                                    >
 
                                                 </td>
 
@@ -1178,9 +1108,10 @@ function renderBOQ() {
                                                         min="0"
                                                         step="0.01"
                                                         class="boq-input number-input"
-                                                        data-id="${item.id}"
                                                         data-field="rate"
-                                                        value="${item.rate}">
+                                                        data-id="${item.id}"
+                                                        value="${item.rate}"
+                                                    >
 
                                                 </td>
 
@@ -1189,7 +1120,8 @@ function renderBOQ() {
 
                                                     <strong
                                                         class="amount-cell"
-                                                        data-amount-id="${item.id}">
+                                                        data-amount-id="${item.id}"
+                                                    >
 
                                                         NPR
                                                         ${Math.round(
@@ -1206,7 +1138,8 @@ function renderBOQ() {
                                                     <button
                                                         type="button"
                                                         class="delete-boq-button"
-                                                        data-delete-id="${item.id}">
+                                                        data-delete-boq="${item.id}"
+                                                    >
 
                                                         🗑️
 
@@ -1222,6 +1155,31 @@ function renderBOQ() {
                                 ).join("")
                             }
 
+
+                            ${
+                                activeBOQ.length === 0
+                                    ? `
+
+                                        <tr>
+
+                                            <td
+                                                colspan="8"
+                                                class="no-boq-items">
+
+                                                No BOQ items.
+                                                Click
+                                                <strong>
+                                                    + Add BOQ Item
+                                                </strong>
+                                                to add one.
+
+                                            </td>
+
+                                        </tr>
+
+                                    `
+                                    : ""
+                            }
 
                         </tbody>
 
@@ -1261,12 +1219,11 @@ function renderBOQ() {
             </div>
 
 
-            <!-- ADD CUSTOM BOQ -->
+            <!-- CUSTOM ITEM FORM -->
 
             <div
                 id="addBOQForm"
                 class="add-boq-form hidden">
-
 
                 <h3>
                     Add Custom BOQ Item
@@ -1285,7 +1242,8 @@ function renderBOQ() {
                         <input
                             id="customCategory"
                             type="text"
-                            placeholder="e.g. Plumbing">
+                            placeholder="e.g. Plumbing"
+                        >
 
                     </div>
 
@@ -1299,7 +1257,8 @@ function renderBOQ() {
                         <input
                             id="customItem"
                             type="text"
-                            placeholder="e.g. Water supply pipes">
+                            placeholder="e.g. Water supply pipes"
+                        >
 
                     </div>
 
@@ -1310,8 +1269,7 @@ function renderBOQ() {
                             Unit
                         </label>
 
-                        <select
-                            id="customUnit">
+                        <select id="customUnit">
 
                             <option value="sq.ft">
                                 sq.ft
@@ -1360,7 +1318,9 @@ function renderBOQ() {
                             id="customQuantity"
                             type="number"
                             min="0"
-                            step="0.01">
+                            step="0.01"
+                            placeholder="0"
+                        >
 
                     </div>
 
@@ -1375,7 +1335,9 @@ function renderBOQ() {
                             id="customRate"
                             type="number"
                             min="0"
-                            step="0.01">
+                            step="0.01"
+                            placeholder="0"
+                        >
 
                     </div>
 
@@ -1428,72 +1390,12 @@ function renderBOQ() {
     populateRateItems();
 
     attachBOQEvents();
-
 }
 
 
-// ======================================================
-// NEPAL RATE DATABASE
-// ======================================================
-//
-// IMPORTANT:
-// These are reference/demo values.
-// They are NOT being represented as official
-// government rates.
-//
-
-const nepalRates = {
-
-    Kathmandu: {
-
-        "Earthwork": {
-            unit: "cu.ft",
-            rate: 55
-        },
-
-        "PCC": {
-            unit: "cu.ft",
-            rate: 180
-        },
-
-        "RCC": {
-            unit: "cu.ft",
-            rate: 850
-        },
-
-        "Reinforcement Steel": {
-            unit: "kg",
-            rate: 115
-        },
-
-        "Brick Masonry": {
-            unit: "cu.ft",
-            rate: 220
-        },
-
-        "Plaster": {
-            unit: "sq.ft",
-            rate: 65
-        },
-
-        "Flooring": {
-            unit: "sq.ft",
-            rate: 140
-        },
-
-        "Painting": {
-            unit: "sq.ft",
-            rate: 45
-        }
-
-    }
-
-};
-
-
-// ======================================================
-// POPULATE RATE ITEMS
-// ======================================================
+// ==========================================================
+// POPULATE RATE DROPDOWN
+// ==========================================================
 
 function populateRateItems() {
 
@@ -1517,22 +1419,8 @@ function populateRateItems() {
     `;
 
 
-    const location =
-        document.getElementById(
-            "rateLocation"
-        );
-
-
-    const selectedLocation =
-        location
-            ? location.value
-            : "Kathmandu";
-
-
     const rates =
-        nepalRates[
-            selectedLocation
-        ] || {};
+        nepalRates.Kathmandu;
 
 
     Object.keys(rates).forEach(
@@ -1543,14 +1431,11 @@ function populateRateItems() {
                     "option"
                 );
 
-
             option.value =
                 item;
 
-
             option.textContent =
                 item;
-
 
             select.appendChild(
                 option
@@ -1564,26 +1449,12 @@ function populateRateItems() {
         "change",
         updateRateFields
     );
-
-
-    if (location) {
-
-        location.addEventListener(
-            "change",
-            function() {
-
-                populateRateItems();
-
-            }
-        );
-
-    }
 }
 
 
-// ======================================================
+// ==========================================================
 // UPDATE RATE FIELDS
-// ======================================================
+// ==========================================================
 
 function updateRateFields() {
 
@@ -1592,12 +1463,10 @@ function updateRateFields() {
             "rateItem"
         );
 
-
     const unitInput =
         document.getElementById(
             "rateUnit"
         );
-
 
     const rateInput =
         document.getElementById(
@@ -1614,40 +1483,21 @@ function updateRateFields() {
     }
 
 
-    const selected =
+    const item =
         itemSelect.value;
 
 
-    if (!selected) {
+    if (!item) {
 
-        unitInput.value =
-            "";
-
-        rateInput.value =
-            "";
+        unitInput.value = "";
+        rateInput.value = "";
 
         return;
     }
 
 
-    const location =
-        document.getElementById(
-            "rateLocation"
-        );
-
-
-    const selectedLocation =
-        location
-            ? location.value
-            : "Kathmandu";
-
-
     const rate =
-        nepalRates[
-            selectedLocation
-        ][
-            selected
-        ];
+        nepalRates.Kathmandu[item];
 
 
     if (!rate) {
@@ -1664,9 +1514,9 @@ function updateRateFields() {
 }
 
 
-// ======================================================
+// ==========================================================
 // APPLY NEPAL RATE
-// ======================================================
+// ==========================================================
 
 function applySelectedNepalRate() {
 
@@ -1675,6 +1525,10 @@ function applySelectedNepalRate() {
             "rateItem"
         );
 
+    const unitInput =
+        document.getElementById(
+            "rateUnit"
+        );
 
     const rateInput =
         document.getElementById(
@@ -1682,16 +1536,10 @@ function applySelectedNepalRate() {
         );
 
 
-    const unitInput =
-        document.getElementById(
-            "rateUnit"
-        );
-
-
     if (
         !itemSelect ||
-        !rateInput ||
-        !unitInput
+        !unitInput ||
+        !rateInput
     ) {
         return;
     }
@@ -1735,57 +1583,113 @@ function applySelectedNepalRate() {
         selected.toLowerCase();
 
 
-    const boqItem =
+    let matchingItem = null;
+
+
+    // Try category first
+
+    matchingItem =
         activeBOQ.find(
             function(item) {
 
-                const category =
-                    String(
-                        item.category || ""
-                    ).toLowerCase();
-
-
-                const description =
-                    String(
-                        item.item || ""
-                    ).toLowerCase();
-
-
-                return (
-                    category.includes(search) ||
-                    description.includes(search)
-                );
+                return String(
+                    item.category || ""
+                )
+                    .toLowerCase()
+                    .includes(search);
 
             }
         );
 
 
-    if (!boqItem) {
+    // Try description
+
+    if (!matchingItem) {
+
+        matchingItem =
+            activeBOQ.find(
+                function(item) {
+
+                    return String(
+                        item.item || ""
+                    )
+                        .toLowerCase()
+                        .includes(search);
+
+                }
+            );
+
+    }
+
+
+    // Special mappings
+
+    if (
+        !matchingItem &&
+        selected === "PCC"
+    ) {
+
+        matchingItem =
+            activeBOQ.find(
+                function(item) {
+
+                    return String(
+                        item.item || ""
+                    )
+                        .toLowerCase()
+                        .includes("pcc");
+
+                }
+            );
+
+    }
+
+
+    if (
+        !matchingItem &&
+        selected === "RCC"
+    ) {
+
+        matchingItem =
+            activeBOQ.find(
+                function(item) {
+
+                    return String(
+                        item.item || ""
+                    )
+                        .toLowerCase()
+                        .includes("rcc");
+
+                }
+            );
+
+    }
+
+
+    if (!matchingItem) {
 
         alert(
-            "No matching BOQ item found.\n\n" +
-            "You can edit the BOQ category " +
-            "to match this item, or add it " +
-            "as a custom BOQ item."
+            "No matching BOQ item was found.\n\n" +
+            "You can edit the BOQ category/description " +
+            "or add the item as a custom BOQ item."
         );
 
         return;
     }
 
 
-    boqItem.rate =
+    matchingItem.rate =
         rate;
 
 
-    boqItem.unit =
+    matchingItem.unit =
         unit;
 
 
-    boqItem.amount =
+    matchingItem.amount =
         Number(
-            boqItem.quantity || 0
-        ) *
-        rate;
+            matchingItem.quantity || 0
+        ) * rate;
 
 
     saveCurrentBOQ();
@@ -1801,12 +1705,13 @@ function applySelectedNepalRate() {
 }
 
 
-// ======================================================
+// ==========================================================
 // BOQ EVENTS
-// ======================================================
+// ==========================================================
 
 function attachBOQEvents() {
 
+    // BACK
 
     const backButton =
         document.getElementById(
@@ -1823,6 +1728,8 @@ function attachBOQEvents() {
 
     }
 
+
+    // ADD ITEM
 
     const addButton =
         document.getElementById(
@@ -1856,6 +1763,8 @@ function attachBOQEvents() {
     }
 
 
+    // CANCEL
+
     const cancelButton =
         document.getElementById(
             "cancelCustomBOQ"
@@ -1888,6 +1797,8 @@ function attachBOQEvents() {
     }
 
 
+    // SAVE CUSTOM ITEM
+
     const saveButton =
         document.getElementById(
             "saveCustomBOQ"
@@ -1904,15 +1815,17 @@ function attachBOQEvents() {
     }
 
 
-    const applyRateButton =
+    // APPLY NEPAL RATE
+
+    const applyRate =
         document.getElementById(
             "applyNepalRate"
         );
 
 
-    if (applyRateButton) {
+    if (applyRate) {
 
-        applyRateButton.addEventListener(
+        applyRate.addEventListener(
             "click",
             applySelectedNepalRate
         );
@@ -1920,7 +1833,7 @@ function attachBOQEvents() {
     }
 
 
-    // EDITABLE BOQ INPUTS
+    // EDITABLE INPUTS
 
     document
         .querySelectorAll(
@@ -1944,7 +1857,7 @@ function attachBOQEvents() {
         );
 
 
-    // DELETE BOQ ITEMS
+    // DELETE ITEMS
 
     document
         .querySelectorAll(
@@ -1958,7 +1871,7 @@ function attachBOQEvents() {
                     function() {
 
                         deleteBOQItem(
-                            button.dataset.deleteId
+                            button.dataset.deleteBoq
                         );
 
                     }
@@ -1969,13 +1882,11 @@ function attachBOQEvents() {
 }
 
 
-// ======================================================
+// ==========================================================
 // UPDATE BOQ ITEM
-// ======================================================
+// ==========================================================
 
-function updateBOQItem(
-    input
-) {
+function updateBOQItem(input) {
 
     const id =
         Number(
@@ -2034,24 +1945,49 @@ function updateBOQItem(
     saveCurrentBOQ();
 
 
-    updateBOQSummary(
-        id,
-        item
-    );
+    updateBOQSummary();
+
+
+    const amountCell =
+        document.querySelector(
+            `[data-amount-id="${id}"]`
+        );
+
+
+    if (amountCell) {
+
+        amountCell.textContent =
+            "NPR " +
+            Math.round(
+                item.amount
+            ).toLocaleString();
+
+    }
 }
 
 
-// ======================================================
+// ==========================================================
 // UPDATE SUMMARY
-// ======================================================
+// ==========================================================
 
-function updateBOQSummary(
-    changedId,
-    changedItem
-) {
+function updateBOQSummary() {
 
-    const total =
-        calculateBOQTotal();
+    let total = 0;
+
+
+    activeBOQ.forEach(
+        function(item) {
+
+            total +=
+                Number(
+                    item.quantity || 0
+                ) *
+                Number(
+                    item.rate || 0
+                );
+
+        }
+    );
 
 
     const area =
@@ -2066,22 +2002,22 @@ function updateBOQSummary(
             : 0;
 
 
-    const summary =
+    const cards =
         document.querySelectorAll(
             ".summary-card strong"
         );
 
 
-    if (summary.length >= 4) {
+    if (cards.length >= 4) {
 
-        summary[2].textContent =
+        cards[2].textContent =
             "NPR " +
             Math.round(
                 costPerSqFt
             ).toLocaleString();
 
 
-        summary[3].textContent =
+        cards[3].textContent =
             "NPR " +
             Math.round(
                 total
@@ -2105,29 +2041,12 @@ function updateBOQSummary(
             ).toLocaleString();
 
     }
-
-
-    const amount =
-        document.querySelector(
-            `[data-amount-id="${changedId}"]`
-        );
-
-
-    if (amount) {
-
-        amount.textContent =
-            "NPR " +
-            Math.round(
-                changedItem.amount
-            ).toLocaleString();
-
-    }
 }
 
 
-// ======================================================
+// ==========================================================
 // ADD CUSTOM BOQ ITEM
-// ======================================================
+// ==========================================================
 
 function addCustomBOQItem() {
 
@@ -2266,13 +2185,11 @@ function addCustomBOQItem() {
 }
 
 
-// ======================================================
+// ==========================================================
 // DELETE BOQ ITEM
-// ======================================================
+// ==========================================================
 
-function deleteBOQItem(
-    id
-) {
+function deleteBOQItem(id) {
 
     const item =
         activeBOQ.find(
@@ -2323,13 +2240,11 @@ function deleteBOQItem(
 }
 
 
-// ======================================================
+// ==========================================================
 // DELETE PROJECT
-// ======================================================
+// ==========================================================
 
-function deleteProject(
-    id
-) {
+function deleteProject(id) {
 
     const project =
         projects.find(
@@ -2380,9 +2295,9 @@ function deleteProject(
 }
 
 
-// ======================================================
+// ==========================================================
 // AREA CALCULATION
-// ======================================================
+// ==========================================================
 
 function calculateArea() {
 
@@ -2437,9 +2352,9 @@ if (areaInput) {
 }
 
 
-// ======================================================
+// ==========================================================
 // CREATE PROJECT
-// ======================================================
+// ==========================================================
 
 if (projectForm) {
 
@@ -2583,14 +2498,6 @@ if (projectForm) {
             saveProjects();
 
 
-            activeProject =
-                null;
-
-
-            activeBOQ =
-                [];
-
-
             projectForm.reset();
 
 
@@ -2610,9 +2517,9 @@ if (projectForm) {
 }
 
 
-// ======================================================
+// ==========================================================
 // NAVIGATION BUTTONS
-// ======================================================
+// ==========================================================
 
 function connectButton(
     id,
@@ -2660,13 +2567,11 @@ connectButton(
 );
 
 
-// ======================================================
+// ==========================================================
 // SECURITY
-// ======================================================
+// ==========================================================
 
-function escapeHTML(
-    value
-) {
+function escapeHTML(value) {
 
     const div =
         document.createElement(
@@ -2682,9 +2587,7 @@ function escapeHTML(
 }
 
 
-function escapeAttribute(
-    value
-) {
+function escapeAttribute(value) {
 
     return String(
         value || ""
@@ -2708,14 +2611,13 @@ function escapeAttribute(
 }
 
 
-// ======================================================
+// ==========================================================
 // START APP
-// ======================================================
+// ==========================================================
 
 loadProjects();
 
 displayProjects();
-
 
 console.log(
     "Nepal Construction Estimator loaded successfully."
