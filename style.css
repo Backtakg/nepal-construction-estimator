@@ -1,23 +1,23 @@
 /* ==========================================
-   RESET
+   NEPAL CONSTRUCTION ESTIMATOR
+   CLEAN WORKING STYLESHEET
 ========================================== */
 
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
-
-/* ==========================================
-   BODY
-========================================== */
+html {
+    scroll-behavior: smooth;
+}
 
 body {
     font-family: Arial, Helvetica, sans-serif;
     background: #f4f7fb;
     color: #17233a;
-    line-height: 1.6;
+    min-height: 100vh;
 }
 
 
@@ -33,29 +33,28 @@ body {
 .header-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 22px 24px;
+    padding: 20px 24px;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
 }
 
 .brand-icon {
-    font-size: 34px;
+    font-size: 38px;
 }
 
 .brand h1 {
     font-size: 25px;
     line-height: 1.2;
-    color: #17233a;
+    margin-bottom: 5px;
 }
 
 .brand p {
-    margin-top: 4px;
+    color: #64748b;
     font-size: 14px;
-    color: #66758a;
 }
 
 
@@ -64,14 +63,15 @@ body {
 ========================================== */
 
 .container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 24px;
+    padding: 45px 24px 60px;
 }
 
 
 /* ==========================================
-   HIDDEN
+   IMPORTANT
 ========================================== */
 
 .hidden {
@@ -86,57 +86,49 @@ body {
 .hero-card {
     background: #ffffff;
     border-radius: 20px;
-    padding: 52px 46px;
-    min-height: 330px;
+    padding: 48px;
+    min-height: 300px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    box-shadow: 0 10px 35px rgba(20, 40, 80, 0.08);
+    box-shadow: 0 10px 35px rgba(20, 40, 80, 0.07);
 
-    margin-bottom: 32px;
+    margin-bottom: 30px;
 }
 
 .hero-content {
-    max-width: 760px;
+    max-width: 750px;
 }
 
 .badge {
     display: inline-block;
-
     background: #edf4ff;
-    color: #2563eb;
-
-    padding: 8px 14px;
+    color: #2864e8;
+    padding: 8px 13px;
     border-radius: 30px;
-
     font-size: 13px;
-    font-weight: bold;
-
+    font-weight: 700;
     margin-bottom: 22px;
 }
 
 .hero-card h2 {
     font-size: 42px;
     line-height: 1.15;
-
     margin-bottom: 18px;
-
-    color: #17233a;
 }
 
 .hero-card p {
-    color: #63748a;
+    color: #63738a;
     font-size: 17px;
-
+    line-height: 1.7;
     margin-bottom: 28px;
 }
 
 .hero-icon {
-    font-size: 90px;
-    min-width: 150px;
-    text-align: center;
+    font-size: 80px;
+    padding: 20px;
 }
 
 
@@ -151,43 +143,46 @@ button {
 
 .primary-button {
     border: none;
-
     background: #2864e8;
-    color: white;
-
-    padding: 12px 20px;
-
+    color: #ffffff;
+    padding: 13px 20px;
     border-radius: 9px;
-
     font-size: 15px;
-    font-weight: bold;
-
+    font-weight: 700;
     transition: 0.2s ease;
 }
 
 .primary-button:hover {
-    background: #174fc9;
+    background: #174fc8;
     transform: translateY(-1px);
 }
 
 .secondary-button {
-    border: 1px solid #d8dee8;
-
+    border: 1px solid #d9e0ea;
     background: #ffffff;
-    color: #344054;
-
-    padding: 12px 20px;
-
+    color: #34445c;
+    padding: 13px 20px;
     border-radius: 9px;
-
     font-size: 15px;
     font-weight: 600;
-
-    transition: 0.2s ease;
 }
 
 .secondary-button:hover {
-    background: #f5f7fa;
+    background: #f4f6f9;
+}
+
+.back-button {
+    border: none;
+    background: transparent;
+    color: #2864e8;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    text-decoration: underline;
 }
 
 
@@ -197,31 +192,28 @@ button {
 
 .projects-section {
     background: #ffffff;
-
     border-radius: 20px;
-
-    padding: 32px;
+    padding: 30px;
 
     box-shadow: 0 10px 35px rgba(20, 40, 80, 0.06);
 }
 
 .section-header {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
-    margin-bottom: 26px;
+    gap: 20px;
+    margin-bottom: 25px;
 }
 
 .section-header h2 {
-    font-size: 26px;
-    color: #17233a;
+    font-size: 25px;
+    margin-bottom: 5px;
 }
 
 .section-header p {
     color: #718096;
-    margin-top: 4px;
+    font-size: 14px;
 }
 
 
@@ -231,28 +223,24 @@ button {
 
 .empty-state {
     text-align: center;
-
-    padding: 60px 20px;
-
-    border: 2px dashed #dfe5ed;
-    border-radius: 15px;
-
-    background: #fafbfd;
+    padding: 55px 20px;
+    border: 1px dashed #d9e1eb;
+    border-radius: 14px;
 }
 
 .empty-icon {
-    font-size: 55px;
-    margin-bottom: 12px;
+    font-size: 45px;
+    margin-bottom: 15px;
 }
 
 .empty-state h3 {
-    font-size: 21px;
+    font-size: 20px;
     margin-bottom: 8px;
 }
 
 .empty-state p {
     color: #718096;
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
 
@@ -262,135 +250,93 @@ button {
 
 .project-card {
     border: 1px solid #e0e6ee;
-
     border-radius: 15px;
-
     padding: 22px;
-
-    margin-bottom: 18px;
-
+    margin-bottom: 15px;
     background: #ffffff;
-
-    transition: 0.2s ease;
 }
 
-.project-card:hover {
-    box-shadow: 0 6px 20px rgba(20, 40, 80, 0.08);
-    border-color: #cbd6e5;
+.project-card:last-child {
+    margin-bottom: 0;
 }
 
 .project-card-header {
     display: flex;
-
     justify-content: space-between;
     align-items: flex-start;
-
+    gap: 20px;
     padding-bottom: 18px;
-
     border-bottom: 1px solid #edf0f4;
 }
 
 .project-card-header h3 {
-    font-size: 20px;
-    margin-bottom: 4px;
+    font-size: 19px;
+    margin-bottom: 7px;
 }
 
 .project-location {
-    color: #68778c;
+    color: #718096;
     font-size: 14px;
 }
 
 .project-type {
     background: #edf4ff;
     color: #2864e8;
-
-    padding: 6px 12px;
-
+    padding: 6px 11px;
     border-radius: 20px;
-
     font-size: 12px;
-    font-weight: bold;
+    white-space: nowrap;
 }
-
-
-/* ==========================================
-   PROJECT DETAILS
-========================================== */
 
 .project-details {
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
-
     gap: 20px;
-
-    padding: 20px 0;
-
+    padding: 18px 0;
     border-bottom: 1px solid #edf0f4;
 }
 
-.project-details div {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
 .project-details span {
-    color: #7a8799;
-    font-size: 13px;
+    display: block;
+    color: #718096;
+    font-size: 12px;
+    margin-bottom: 5px;
 }
 
 .project-details strong {
     font-size: 15px;
-    color: #17233a;
 }
-
-
-/* ==========================================
-   PROJECT FOOTER
-========================================== */
 
 .project-card-footer {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
     padding-top: 18px;
 }
 
 .open-project-button {
     border: none;
-
     background: #2864e8;
-    color: white;
-
+    color: #ffffff;
     padding: 10px 16px;
-
     border-radius: 8px;
-
     font-weight: 600;
-
     cursor: pointer;
 }
 
 .open-project-button:hover {
-    background: #174fc9;
+    background: #174fc8;
 }
 
 .delete-button {
     border: none;
-
     background: transparent;
-    color: #e53935;
-
-    font-size: 14px;
-
+    color: #dc2626;
     cursor: pointer;
+    font-size: 14px;
 }
 
 .delete-button:hover {
-    color: #b91c1c;
     text-decoration: underline;
 }
 
@@ -400,55 +346,26 @@ button {
 ========================================== */
 
 .form-card {
-    max-width: 800px;
-
-    margin: 0 auto;
-
     background: #ffffff;
-
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 35px;
     border-radius: 20px;
-
-    padding: 38px;
-
-    box-shadow: 0 10px 35px rgba(20, 40, 80, 0.08);
+    box-shadow: 0 10px 35px rgba(20, 40, 80, 0.07);
 }
 
 .form-header {
     margin-bottom: 30px;
 }
 
-.back-button {
-    border: none;
-
-    background: transparent;
-
-    color: #2864e8;
-
-    font-size: 15px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    margin-bottom: 22px;
-}
-
-.back-button:hover {
-    text-decoration: underline;
-}
-
 .form-header h2 {
-    font-size: 30px;
-    margin-bottom: 7px;
+    font-size: 28px;
+    margin-bottom: 8px;
 }
 
 .form-header p {
     color: #718096;
 }
-
-
-/* ==========================================
-   FORM GROUP
-========================================== */
 
 .form-group {
     margin-bottom: 20px;
@@ -456,255 +373,65 @@ button {
 
 .form-group label {
     display: block;
-
     font-size: 14px;
-    font-weight: 600;
-
-    color: #344054;
-
+    font-weight: 700;
     margin-bottom: 8px;
 }
 
 .form-group input,
 .form-group select {
     width: 100%;
-
-    padding: 12px 14px;
-
-    border: 1px solid #d6dde7;
-
-    border-radius: 9px;
-
+    padding: 13px 14px;
+    border: 1px solid #d8e0ea;
+    border-radius: 8px;
     background: #ffffff;
-
     color: #17233a;
-
     font-size: 15px;
-
     outline: none;
-
-    transition: 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     border-color: #2864e8;
-
-    box-shadow: 0 0 0 3px rgba(40, 100, 232, 0.12);
+    box-shadow: 0 0 0 3px rgba(40, 100, 232, 0.1);
 }
-
-
-/* ==========================================
-   FORM ROW
-========================================== */
 
 .form-row {
     display: grid;
-
     grid-template-columns: 1fr 1fr;
-
-    gap: 18px;
+    gap: 20px;
 }
 
-
-/* ==========================================
-   AREA RESULT
-========================================== */
-
 .area-result {
-    background: #f1f6ff;
-
-    border: 1px solid #dce9ff;
-
-    border-radius: 12px;
-
-    padding: 18px 20px;
-
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
-    margin: 8px 0 25px;
+    background: #f1f6ff;
+    border: 1px solid #dce9ff;
+    padding: 18px;
+    border-radius: 10px;
+    margin: 10px 0 25px;
 }
 
 .area-result span {
     color: #52647a;
-
     font-size: 14px;
 }
 
 .area-result strong {
     color: #2864e8;
-
     font-size: 20px;
 }
 
-
-/* ==========================================
-   FORM ACTIONS
-========================================== */
-
 .form-actions {
     display: flex;
-
     justify-content: flex-end;
-
     gap: 12px;
-
-    padding-top: 10px;
 }
 
 
 /* ==========================================
-   FOOTER
-========================================== */
-
-.footer {
-    text-align: center;
-
-    padding: 30px 20px 45px;
-
-    color: #617087;
-}
-
-.footer p {
-    font-size: 15px;
-
-    margin-bottom: 5px;
-}
-
-.footer small {
-    font-size: 12px;
-}
-
-
-/* ==========================================
-   RESPONSIVE - TABLET
-========================================== */
-
-@media (max-width: 800px) {
-
-    .hero-card {
-        padding: 35px 30px;
-    }
-
-    .hero-card h2 {
-        font-size: 34px;
-    }
-
-    .hero-icon {
-        font-size: 65px;
-        min-width: 100px;
-    }
-
-    .project-details {
-        grid-template-columns: 1fr 1fr;
-    }
-
-}
-
-
-/* ==========================================
-   RESPONSIVE - MOBILE
-========================================== */
-
-@media (max-width: 600px) {
-
-    .container {
-        padding: 20px 14px;
-    }
-
-    .header-container {
-        padding: 18px 15px;
-    }
-
-    .brand h1 {
-        font-size: 20px;
-    }
-
-    .brand p {
-        font-size: 12px;
-    }
-
-    .hero-card {
-        display: block;
-
-        padding: 30px 24px;
-
-        min-height: auto;
-    }
-
-    .hero-card h2 {
-        font-size: 30px;
-    }
-
-    .hero-card p {
-        font-size: 15px;
-    }
-
-    .hero-icon {
-        display: none;
-    }
-
-    .projects-section {
-        padding: 22px 18px;
-    }
-
-    .section-header {
-        display: block;
-    }
-
-    .section-header .primary-button {
-        margin-top: 18px;
-        width: 100%;
-    }
-
-    .project-card {
-        padding: 17px;
-    }
-
-    .project-card-header {
-        gap: 12px;
-    }
-
-    .project-details {
-        grid-template-columns: 1fr;
-        gap: 14px;
-    }
-
-    .project-card-footer {
-        gap: 15px;
-    }
-
-    .form-card {
-        padding: 25px 20px;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .form-actions {
-        flex-direction: column-reverse;
-    }
-
-    .form-actions button {
-        width: 100%;
-    }
-
-    .area-result {
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        gap: 6px;
-    }
-
-}
-/* ==========================================
-   BOQ SCREEN
+   BOQ
 ========================================== */
 
 .boq-screen {
@@ -712,8 +439,7 @@ button {
 }
 
 .boq-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .boq-header {
@@ -726,7 +452,7 @@ button {
 
 .boq-header h2 {
     font-size: 32px;
-    margin: 15px 0 5px;
+    margin: 12px 0 7px;
 }
 
 .boq-header p {
@@ -780,6 +506,7 @@ button {
 
 .boq-title h3 {
     font-size: 24px;
+    margin-bottom: 5px;
 }
 
 .boq-title p {
@@ -832,16 +559,98 @@ button {
 }
 
 
-/* MOBILE BOQ */
+/* ==========================================
+   FOOTER
+========================================== */
+
+.footer {
+    text-align: center;
+    padding: 35px 20px 50px;
+    color: #64748b;
+}
+
+.footer p {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.footer small {
+    font-size: 12px;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
 
 @media (max-width: 700px) {
+
+    .container {
+        padding: 25px 15px 45px;
+    }
+
+    .header-container {
+        padding: 18px 15px;
+    }
+
+    .brand h1 {
+        font-size: 20px;
+    }
+
+    .hero-card {
+        padding: 30px 22px;
+        display: block;
+    }
+
+    .hero-card h2 {
+        font-size: 32px;
+    }
+
+    .hero-icon {
+        display: none;
+    }
+
+    .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .projects-section {
+        padding: 22px 18px;
+    }
+
+    .project-card-header {
+        flex-direction: column;
+    }
+
+    .project-details {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .form-card {
+        padding: 25px 18px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
 
     .estimate-summary {
         grid-template-columns: 1fr;
     }
 
     .boq-header {
-        padding: 24px 20px;
+        padding: 25px 20px;
     }
 
     .boq-header h2 {
@@ -851,5 +660,4 @@ button {
     .boq-card {
         padding: 20px 15px;
     }
-
 }
