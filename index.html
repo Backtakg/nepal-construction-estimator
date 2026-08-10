@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Nepal Construction Estimator</title>
 
@@ -13,16 +12,11 @@
 
 <body>
 
-    <!-- =========================================
-         HEADER
-    ========================================== -->
-
     <header class="top-header">
-
         <div class="header-container">
 
             <div class="brand">
-                <span class="brand-icon">🏗️</span>
+                <div class="brand-icon">🏗️</div>
 
                 <div>
                     <h1>Nepal Construction Estimator</h1>
@@ -31,25 +25,14 @@
             </div>
 
         </div>
-
     </header>
 
 
-    <!-- =========================================
-         MAIN APPLICATION
-    ========================================== -->
-
     <main class="container">
 
-
-        <!-- =====================================
-             DASHBOARD
-        ====================================== -->
+        <!-- DASHBOARD -->
 
         <section id="dashboard">
-
-
-            <!-- HERO -->
 
             <div class="hero-card">
 
@@ -74,13 +57,10 @@
                         type="button"
                         class="primary-button"
                         id="newProjectButton">
-
                         + New Project
-
                     </button>
 
                 </div>
-
 
                 <div class="hero-icon">
                     🏗️
@@ -88,8 +68,6 @@
 
             </div>
 
-
-            <!-- PROJECT SECTION -->
 
             <div class="projects-section">
 
@@ -107,40 +85,24 @@
                         type="button"
                         class="primary-button"
                         id="newProjectButton2">
-
                         + New Project
-
                     </button>
 
                 </div>
 
 
-                <!-- PROJECT LIST -->
-
-                <div id="projectList">
-
-                    <!-- Projects will appear here -->
-
-                </div>
+                <div id="projectList"></div>
 
             </div>
 
         </section>
 
 
-        <!-- =====================================
-             NEW PROJECT
-        ====================================== -->
+        <!-- NEW PROJECT -->
 
-        <section
-            id="newProject"
-            class="hidden">
-
+        <section id="newProject" class="hidden">
 
             <div class="form-card">
-
-
-                <!-- FORM HEADER -->
 
                 <div class="form-header">
 
@@ -148,27 +110,19 @@
                         type="button"
                         class="back-button"
                         id="backButton">
-
                         ← Back
-
                     </button>
 
                     <h2>Create New Project</h2>
 
                     <p>
-                        Enter the basic information
-                        about your construction project.
+                        Enter your construction project information.
                     </p>
 
                 </div>
 
 
-                <!-- PROJECT FORM -->
-
                 <form id="projectForm">
-
-
-                    <!-- PROJECT NAME -->
 
                     <div class="form-group">
 
@@ -179,13 +133,11 @@
                         <input
                             type="text"
                             id="projectName"
-                            placeholder="e.g. Sharma Residence"
+                            placeholder="Example: Sharma Residence"
                             required>
 
                     </div>
 
-
-                    <!-- CLIENT -->
 
                     <div class="form-group">
 
@@ -196,12 +148,10 @@
                         <input
                             type="text"
                             id="clientName"
-                            placeholder="e.g. Ram Sharma">
+                            placeholder="Example: Ram Sharma">
 
                     </div>
 
-
-                    <!-- LOCATION -->
 
                     <div class="form-group">
 
@@ -212,13 +162,11 @@
                         <input
                             type="text"
                             id="location"
-                            placeholder="e.g. Kathmandu"
+                            placeholder="Example: Kathmandu"
                             required>
 
                     </div>
 
-
-                    <!-- BUILDING TYPE -->
 
                     <div class="form-group">
 
@@ -226,9 +174,7 @@
                             Building Type *
                         </label>
 
-                        <select
-                            id="buildingType"
-                            required>
+                        <select id="buildingType" required>
 
                             <option value="">
                                 Select building type
@@ -259,10 +205,7 @@
                     </div>
 
 
-                    <!-- TWO COLUMN AREA -->
-
                     <div class="form-row">
-
 
                         <div class="form-group">
 
@@ -275,7 +218,7 @@
                                 id="floors"
                                 min="0.5"
                                 step="0.5"
-                                placeholder="e.g. 2.5"
+                                placeholder="Example: 2"
                                 required>
 
                         </div>
@@ -292,15 +235,13 @@
                                 id="area"
                                 min="1"
                                 step="1"
-                                placeholder="e.g. 1200"
+                                placeholder="Example: 1200"
                                 required>
 
                         </div>
 
                     </div>
 
-
-                    <!-- TOTAL AREA -->
 
                     <div class="area-result">
 
@@ -315,26 +256,20 @@
                     </div>
 
 
-                    <!-- BUTTONS -->
-
                     <div class="form-actions">
 
                         <button
                             type="button"
                             class="secondary-button"
                             id="cancelButton">
-
                             Cancel
-
                         </button>
 
 
                         <button
                             type="submit"
                             class="primary-button">
-
                             Create Project
-
                         </button>
 
                     </div>
@@ -348,10 +283,6 @@
     </main>
 
 
-    <!-- =========================================
-         FOOTER
-    ========================================== -->
-
     <footer class="footer">
 
         <p>
@@ -359,18 +290,14 @@
         </p>
 
         <small>
-            Built for engineers, contractors and
-            builders in Nepal 🇳🇵
+            BOQ & Cost Estimation Tool for Nepal
         </small>
 
     </footer>
 
 
-    <!-- =========================================
-         JAVASCRIPT
-    ========================================== -->
-
     <script src="script.js"></script>
 
 </body>
+
 </html>
