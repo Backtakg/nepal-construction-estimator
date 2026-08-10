@@ -2054,61 +2054,85 @@ function populateRateItems() {
 // UPDATE RATE FIELDS
 // ==========================================================
 
-function updateRateFields() {
+function attachRateSelector() {
 
-    const itemSelect =
-        document.getElementById(
-            "rateItem"
-        );
+    const rateItem =
+        document.getElementById("rateItem");
 
-    const unitInput =
-        document.getElementById(
-            "rateUnit"
-        );
+    const rateUnit =
+        document.getElementById("rateUnit");
 
-    const rateInput =
-        document.getElementById(
-            "rateValue"
-        );
+    const rateValue =
+        document.getElementById("rateValue");
+
+    if (!rateItem) return;
 
 
-    if (
-        !itemSelect ||
-        !unitInput ||
-        !rateInput
-    ) {
-        return;
-    }
+    rateItem.addEventListener(
+        "change",
+        function() {
+
+            const value =
+                rateItem.value;
 
 
-    const item =
-        itemSelect.value;
+            rateUnit.value = "";
+            rateValue.value = "";
 
 
-    if (!item) {
+            // ==============================
+            // CUSTOM RATE
+            // ==============================
 
-        unitInput.value = "";
-        rateInput.value = "";
+            if (value === "custom") {
 
-        return;
-    }
+                rateUnit.readOnly = false;
+                rateValue.readOnly = false;
 
+                rateUnit.placeholder =
+                    "Enter unit";
 
-    const rate =
-        nepalRates.Kathmandu[item];
+                rateValue.placeholder =
+                    "Enter rate";
 
+                rateUnit.focus();
 
-    if (!rate) {
-        return;
-    }
-
-
-    unitInput.value =
-        rate.unit;
+                return;
+            }
 
 
-    rateInput.value =
-        rate.rate;
+            // ==============================
+            // NEPAL RATE
+            // ==============================
+
+            if (value.startsWith("rate:")) {
+
+                const name =
+                    value.substring(5);
+
+                const rate =
+                    NEPAL_RATE_DATABASE[name];
+
+
+                if (!rate) {
+                    return;
+                }
+
+
+                rateUnit.value =
+                    rate.unit || "";
+
+                rateValue.value =
+                    rate.rate ?? "";
+
+
+                rateUnit.readOnly = true;
+                rateValue.readOnly = false;
+
+            }
+
+        }
+    );
 }
 
 
