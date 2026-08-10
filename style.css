@@ -4008,3 +4008,550 @@ textarea:focus {
         transition-duration: 0.01ms !important;
     }
 }
+
+
+/* =========================================================
+   WORKSPACE / BOQ — MATCH HOME PAGE UI
+   Same Constructor Estimator visual language
+   ========================================================= */
+
+/* Main workspace canvas */
+#boqScreen {
+    width: min(1280px, calc(100% - 40px)) !important;
+    margin: 0 auto !important;
+    padding: 54px 0 100px !important;
+}
+
+/* Keep the whole workspace visually centered like the landing page */
+#boqScreen .boq-container {
+    width: 100% !important;
+    max-width: 1280px !important;
+    margin: 0 auto !important;
+}
+
+/* Workspace title/header area */
+#boqScreen .boq-container > h1,
+#boqScreen .boq-container > h2,
+#boqScreen .boq-container > header h1,
+#boqScreen .boq-container > header h2 {
+    font-family: "Space Grotesk", sans-serif !important;
+    letter-spacing: -.045em !important;
+    color: var(--text) !important;
+}
+
+#boqScreen .boq-container > p {
+    color: var(--text-soft) !important;
+}
+
+/* Every major BOQ panel becomes a floating SaaS card */
+#boqScreen .boq-card,
+#boqScreen .nepal-rate-panel,
+#boqScreen .boq-header,
+#boqScreen .estimate-summary,
+#boqScreen .add-boq-form {
+    position: relative !important;
+    overflow: hidden !important;
+
+    margin: 0 0 18px !important;
+    padding: 26px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.018)
+        ) !important;
+
+    border: 1px solid var(--border-main) !important;
+    border-radius: 24px !important;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.16),
+        inset 0 1px 0 rgba(255,255,255,.035) !important;
+
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+
+    transition:
+        transform .28s ease,
+        border-color .28s ease,
+        box-shadow .28s ease,
+        background .28s ease !important;
+}
+
+/* Blue ambient glow inside cards */
+#boqScreen .boq-card::before,
+#boqScreen .nepal-rate-panel::before,
+#boqScreen .boq-header::before,
+#boqScreen .estimate-summary::before,
+#boqScreen .add-boq-form::before {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    top: -180px;
+    right: -120px;
+    border-radius: 50%;
+    background: rgba(37,99,235,.10);
+    filter: blur(55px);
+    pointer-events: none;
+}
+
+/* Light mode cards */
+html[data-theme="light"] #boqScreen .boq-card,
+html[data-theme="light"] #boqScreen .nepal-rate-panel,
+html[data-theme="light"] #boqScreen .boq-header,
+html[data-theme="light"] #boqScreen .estimate-summary,
+html[data-theme="light"] #boqScreen .add-boq-form,
+body.light-mode #boqScreen .boq-card,
+body.light-mode #boqScreen .nepal-rate-panel,
+body.light-mode #boqScreen .boq-header,
+body.light-mode #boqScreen .estimate-summary,
+body.light-mode #boqScreen .add-boq-form {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.98),
+            rgba(248,250,252,.96)
+        ) !important;
+
+    box-shadow:
+        0 18px 50px rgba(15,23,42,.07),
+        inset 0 1px 0 rgba(255,255,255,.8) !important;
+}
+
+#boqScreen .boq-card:hover,
+#boqScreen .nepal-rate-panel:hover,
+#boqScreen .estimate-summary:hover,
+#boqScreen .add-boq-form:hover {
+    transform: translateY(-2px);
+    border-color: var(--blue-border) !important;
+}
+
+/* Labels */
+#boqScreen label,
+#boqScreen .field label,
+#boqScreen .rate-label {
+    display: block !important;
+    margin: 0 0 7px !important;
+
+    color: var(--text-soft) !important;
+
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .01em !important;
+}
+
+/* Workspace controls */
+#boqScreen input,
+#boqScreen select,
+#boqScreen textarea {
+    min-height: 50px !important;
+
+    width: 100% !important;
+    padding: 0 15px !important;
+
+    color: var(--text) !important;
+    background: var(--surface-solid) !important;
+
+    border: 1px solid var(--border-main) !important;
+    border-radius: 14px !important;
+
+    outline: none !important;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease,
+        background .2s ease !important;
+}
+
+#boqScreen textarea {
+    padding: 13px 15px !important;
+    min-height: 100px !important;
+}
+
+#boqScreen input:hover,
+#boqScreen select:hover,
+#boqScreen textarea:hover {
+    border-color: var(--blue-border) !important;
+}
+
+#boqScreen input:focus,
+#boqScreen select:focus,
+#boqScreen textarea:focus {
+    border-color: var(--primary) !important;
+
+    box-shadow:
+        0 0 0 4px var(--blue-soft),
+        0 10px 25px rgba(37,99,235,.06) !important;
+
+    transform: translateY(-1px);
+}
+
+/* Better select appearance */
+#boqScreen select {
+    cursor: pointer;
+}
+
+#boqScreen option {
+    background: var(--surface-solid);
+    color: var(--text);
+}
+
+/* Rate section */
+#boqScreen .nepal-rate-panel {
+    padding: 28px !important;
+}
+
+#boqScreen .nepal-rate-panel h2,
+#boqScreen .nepal-rate-panel h3,
+#boqScreen .boq-card h2,
+#boqScreen .boq-card h3,
+#boqScreen .estimate-summary h2,
+#boqScreen .estimate-summary h3 {
+    margin-top: 0 !important;
+
+    font-family: "Space Grotesk", sans-serif !important;
+    color: var(--text) !important;
+    letter-spacing: -.025em !important;
+}
+
+/* Reference / status line */
+#boqScreen .rate-status,
+#boqScreen .rate-reference,
+#boqScreen .reference,
+#boqScreen .rate-meta {
+    color: var(--primary) !important;
+    font-weight: 700 !important;
+}
+
+/* Warning should stay amber, not green */
+#boqScreen .warning,
+#boqScreen .rate-warning,
+#boqScreen .notice-warning {
+    color: #f59e0b !important;
+}
+
+/* All primary workspace buttons */
+#boqScreen button,
+#boqScreen .primary-button,
+#boqScreen #applyNepalRate,
+#boqScreen #addBOQButton,
+#boqScreen #saveCustomBOQ {
+    border-radius: 13px !important;
+    font-weight: 700 !important;
+}
+
+#boqScreen .primary-button,
+#boqScreen #applyNepalRate,
+#boqScreen #addBOQButton,
+#boqScreen #saveCustomBOQ {
+    min-height: 46px !important;
+    padding: 0 18px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        ) !important;
+
+    color: #fff !important;
+    border: 0 !important;
+
+    box-shadow:
+        0 12px 28px rgba(37,99,235,.20) !important;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease !important;
+}
+
+#boqScreen .primary-button:hover,
+#boqScreen #applyNepalRate:hover,
+#boqScreen #addBOQButton:hover,
+#boqScreen #saveCustomBOQ:hover {
+    transform: translateY(-2px) !important;
+
+    box-shadow:
+        0 16px 35px rgba(37,99,235,.28) !important;
+
+    filter: brightness(1.06);
+}
+
+#boqScreen .primary-button:active,
+#boqScreen #applyNepalRate:active,
+#boqScreen #addBOQButton:active,
+#boqScreen #saveCustomBOQ:active {
+    transform: translateY(0) scale(.98) !important;
+}
+
+/* =========================================================
+   BILL OF QUANTITIES
+   ========================================================= */
+
+#boqScreen .boq-card {
+    padding: 26px !important;
+}
+
+#boqScreen .boq-card > h2,
+#boqScreen .boq-card > h3 {
+    font-size: 24px !important;
+}
+
+#boqScreen .boq-card > p {
+    color: var(--text-soft) !important;
+}
+
+/* Table wrapper */
+#boqScreen .boq-table-wrapper,
+#boqScreen .table-wrapper,
+#boqScreen .table-responsive {
+    width: 100% !important;
+    overflow-x: auto !important;
+
+    margin-top: 18px !important;
+
+    border:
+        1px solid var(--border-main) !important;
+
+    border-radius: 18px !important;
+
+    background: var(--surface-solid) !important;
+}
+
+/* Table */
+#boqScreen .boq-table {
+    width: 100% !important;
+    min-width: 850px;
+
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+
+    color: var(--text) !important;
+    background: transparent !important;
+}
+
+/* Table header */
+#boqScreen .boq-table thead th,
+#boqScreen .boq-table th {
+    height: 48px !important;
+    padding: 12px 14px !important;
+
+    background:
+        rgba(37,99,235,.08) !important;
+
+    color: var(--text-soft) !important;
+
+    border-bottom:
+        1px solid var(--border-main) !important;
+
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: .06em !important;
+    text-transform: uppercase !important;
+
+    white-space: nowrap;
+}
+
+/* Blue line above table header */
+#boqScreen .boq-table thead {
+    position: relative;
+}
+
+/* Table cells */
+#boqScreen .boq-table td {
+    padding: 10px 12px !important;
+
+    background: transparent !important;
+
+    color: var(--text) !important;
+
+    border-bottom:
+        1px solid var(--border-main) !important;
+
+    vertical-align: middle !important;
+}
+
+#boqScreen .boq-table tbody tr {
+    transition:
+        background .18s ease,
+        transform .18s ease !important;
+}
+
+#boqScreen .boq-table tbody tr:hover {
+    background: var(--blue-soft) !important;
+}
+
+#boqScreen .boq-table tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+
+/* Inputs inside BOQ table */
+#boqScreen .boq-table td input,
+#boqScreen .boq-table td select {
+    min-height: 42px !important;
+    height: 42px !important;
+
+    padding: 0 11px !important;
+
+    border-radius: 11px !important;
+    background: transparent !important;
+}
+
+/* Amount values */
+#boqScreen .boq-table .amount,
+#boqScreen .boq-table .total,
+#boqScreen .boq-table .amount-cell {
+    color: var(--text) !important;
+    font-weight: 800 !important;
+}
+
+/* Delete/action buttons */
+#boqScreen .boq-table button {
+    min-width: 38px !important;
+    min-height: 38px !important;
+
+    padding: 0 10px !important;
+
+    border-radius: 10px !important;
+
+    background: var(--surface-alt) !important;
+    border: 1px solid var(--border-main) !important;
+    color: var(--text-soft) !important;
+
+    transition:
+        transform .18s ease,
+        color .18s ease,
+        border-color .18s ease,
+        background .18s ease !important;
+}
+
+#boqScreen .boq-table button:hover {
+    color: #fff !important;
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   SUMMARY / COST BREAKDOWN
+   ========================================================= */
+
+#boqScreen .estimate-summary {
+    padding: 30px !important;
+}
+
+#boqScreen .estimate-summary h2,
+#boqScreen .estimate-summary h3 {
+    font-size: 28px !important;
+}
+
+#boqScreen .estimate-summary .total,
+#boqScreen .estimate-summary .grand-total,
+#boqScreen .estimate-summary .total-value {
+    color: var(--primary) !important;
+    font-family: "Space Grotesk", sans-serif !important;
+    font-weight: 800 !important;
+}
+
+/* Cost rows */
+#boqScreen .cost-row,
+#boqScreen .summary-row,
+#boqScreen .breakdown-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 20px !important;
+
+    padding: 14px 0 !important;
+
+    border-bottom:
+        1px solid var(--border-main) !important;
+}
+
+#boqScreen .cost-row:last-child,
+#boqScreen .summary-row:last-child,
+#boqScreen .breakdown-row:last-child {
+    border-bottom: 0 !important;
+}
+
+#boqScreen .cost-label,
+#boqScreen .summary-label,
+#boqScreen .breakdown-label {
+    color: var(--text-soft) !important;
+}
+
+#boqScreen .cost-value,
+#boqScreen .summary-value,
+#boqScreen .breakdown-value {
+    color: var(--text) !important;
+    font-weight: 700 !important;
+}
+
+/* =========================================================
+   EMPTY / HELPER STATES
+   ========================================================= */
+
+#boqScreen .empty-state,
+#boqScreen .helper-text,
+#boqScreen .muted {
+    color: var(--text-muted) !important;
+}
+
+/* =========================================================
+   WORKSPACE SPACING
+   ========================================================= */
+
+#boqScreen > * + * {
+    margin-top: 18px;
+}
+
+/* =========================================================
+   MOBILE WORKSPACE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    #boqScreen {
+        width: min(100% - 28px, 760px) !important;
+        padding-top: 36px !important;
+    }
+
+    #boqScreen .boq-card,
+    #boqScreen .nepal-rate-panel,
+    #boqScreen .boq-header,
+    #boqScreen .estimate-summary,
+    #boqScreen .add-boq-form {
+        padding: 20px !important;
+        border-radius: 20px !important;
+    }
+}
+
+@media (max-width: 650px) {
+    #boqScreen {
+        width: calc(100% - 20px) !important;
+        padding: 26px 0 70px !important;
+    }
+
+    #boqScreen .boq-card,
+    #boqScreen .nepal-rate-panel,
+    #boqScreen .boq-header,
+    #boqScreen .estimate-summary,
+    #boqScreen .add-boq-form {
+        padding: 16px !important;
+        border-radius: 17px !important;
+    }
+
+    #boqScreen .cost-row,
+    #boqScreen .summary-row,
+    #boqScreen .breakdown-row {
+        gap: 12px !important;
+    }
+
+    #boqScreen .estimate-summary h2,
+    #boqScreen .estimate-summary h3 {
+        font-size: 23px !important;
+    }
+}
