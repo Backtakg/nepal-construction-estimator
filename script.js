@@ -812,7 +812,7 @@ function saveProjects() {
 
 
 function showDashboard() {
-
+editingProjectId = null;
     // User intentionally returned to dashboard
     localStorage.removeItem(
         "activeProject"
