@@ -1433,43 +1433,69 @@ function saveActiveBOQ() {
 
 function calculateBOQTotal() {
 
+    if (!Array.isArray(activeBOQ)) {
+        activeBOQ = [];
+    }
+
     let directCost = 0;
-
     let toolsEquipment = 0;
-
     let contingencies = 0;
-
     let contractorProfit = 0;
 
 
-    // ------------------------------------------------------
-    // CALCULATE DIRECT BOQ ITEMS
-    // ------------------------------------------------------
+    // ======================================================
+    // CALCULATE NORMAL BOQ ITEMS
+    // ======================================================
 
     activeBOQ.forEach(function(item) {
 
-        const quantity =
+        item.quantity =
             Number(item.quantity) || 0;
 
-        const rate =
+        item.rate =
             Number(item.rate) || 0;
 
 
-        // Keep amount updated
-        item.amount =
-            quantity * rate;
-
-
         const category =
-            normalizeText(
-                item.category
-            );
-
+            normalizeText(item.category);
 
         const itemName =
-            normalizeText(
-                item.item
-            );
+            normalizeText(item.item);
+
+
+        // --------------------------------------------------
+        // CONTINGENCY ITEM
+        // --------------------------------------------------
+
+        if (
+            category === "contingencies" ||
+            itemName === "contingencies"
+        ) {
+            return;
+        }
+
+
+        // --------------------------------------------------
+        // CONTRACTOR PROFIT ITEM
+        // --------------------------------------------------
+
+        if (
+            category === "contractor's profit" ||
+            category === "contractors profit" ||
+            itemName === "contractor's profit" ||
+            itemName === "contractors profit"
+        ) {
+            return;
+        }
+
+
+        // --------------------------------------------------
+        // NORMAL AMOUNT
+        // --------------------------------------------------
+
+        item.amount =
+            item.quantity *
+            item.rate;
 
 
         // --------------------------------------------------
@@ -1479,48 +1505,20 @@ function calculateBOQTotal() {
         if (
             category === "tools & equipment" ||
             category === "tools and equipment" ||
-            itemName.includes("tools and construction equipment")
+            itemName.includes(
+                "tools and construction equipment"
+            )
         ) {
 
             toolsEquipment +=
                 item.amount;
 
             return;
-
         }
 
 
         // --------------------------------------------------
-        // CONTINGENCIES
-        // --------------------------------------------------
-
-        if (
-            category === "contingencies" ||
-            itemName === "contingencies"
-        ) {
-
-            return;
-
-        }
-
-
-        // --------------------------------------------------
-        // CONTRACTOR PROFIT
-        // --------------------------------------------------
-
-        if (
-            category === "contractor's profit" ||
-            category === "contractors profit" ||
-            itemName === "contractor's profit"
-        ) {
-
-            return;
-
-        }
-
-
-        // --------------------------------------------------
-        // NORMAL DIRECT COST
+        // DIRECT CONSTRUCTION COST
         // --------------------------------------------------
 
         directCost +=
@@ -1529,35 +1527,31 @@ function calculateBOQTotal() {
     });
 
 
-    // ------------------------------------------------------
-    // SUBTOTAL BEFORE CONTINGENCY / PROFIT
-    // ------------------------------------------------------
+    // ======================================================
+    // SUBTOTAL
+    // ======================================================
 
     const subtotal =
         directCost +
         toolsEquipment;
 
 
-    // ------------------------------------------------------
-    // CONTINGENCY %
-    // ------------------------------------------------------
+    // ======================================================
+    // FIND CONTINGENCY
+    // ======================================================
 
     const contingencyItem =
         activeBOQ.find(function(item) {
 
             const category =
-                normalizeText(
-                    item.category
-                );
+                normalizeText(item.category);
 
-            const name =
-                normalizeText(
-                    item.item
-                );
+            const itemName =
+                normalizeText(item.item);
 
             return (
                 category === "contingencies" ||
-                name === "contingencies"
+                itemName === "contingencies"
             );
 
         });
@@ -1565,11 +1559,12 @@ function calculateBOQTotal() {
 
     const contingencyRate =
         contingencyItem
-            ? Number(
-                contingencyItem.rate
-            ) || 0
+            ? Number(contingencyItem.rate) || 0
             : 0;
 
+
+    // Contingency is calculated
+    // as a percentage of subtotal.
 
     contingencies =
         subtotal *
@@ -1579,42 +1574,42 @@ function calculateBOQTotal() {
 
     if (contingencyItem) {
 
+        contingencyItem.quantity =
+            1;
+
         contingencyItem.amount =
             contingencies;
 
     }
 
 
-    // ------------------------------------------------------
-    // COST AFTER CONTINGENCY
-    // ------------------------------------------------------
+    // ======================================================
+    // COST BEFORE CONTRACTOR PROFIT
+    // ======================================================
 
     const costBeforeProfit =
         subtotal +
         contingencies;
 
 
-    // ------------------------------------------------------
-    // CONTRACTOR PROFIT %
-    // ------------------------------------------------------
+    // ======================================================
+    // FIND CONTRACTOR PROFIT
+    // ======================================================
 
     const profitItem =
         activeBOQ.find(function(item) {
 
             const category =
-                normalizeText(
-                    item.category
-                );
+                normalizeText(item.category);
 
-            const name =
-                normalizeText(
-                    item.item
-                );
+            const itemName =
+                normalizeText(item.item);
 
             return (
                 category === "contractor's profit" ||
                 category === "contractors profit" ||
-                name === "contractor's profit"
+                itemName === "contractor's profit" ||
+                itemName === "contractors profit"
             );
 
         });
@@ -1622,11 +1617,12 @@ function calculateBOQTotal() {
 
     const profitRate =
         profitItem
-            ? Number(
-                profitItem.rate
-            ) || 0
+            ? Number(profitItem.rate) || 0
             : 0;
 
+
+    // Contractor profit is calculated
+    // after contingency.
 
     contractorProfit =
         costBeforeProfit *
@@ -1636,24 +1632,27 @@ function calculateBOQTotal() {
 
     if (profitItem) {
 
+        profitItem.quantity =
+            1;
+
         profitItem.amount =
             contractorProfit;
 
     }
 
 
-    // ------------------------------------------------------
+    // ======================================================
     // GRAND TOTAL
-    // ------------------------------------------------------
+    // ======================================================
 
     const total =
         costBeforeProfit +
         contractorProfit;
 
 
-    // ------------------------------------------------------
-    // RETURN COMPLETE BREAKDOWN
-    // ------------------------------------------------------
+    // ======================================================
+    // RETURN BREAKDOWN
+    // ======================================================
 
     return {
 
