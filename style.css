@@ -27,9 +27,9 @@
     --border: rgba(255,255,255,.08);
     --border-strong: rgba(255,255,255,.14);
 
-    --accent: #b8ff4d;
-    --accent-soft: rgba(184,255,77,.12);
-    --accent-dark: #8edb28;
+    --accent: #2563eb;
+    --accent-soft: rgba(37,99,235,.12);
+    --accent-dark: #1d4ed8;
 
     --danger: #ff667a;
 
@@ -66,9 +66,9 @@ body.light-mode {
     --border: rgba(17,19,24,.08);
     --border-strong: rgba(17,19,24,.14);
 
-    --accent: #74b900;
-    --accent-soft: rgba(116,185,0,.11);
-    --accent-dark: #609d00;
+    --accent: #2563eb;
+    --accent-soft: rgba(37,99,235,.11);
+    --accent-dark: #1d4ed8;
 
     --shadow:
         0 25px 70px rgba(25,30,40,.10);
@@ -99,7 +99,7 @@ body {
     background:
         radial-gradient(
             circle at 15% 10%,
-            rgba(184,255,77,.07),
+            rgba(37,99,235,.07),
             transparent 30%
         ),
         radial-gradient(
@@ -310,11 +310,11 @@ a {
             var(--accent-dark)
         );
 
-    color: #10140a;
+    color: #ffffff;
 
     box-shadow:
         0 8px 25px
-        rgba(184,255,77,.15);
+        rgba(37,99,235,.15);
 
     transform:
         rotate(-3deg);
@@ -470,7 +470,7 @@ a {
         var(--accent-soft);
 
     border-color:
-        rgba(184,255,77,.3);
+        rgba(37,99,235,.30);
 
 }
 
@@ -703,7 +703,7 @@ a {
         var(--accent);
 
     color:
-        #10140a;
+        #ffffff;
 
     font-weight: 800;
 
@@ -711,7 +711,7 @@ a {
 
     box-shadow:
         0 10px 30px
-        rgba(184,255,77,.14);
+        rgba(37,99,235,.14);
 
     transition:
         transform var(--transition),
@@ -728,7 +728,7 @@ a {
 
     box-shadow:
         0 15px 40px
-        rgba(184,255,77,.23);
+        rgba(37,99,235,.23);
 
     filter:
         brightness(1.04);
@@ -787,7 +787,7 @@ a {
         var(--surface-hover);
 
     border-color:
-        rgba(184,255,77,.35);
+        rgba(37,99,235,.35);
 
     transform:
         translateY(-2px);
@@ -1301,7 +1301,7 @@ a {
         translateY(-5px);
 
     border-color:
-        rgba(184,255,77,.24);
+        rgba(37,99,235,.24);
 
     background:
         var(--surface-hover);
@@ -1853,7 +1853,7 @@ a {
 
     border:
         1px solid
-        rgba(184,255,77,.2);
+        rgba(37,99,235,.20);
 
     border-radius:
         15px;
@@ -1918,7 +1918,7 @@ a {
     border-radius: 12px;
 
     background:
-        rgba(184,255,77,.12);
+        rgba(37,99,235,.12);
 
     color:
         var(--accent);
@@ -2023,7 +2023,7 @@ a {
         var(--accent);
 
     color:
-        #10140a;
+        #ffffff;
 
     font-size: 9px;
 
@@ -3633,4 +3633,378 @@ body.dark .brand-logo {
 
     box-shadow:
         0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+/* =========================================================
+   FINAL THEME OVERRIDE
+   CONSTRUCTOR ESTIMATOR
+   BLUE + WHITE / BLUE DARK MODE
+   ========================================================= */
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #eff6ff;
+
+    --background: #f8fafc;
+    --background-soft: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f1f5f9;
+
+    --text-main: #0f172a;
+    --text-secondary: #475569;
+    --text-muted-main: #64748b;
+
+    --border-main: #dbe3ee;
+    --success: #2563eb;
+
+    --blue-glow: rgba(37, 99, 235, 0.18);
+    --blue-soft: rgba(37, 99, 235, 0.10);
+    --blue-border: rgba(37, 99, 235, 0.24);
+
+    color-scheme: light;
+
+    /* Bridge the original CSS variable system to the blue palette. */
+    --bg: var(--background);
+    --bg-soft: var(--background-soft);
+    --surface: rgba(255, 255, 255, 0.90);
+    --surface-solid: var(--surface);
+    --surface-hover: #f1f5f9;
+
+    --text: var(--text-main);
+    --text-soft: var(--text-secondary);
+    --text-muted: var(--text-muted-main);
+
+    --border: var(--border-main);
+    --border-strong: #cbd5e1;
+
+    --accent: var(--primary);
+    --accent-soft: var(--blue-soft);
+    --accent-dark: var(--primary-dark);
+
+    --shadow:
+        0 20px 60px rgba(15, 23, 42, 0.10);
+}
+
+html[data-theme="dark"],
+body:not(.light-mode) {
+    --primary: #60a5fa;
+    --primary-dark: #3b82f6;
+    --primary-light: rgba(59, 130, 246, 0.14);
+
+    --background: #080b12;
+    --background-soft: #0d1420;
+    --surface: #111827;
+    --surface-alt: #182131;
+
+    --text-main: #f8fafc;
+    --text-secondary: #a8b3c5;
+    --text-muted-main: #718096;
+
+    --border-main: #263449;
+
+    --blue-glow: rgba(96, 165, 250, 0.20);
+    --blue-soft: rgba(59, 130, 246, 0.12);
+    --blue-border: rgba(96, 165, 250, 0.28);
+
+    color-scheme: dark;
+
+    --bg: var(--background);
+    --bg-soft: var(--background-soft);
+    --surface: rgba(17, 24, 39, 0.90);
+    --surface-solid: #111827;
+    --surface-hover: #182131;
+
+    --text: var(--text-main);
+    --text-soft: var(--text-secondary);
+    --text-muted: var(--text-muted-main);
+
+    --border: var(--border-main);
+    --border-strong: #334155;
+
+    --accent: var(--primary);
+    --accent-soft: var(--blue-soft);
+    --accent-dark: var(--primary-dark);
+
+    --shadow:
+        0 25px 70px rgba(0, 0, 0, 0.35);
+}
+
+/* Explicit light mode always wins over the dark compatibility rule. */
+html[data-theme="light"],
+body.light-mode {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #eff6ff;
+
+    --background: #f8fafc;
+    --background-soft: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f1f5f9;
+
+    --text-main: #0f172a;
+    --text-secondary: #475569;
+    --text-muted-main: #64748b;
+
+    --border-main: #dbe3ee;
+
+    --blue-glow: rgba(37, 99, 235, 0.18);
+    --blue-soft: rgba(37, 99, 235, 0.10);
+    --blue-border: rgba(37, 99, 235, 0.24);
+
+    color-scheme: light;
+
+    --bg: var(--background);
+    --bg-soft: var(--background-soft);
+    --surface: rgba(255, 255, 255, 0.90);
+    --surface-solid: #ffffff;
+    --surface-hover: #f1f5f9;
+
+    --text: var(--text-main);
+    --text-soft: var(--text-secondary);
+    --text-muted: var(--text-muted-main);
+
+    --border: var(--border-main);
+    --border-strong: #cbd5e1;
+
+    --accent: var(--primary);
+    --accent-soft: var(--blue-soft);
+    --accent-dark: var(--primary-dark);
+
+    --shadow:
+        0 20px 60px rgba(15, 23, 42, 0.10);
+}
+
+/* Global surface/background consistency */
+html,
+body {
+    background: var(--background);
+    color: var(--text-main);
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at 8% 0%,
+            var(--blue-soft),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 92% 25%,
+            rgba(59, 130, 246, 0.06),
+            transparent 30%
+        ),
+        var(--background);
+}
+
+/* Light mode gets a cleaner white canvas. */
+html[data-theme="light"] body,
+body.light-mode {
+    background:
+        radial-gradient(
+            circle at 8% 0%,
+            rgba(37, 99, 235, 0.06),
+            transparent 30%
+        ),
+        #f8fafc;
+}
+
+/* Header */
+.site-header {
+    background: rgba(8, 11, 18, 0.78);
+    border-color: var(--border-main);
+}
+
+.light-mode .site-header,
+html[data-theme="light"] .site-header {
+    background: rgba(255, 255, 255, 0.84);
+}
+
+/* Branding */
+.brand-logo,
+.footer-mark {
+    background: linear-gradient(
+        145deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+    color: #ffffff;
+    box-shadow:
+        0 8px 28px var(--blue-glow);
+}
+
+.brand-logo {
+    border-color: var(--blue-border);
+}
+
+/* Theme button */
+.theme-toggle:hover {
+    background: var(--blue-soft);
+    border-color: var(--blue-border);
+    color: var(--primary);
+}
+
+/* Primary actions */
+.primary-button {
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+    color: #ffffff;
+    box-shadow:
+        0 12px 30px var(--blue-glow);
+}
+
+.primary-button:hover {
+    box-shadow:
+        0 18px 42px var(--blue-glow);
+    filter: brightness(1.06);
+}
+
+.outline-button:hover,
+.secondary-button:hover {
+    border-color: var(--blue-border);
+    color: var(--primary);
+}
+
+/* Hero */
+.hero-content h1 span,
+.visual-number,
+.visual-status,
+.eyebrow-dot {
+    color: var(--primary);
+}
+
+.eyebrow-dot {
+    background: var(--primary);
+    box-shadow: 0 0 16px var(--blue-glow);
+}
+
+/* Floating visual */
+.visual-card::before {
+    background: var(--primary);
+    opacity: .14;
+}
+
+.visual-card {
+    border-color: var(--border-main);
+}
+
+/* Links / interactive elements */
+a:hover {
+    color: var(--primary);
+}
+
+/* Focus states */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+    outline: 3px solid var(--blue-glow);
+    outline-offset: 3px;
+}
+
+/* Inputs and selects */
+input,
+select,
+textarea {
+    border-color: var(--border-main);
+    background: var(--surface-solid);
+    color: var(--text-main);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--blue-soft);
+}
+
+/* Cards and panels */
+.boq-card,
+.nepal-rate-panel,
+.boq-header,
+.estimate-summary,
+.add-boq-form,
+.project-card,
+.stat-card,
+.form-card,
+.modal-content {
+    border-color: var(--border-main);
+}
+
+/* Common badges/status accents */
+.badge,
+.status-badge,
+.rate-badge,
+.project-type,
+.estimate-badge {
+    border-color: var(--blue-border);
+}
+
+/* Remove any old green-looking success accent. */
+.success,
+.success-text,
+.success-value {
+    color: var(--primary) !important;
+}
+
+/* BOQ / cost accents */
+#addBOQButton,
+.add-boq-button,
+.edit-rate-button,
+.rate-action-button {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+#addBOQButton:hover,
+.add-boq-button:hover,
+.edit-rate-button:hover,
+.rate-action-button:hover {
+    background: var(--primary-dark);
+}
+
+/* Footer */
+.site-footer {
+    border-color: var(--border-main);
+}
+
+.footer-mark {
+    background: var(--primary);
+}
+
+/* =========================================================
+   BLUE FLOATING ANIMATION
+   ========================================================= */
+
+@keyframes bluePulse {
+    0%, 100% {
+        box-shadow:
+            0 0 0 0 rgba(37, 99, 235, 0);
+    }
+    50% {
+        box-shadow:
+            0 0 0 8px rgba(37, 99, 235, 0.06);
+    }
+}
+
+.brand-logo,
+.theme-toggle,
+.primary-button {
+    animation: bluePulse 4s ease-in-out infinite;
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
 }
